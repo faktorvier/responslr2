@@ -1,0 +1,38 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+$rr-display-class-prefix: 'd-' !default;
+
+$rr-display-properties: (
+	'none',
+	'inline',
+	'inline-block',
+	'block',
+	'table',
+	'table-row',
+	'table-cell',
+	'flex',
+	'inline-flex',
+	//'grid',
+	//'inline-grid',
+	//'list-item',
+	'contents',
+	'initial',
+	'unset'
+) !default;
+
+// Print output for this module
+$rr-generate-display: $rr-generate-classes !default;
+
+/********************/
+/* OUTPUT: DISPLAYS */
+/********************/
+
+@if $rr-generate-display {
+	@include mq-generate-property-classes-simple(
+		$property: 'display',
+		$values: $rr-display-properties,
+		$class-prefix: $rr-display-class-prefix
+	);
+}

@@ -1,0 +1,40 @@
+// Global code variables
+$rr-global-settings: ();
+
+$rr-global-reset-class: 'reset' !default;
+
+$rr-generate-classes: true !default;
+$rr-generate-settings: true !default;
+
+// Load core
+@import 'core/reset';
+@import 'core/grid';
+
+// Load layout
+@import 'layout/alignment';
+@import 'layout/aspect-ratio';
+@import 'layout/color';
+@import 'layout/display';
+@import 'layout/flex';
+@import 'layout/helpers';
+@import 'layout/position';
+@import 'layout/spacing';
+@import 'layout/typo';
+@import 'layout/transition';
+@import 'layout/visibility';
+
+// Load components
+@import 'components/list';
+@import 'components/table';
+
+// Output JSON settings
+@if $rr-generate-settings != false and $rr-global-settings != () {
+	html::before {
+		content: json-encode($rr-global-settings);
+		visibility: hidden;
+		position: absolute;
+		font-size: 0;
+		line-height: 0;
+		height: 0;
+	}
+}

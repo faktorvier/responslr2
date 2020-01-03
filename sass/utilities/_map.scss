@@ -1,0 +1,73 @@
+////////////
+// FUNCTIONS
+////////////
+
+// Check if value is a map
+@function is-map($map) {
+	@return type-of($map) == 'map';
+}
+
+// Check if map is empty
+@function map-empty($map) {
+	@return length($map) == 0;
+}
+
+// Check if map is not empty
+@function map-not-empty($map) {
+	@return length($map) > 0;
+}
+
+// Get default value from map
+@function map-default($map) {
+	$map-default: null;
+
+	@if map-not-empty($map){
+		@if map-has-key($map, default) {
+			$map-default: default;
+		} @else {
+			$map-default: nth(map-keys($map), 1);
+		}
+	}
+
+	@return $map-default;
+}
+
+// Append item to map
+@function map-append($map, $item, $key) {
+	$map: map-merge($map, (
+		$key: $item
+	));
+
+	@return $map;
+}
+
+// Reverse a map
+@function map-reverse($map) {
+	$return-map: null;
+
+	@if type-of($map) == "map" {
+		$keys: map-keys($map);
+		$map-reversed: ();
+
+		@for $i from length($keys) through 1 {
+			$map-reversed: map-merge(
+				$map-reversed,
+				(nth($keys, $i): map-get($map, nth($keys, $i)))
+			);
+		}
+
+		@if type-of($map-reversed) == "map" {
+			$return-map: $map-reversed;
+		} @else {
+			@warn 'There was an error reversing the order of "#{$map}"';
+		}
+	} @else {
+		@warn '"#{$map}" is not a valid map';
+	}
+
+	@return $return-map;
+}
+
+/////////
+// MIXINS
+/////////

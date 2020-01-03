@@ -1,0 +1,23 @@
+////////////
+// FUNCTIONS
+////////////
+
+// Check if value is a list
+@function is-list($list) {
+	@return type-of($list) == 'list';
+}
+
+// Check if value is in list
+@function in-list($list, $value) {
+	@return is-not-null(index($list, $value));
+}
+
+// Get first list item
+@function list-get-first($list) {
+	@return nth($list, 1);
+}
+
+// Get last list item
+@function list-get-last($list) {
+	@return nth($list, length($list));
+}

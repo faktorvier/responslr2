@@ -1,0 +1,239 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-aspect-ratio-prefix: 'ar-' !default;
+$rr-aspect-ratio-reset-class: $rr-global-reset-class !default;
+
+// Aspect ratios
+$rr-aspect-ratios: () !default;
+
+// Defaults
+$rr-aspect-ratio-map-defaults: (
+	'ratio': null,
+	'breakpoints': ()
+) !default;
+
+$rr-aspect-ratios-default: map-default($rr-aspect-ratios) !default;
+
+// Print output for this module
+$rr-generate-aspect-ratios: $rr-generate-classes !default;
+$rr-generate-aspect-ratios-reset: $rr-generate-aspect-ratios !default;
+
+///////////////////
+// CLASS PROPERTIES
+///////////////////
+
+$rr-aspect-ratio-class-properties: (
+	position: relative
+) !default;
+
+$rr-aspect-ratio-child-class-properties: (
+	position: absolute,
+	top: 0,
+	left: 0,
+	bottom: 0,
+	right: 0
+) !default;
+
+$rr-aspect-ratio-reset-class-properties: (
+	position: unset,
+	padding-top: unset
+) !default;
+
+$rr-aspect-ratio-child-reset-class-properties: (
+	position: unset,
+	top: unset,
+	left: unset,
+	bottom: unset,
+	right: unset
+) !default;
+
+////////////
+// FUNCTIONS
+////////////
+
+// Check if an entry exists
+@function aspect-ratio-exists($name) {
+	@return map-has-key($rr-aspect-ratios, to-string($name));
+}
+
+// Gets an entry by name
+@function aspect-ratio($name: null) {
+	$return: null;
+	$name: to-string($name);
+
+	@if is-null($name) {
+		$name: $rr-aspect-ratios-default;
+	}
+
+	@if aspect-ratio-exists($name) {
+		$return: map-get($rr-aspect-ratios, $name);
+	}
+
+	@return $return;
+}
+
+// Get an entry value by name
+@function aspect-ratio-property($name, $property) {
+	$return: null;
+	$aspect-ratio: null;
+
+	@if is-string($name) {
+		$aspect-ratio: aspect-ratio($name);
+	} @else {
+		$aspect-ratio: $name;
+	}
+
+	@if is-not-null($aspect-ratio) {
+		@if is-map($aspect-ratio) and map-has-key($aspect-ratio, $property) {
+			$return: map-get($aspect-ratio, $property);
+		} @else {
+			$return: map-get($rr-aspect-ratio-map-defaults, $property);
+		}
+	} @else {
+		$return: map-get($rr-aspect-ratio-map-defaults, $property);
+	}
+
+	@return $return;
+}
+
+// Calculate aspect ratio
+@function aspect-ratio-calculate($width, $height) {
+	@return $height / $width * 100%;
+}
+
+// Convert entry to css properties map
+@function aspect-ratio-to-css-properties($aspect-ratio, $root: true) {
+	$ratio-value: $aspect-ratio;
+
+	// Get ratio from map if not directly defined by list
+	@if is-map($aspect-ratio) {
+		$ratio-value: map-get($aspect-ratio, 'ratio');
+	}
+
+	// Set default property
+	$return: (
+		padding-top: aspect-ratio-calculate(nth($ratio-value, 1), nth($ratio-value, 2)),
+	);
+
+	// Append root properties
+	@if $root {
+		$return: map-append($return, $rr-aspect-ratio-child-class-properties, '> *');
+		$return: map-merge($return, $rr-aspect-ratio-class-properties);
+	}
+
+	// Append breakpoint overwrites if exists
+	@if is-map($aspect-ratio) and map-has-key($aspect-ratio, 'breakpoints') {
+		$breakpoint-entries: map-get($aspect-ratio, 'breakpoints');
+		$property-breakpoints: ();
+
+		@each $breakpoint-name, $breakpoint-aspect-ratio in $breakpoint-entries {
+			$property-breakpoints: map-append($property-breakpoints, aspect-ratio-to-css-properties($breakpoint-aspect-ratio, false), $breakpoint-name);
+		}
+
+		$return: map-append($return, $property-breakpoints, 'breakpoints');
+	}
+
+	@return $return;
+}
+
+// Prepare map for property classes
+@function aspect-ratio-property-classes() {
+	$property-classes: ();
+
+	// Append defined classes
+	@each $class-name, $aspect-ratio in $rr-aspect-ratios {
+		$property-classes: map-append(
+			$property-classes,
+			aspect-ratio-to-css-properties($aspect-ratio),
+			$class-name
+		);
+	}
+
+	// Append reset class
+	@if not is-empty($property-classes) and $rr-generate-aspect-ratios-reset {
+		$reset-property: map-append(
+			$rr-aspect-ratio-reset-class-properties,
+			$rr-aspect-ratio-child-reset-class-properties,
+			'> *'
+		);
+
+		$property-classes: map-append(
+			$property-classes,
+			$reset-property,
+			$rr-aspect-ratio-reset-class
+		);
+	}
+
+	@return $property-classes;
+}
+
+/////////
+// MIXINS
+/////////
+
+// Output aspect ratio by name
+@mixin aspect-ratio($name: null, $append-child: true) {
+	$aspect-ratio: aspect-ratio($name);
+
+	@if is-not-null($aspect-ratio) {
+		$ratio-value: $aspect-ratio;
+
+		@if is-map($aspect-ratio) {
+			$ratio-value: map-get($aspect-ratio, 'ratio');
+		}
+
+		@include aspect-ratio-custom(nth($ratio-value, 1), nth($ratio-value, 2), $append-child);
+	}
+}
+
+@mixin aspect-ratio-custom($width, $height, $append-child: true) {
+	padding-top: aspect-ratio-calculate($width, $height);
+	@include generate-properties($rr-aspect-ratio-class-properties);
+
+	@if $append-child {
+		> * {
+			@include aspect-ratio-child();
+		}
+	}
+}
+
+// Output aspect ratio child
+@mixin aspect-ratio-child() {
+	@include generate-properties($rr-aspect-ratio-child-class-properties);
+}
+
+// Output custom aspect ratio
+@mixin aspect-ratio-reset($append-child: true) {
+	@include generate-properties($rr-aspect-ratio-reset-class-properties);
+
+	@if $append-child {
+		> * {
+			@include aspect-ratio-child-reset();
+		}
+	}
+}
+
+// Output aspect ratio child reset
+@mixin aspect-ratio-child-reset() {
+	@include generate-properties($rr-aspect-ratio-child-reset-class-properties);
+}
+
+/*************************/
+/* OUTPUT: ASPECT RATIOS */
+/*************************/
+
+@if $rr-generate-aspect-ratios and map-not-empty($rr-aspect-ratios) {
+	@include mq-generate-property-classes(
+		$classes: aspect-ratio-property-classes(),
+		$class-prefix: $rr-aspect-ratio-prefix
+	);
+}
+
+///////
+// TODO
+///////
+
+// MAYBE: aspect-ratio on .column? gutter etc?

@@ -1,0 +1,52 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Horizontal alignments
+$rr-alignment-h-class-prefix: 'h-' !default;
+
+$rr-alignment-h-properties: (
+	'left',
+	'right',
+	'center',
+	//'justify',
+	//'justify-all',
+	'initial',
+	'unset'
+) !default;
+
+// Vertical alignments
+$rr-alignment-v-class-prefix: 'v-' !default;
+
+$rr-alignment-v-properties: (
+	'baseline',
+	'top',
+	'middle',
+	'bottom',
+	'sub',
+	//'text-top',
+	//'text-bottom',
+	'initial',
+	'unset'
+) !default;
+
+// Print output for this module
+$rr-generate-alignments: $rr-generate-classes !default;
+
+/**********************/
+/* OUTPUT: ALIGNMENTS */
+/**********************/
+
+@if $rr-generate-alignments {
+	@include mq-generate-property-classes-simple(
+		$property: 'text-align',
+		$values: $rr-alignment-h-properties,
+		$class-prefix: $rr-alignment-h-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
+		$property: 'vertical-align',
+		$values: $rr-alignment-v-properties,
+		$class-prefix: $rr-alignment-v-class-prefix
+	);
+}

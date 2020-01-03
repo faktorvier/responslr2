@@ -1,0 +1,210 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+$rr-colors-generate-types: (text, bg, border) !default; // text, bg, border
+
+// Classes
+$rr-color-text-prefix: 'txt-color-' !default;
+$rr-color-background-prefix: 'bg-color-' !default;
+$rr-color-border-prefix: 'border-color-' !default;
+$rr-color-reset-class: $rr-global-reset-class !default;
+
+// Colors
+$rr-colors: () !default;
+
+// Defaults
+$rr-color-map-defaults: (
+	'color': null,
+	'types': $rr-colors-generate-types,
+	'breakpoints': ()
+) !default;
+
+$rr-colors-default: map-default($rr-colors) !default;
+
+// Print output for this module
+$rr-generate-colors: $rr-generate-classes !default;
+$rr-generate-colors-reset: $rr-generate-colors !default;
+
+////////////
+// FUNCTIONS
+////////////
+
+// Check if an entry exists
+@function color-exists($name) {
+	@return map-has-key($rr-colors, to-string($name));
+}
+
+// Gets an entry by name
+@function color($name: null) {
+	$return: null;
+	$name: to-string($name);
+
+	@if is-null($name) {
+		$name: $rr-colors-default;
+	}
+
+	@if color-exists($name) {
+		$return: map-get($rr-colors, $name);
+	}
+
+	@return $return;
+}
+
+// Get an entry property value by name
+@function color-property($name, $property) {
+	$return: null;
+	$color: null;
+
+	@if is-string($name) {
+		$color: color($name);
+	} @else {
+		$color: $name;
+	}
+
+	@if is-not-null($color) {
+		@if is-map($color) and map-has-key($color, $property) {
+			$return: map-get($color, $property);
+		} @else {
+			$return: map-get($rr-color-map-defaults, $property);
+		}
+	} @else {
+		$return: map-get($rr-color-map-defaults, $property);
+	}
+
+	@return $return;
+}
+
+// Get color property name by type
+@function color-property-by-type($type) {
+	$property-name: color;
+
+	@if $type == 'bg' {
+		$property-name: background-color;
+	} @else if $type == 'border' {
+		$property-name: border-color;
+	}
+
+	@return $property-name;
+}
+
+// Convert entry to css properties map
+@function color-to-css-properties($color, $type) {
+	$color-value: $color;
+
+	// Get type property
+	$property-name: color-property-by-type($type);
+
+	// Get value from map if not directly defined by list
+	@if is-map($color) {
+		$color-value: map-get($color, 'color');
+	}
+
+	// Set default property
+	$return: (
+		$property-name: $color-value
+	);
+
+	// Append breakpoint overwrites if exists
+	$breakpoint-entries: color-property($color, 'breakpoints');
+
+	@if map-not-empty($breakpoint-entries) {
+		$property-breakpoints: ();
+
+		@each $breakpoint-name, $breakpoint-color in $breakpoint-entries {
+			$property-breakpoints: map-append($property-breakpoints, color-to-css-properties($breakpoint-color, $type), $breakpoint-name);
+		}
+
+		$return: map-append($return, $property-breakpoints, 'breakpoints');
+	}
+
+	@return $return;
+}
+
+// Prepare map for property classes
+@function color-property-classes($type) {
+	$property-classes: ();
+
+	// Append defined classes
+	@each $class-name, $color in $rr-colors {
+		$types: color-property($class-name, 'types');
+
+		@if in-list($types, $type) {
+			$property-classes: map-append(
+				$property-classes,
+				color-to-css-properties($color, $type),
+				$class-name
+			);
+		}
+	}
+
+	// Append reset class
+	@if not is-empty($property-classes) and $rr-generate-colors-reset {
+		$property-classes: map-append(
+			$property-classes,
+			color-to-css-properties(unset, $type),
+			$rr-color-reset-class
+		);
+	}
+
+	@return $property-classes;
+}
+
+// Get color value by name
+@function color-value($name) {
+	$color: color($name);
+	$color-value: $color;
+
+	@if is-map($color) {
+		$color-value: map-get($color, 'color');
+	}
+
+	@return $color-value;
+}
+
+/////////
+// MIXINS
+/////////
+
+// Output color by name and type
+@mixin color($name: null, $type: text) {
+	$color: color($name);
+
+	@if is-not-null($color) {
+		$color-value: $color;
+
+		@if is-map($color) {
+			$color-value: map-get($color, 'color');
+		}
+
+		#{color-property-by-type($type)}: $color-value;
+	}
+}
+
+/*****************/
+/* OUTPUT: COLORS */
+/*****************/
+
+@if $rr-generate-colors and map-not-empty($rr-colors) {
+	@include mq-generate-property-classes(
+		$classes: color-property-classes('text'),
+		$class-prefix: $rr-color-text-prefix
+	);
+
+	@include mq-generate-property-classes(
+		$classes: color-property-classes('bg'),
+		$class-prefix: $rr-color-background-prefix
+	);
+
+	@include mq-generate-property-classes(
+		$classes: color-property-classes('border'),
+		$class-prefix: $rr-color-border-prefix
+	);
+}
+
+///////
+// TODO
+///////
+
+// PRIO 2: hover, focus, active states
+// PRIO 3: steps

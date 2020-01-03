@@ -1,0 +1,48 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+$rr-position-class-prefix: '' !default;
+
+$rr-position-properties: (
+	'static',
+	'relative',
+	'absolute',
+	'fixed',
+	'sticky'
+) !default;
+
+// Print output for this module
+$rr-generate-position: $rr-generate-classes !default;
+
+/*********************/
+/* OUTPUT: POSITIONS */
+/*********************/
+
+@if $rr-generate-position {
+	@include mq-generate-property-classes-simple(
+		$property: 'position',
+		$values: $rr-position-properties,
+		$class-prefix: $rr-position-class-prefix
+	);
+
+	.fill-parent {
+		position: absolute;
+		top: 0;
+		right: 0;
+		bottom: 0;
+		left: 0;
+	}
+
+	.fill-width {
+		position: absolute;
+		right: 0;
+		left: 0;
+	}
+
+	.fill-height {
+		position: absolute;
+		top: 0;
+		bottom: 0;
+	}
+}

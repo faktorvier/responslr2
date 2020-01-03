@@ -1,0 +1,174 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Flex direction
+$rr-flex-direction-class-prefix: 'flex-' !default;
+
+$rr-flex-direction-properties: (
+	'row',
+	'row-reverse',
+	'column',
+	'column-reverse',
+	'unset'
+) !default;
+
+// Flex wrap
+$rr-flex-wrap-class-prefix: 'flex-' !default;
+
+$rr-flex-wrap-properties: (
+	'nowrap',
+	'wrap',
+	'wrap-reverse',
+	'unset'
+) !default;
+
+// Flex justify
+$rr-flex-justify-class-prefix: 'justify-' !default;
+
+$rr-flex-justify-properties: (
+	('start' flex-start),
+	('end' flex-end),
+	'center',
+	'space-between',
+	'space-around',
+	'unset'
+) !default;
+
+// Flex align
+$rr-flex-align-class-prefix: 'align-' !default;
+
+$rr-flex-align-properties: (
+	('start' flex-start),
+	('end' flex-end),
+	'center',
+	'baseline',
+	'stretch',
+	'unset'
+) !default;
+
+// Flex align content
+$rr-flex-align-content-class-prefix: 'align-content-' !default;
+
+$rr-flex-align-content-properties: (
+	('start' flex-start),
+	('end' flex-end),
+	'center',
+	'space-between',
+	'space-around',
+	'stretch',
+	'unset'
+) !default;
+
+// Flex align self
+$rr-flex-align-self-class-prefix: 'align-self-' !default;
+
+$rr-flex-align-self-properties: (
+	'auto',
+	('start' flex-start),
+	('end' flex-end),
+	'center',
+	'baseline',
+	'stretch',
+	'unset'
+) !default;
+
+// Flex grow
+$rr-flex-grow-class-prefix: 'flex-grow-' !default;
+
+$rr-flex-grow-properties: (
+	0,
+	1
+) !default;
+
+// Flex shrink
+$rr-flex-shrink-class-prefix: 'flex-shrink-' !default;
+
+$rr-flex-shrink-properties: (
+	0,
+	1
+) !default;
+
+// Flex order
+$rr-flex-order-class-prefix: 'order-' !default;
+
+$rr-flex-order-max: 12 !default;
+
+$rr-flex-order-properties: (
+	('first' -1),
+	('last' $rr-flex-order-max + 1),
+	'unset'
+) !default;
+
+// Print output for this module
+$rr-generate-flex: $rr-generate-classes !default;
+
+/****************/
+/* OUTPUT: FLEX */
+/****************/
+
+@if $rr-generate-flex {
+	@include mq-generate-property-classes-simple(
+		$property: 'flex-direction',
+		$values: $rr-flex-direction-properties,
+		$class-prefix: $rr-flex-direction-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
+		$property: 'flex-wrap',
+		$values: $rr-flex-wrap-properties,
+		$class-prefix: $rr-flex-wrap-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
+		$property: 'justify-content',
+		$values: $rr-flex-justify-properties,
+		$class-prefix: $rr-flex-justify-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
+		$property: 'align-items',
+		$values: $rr-flex-align-properties,
+		$class-prefix: $rr-flex-align-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
+		$property: 'align-content',
+		$values: $rr-flex-align-content-properties,
+		$class-prefix: $rr-flex-align-content-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
+		$property: 'align-self',
+		$values: $rr-flex-align-self-properties,
+		$class-prefix: $rr-flex-align-self-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
+		$property: 'flex-grow',
+		$values: $rr-flex-grow-properties,
+		$class-prefix: $rr-flex-grow-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
+		$property: 'flex-shrink',
+		$values: $rr-flex-shrink-properties,
+		$class-prefix: $rr-flex-shrink-class-prefix
+	);
+
+	@for $order from 0 to $rr-flex-order-max + 1 {
+		$rr-flex-order-properties: append($rr-flex-order-properties, $order);
+	}
+
+	@include mq-generate-property-classes-simple(
+		$property: 'order',
+		$values: $rr-flex-order-properties,
+		$class-prefix: $rr-flex-order-class-prefix
+	);
+}
+
+///////
+// TODO
+///////
+
+// MAYBE: justify-self

@@ -1,0 +1,104 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-dummy-prefix: 'dummy-' !default;
+
+// Dummies
+$rr-dummies: () !default;
+
+// Defaults
+$rr-dummy-map-defaults: (
+	'xyz': null,
+) !default;
+
+$rr-dummies-default: map-default($rr-dummies) !default;
+
+// Print output for this module
+$rr-generate-dummies: $rr-generate-classes !default;
+
+// @todo
+
+/////////////////////
+// INTERNAL VARIABLES
+/////////////////////
+
+// @todo
+
+////////////
+// FUNCTIONS
+////////////
+
+// Check if an entry exists
+@function dummy-exists($name) {
+	@return map-has-key($rr-dummies, to-string($name));
+}
+
+// Gets an entry by name
+@function dummy($name: null) {
+	$return: null;
+	$name: to-string($name);
+
+	@if is-null($name) {
+		$name: $rr-dummies-default;
+	}
+
+	@if dummy-exists($name) {
+		$return: map-get($rr-dummies, $name);
+	}
+
+	@return $return;
+}
+
+// Get an entry property value by name
+@function dummy-property($name, $property) {
+	$return: null;
+	$dummy: null;
+
+	@if is-string($name) {
+		$dummy: dummy($name);
+	} @else {
+		$dummy: $name;
+	}
+
+	@if is-not-null($dummy) {
+		@if is-map($dummy) and map-has-key($dummy, $property) {
+			$return: map-get($dummy, $property);
+		} @else {
+			$return: map-get($rr-dummy-map-defaults, $property);
+		}
+	} @else {
+		$return: map-get($rr-dummy-map-defaults, $property);
+	}
+
+	@return $return;
+}
+
+// @todo
+
+/////////
+// MIXINS
+/////////
+
+// @todo
+
+/*******************/
+/* OUTPUT: DUMMIES */
+/*******************/
+
+@if $rr-generate-dummies and map-not-empty($rr-dummies) {
+	// @todo
+}
+
+/////////////////////////
+// APPEND GLOBAL SETTINGS
+/////////////////////////
+
+// @todo
+
+///////
+// TODO
+///////
+
+// @todo

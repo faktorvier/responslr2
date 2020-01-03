@@ -1,0 +1,101 @@
+////////////
+// FUNCTIONS
+////////////
+
+// Check if empty
+@function is-empty($value) {
+	@if not $value or $value == '' or $value == 0 or $value == () or length($value) == 0 {
+		@return true;
+	}
+
+	@return false;
+}
+
+// Check if value is null
+@function is-null($value) {
+	@return $value == null;
+}
+
+// Check if value is not null
+@function is-not-null($value) {
+	@return $value != null;
+}
+
+// Check if value is specific unit
+@function is-unit($value, $unit) {
+	@return is-number($value) and unit($value) == $unit;
+}
+
+// Check if value isnumber
+@function is-number($value) {
+	@return type-of($value) == 'number';
+}
+
+// Check if value is time
+@function is-time($value) {
+	@return is-number($value) and index('ms' 's', unit($value)) != null;
+}
+
+// Check if value is angle
+@function is-angle($value) {
+	@return is-number($value) and index('deg' 'rad' 'grad' 'turn', unit($value)) != null;
+}
+
+// Check if value is integer
+@function is-integer($value) {
+	@return is-number($value) and round($value) == $value;
+}
+
+// Check if value is relative length
+@function is-relative-length($value) {
+	@return is-number($value) and index('em' 'ex' 'ch' 'rem' 'vw' 'vh' 'vmin' 'vmax', unit($value)) != null;
+}
+
+// Check if value is absolute length
+@function is-absolute-length($value) {
+	@return is-number($value) and index('cm' 'mm' 'in' 'px' 'pt' 'pc', unit($value)) != null;
+}
+
+// Check if value is any length
+@function is-length($value) {
+	@return is-relative-length($value) or is-absolute-length($value);
+}
+
+// Check if value is percentage
+@function is-percentage($value) {
+	@return is-number($value) and is-unit($value, '%');
+}
+
+// Check if value is pixel
+@function is-pixel($value) {
+	@return is-number($value) and is-unit($value, 'px');
+}
+
+// Convert a value to rem
+@function to-rem($value) {
+	$base-breakpoint: map-get($rr-grid-breakpoints, nth(map-keys($rr-grid-breakpoints), 1));
+	$base-size: map-get($base-breakpoint, base-size);
+
+	@if type-of($base-size) != number {
+		$base-size: 16px;
+	}
+
+	@return ($value / $base-size * 1rem);
+}
+
+// Convert a value to rem by breakpoint
+@function to-rem-breakpoint($value, $breakpoint: '') {
+	@if $breakpoint == '' {
+		$breakpoint: nth(map-keys($rr-grid-breakpoints), length(map-keys($rr-grid-breakpoints)));
+	}
+
+	$smallest-breakpoint: map-get($rr-grid-breakpoints, nth(map-keys($rr-grid-breakpoints), 1));
+	$smallest-base-size: map-get($smallest-breakpoint, base-size);
+
+	$output-breakpoint: map-get($rr-grid-breakpoints, $breakpoint);
+	$output-base-size: map-get($output-breakpoint, base-size);
+
+	$output-base-size-modifier: ($smallest-base-size / $output-base-size);
+
+	@return to-rem($value) * $output-base-size-modifier;
+}

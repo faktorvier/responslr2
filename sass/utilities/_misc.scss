@@ -1,0 +1,104 @@
+////////////
+// FUNCTIONS
+////////////
+
+// Escape selector
+@function escape-selector($selector) {
+	$map: (':', '/', '@');
+
+    $selector-replaced: $selector;
+
+    @each $search in $map {
+        $selector-replaced: str-replace($selector-replaced, $search, '\\#{$search}');
+    }
+
+	@return $selector-replaced;
+}
+
+// Split padding or margin shorthand
+@function split-shorthand($padding-string, $part) {
+	$length: length(str-unquote($padding-string));
+	$return-value: $padding-string;
+
+	@if $length == 4 {
+		@if $part == top {
+			$return-value: nth($padding-string, 1);
+		} @else if $part == right {
+			$return-value: nth($padding-string, 2);
+		} @else if $part == bottom {
+			$return-value: nth($padding-string, 3);
+		} @else {
+			$return-value: nth($padding-string, 4);
+		}
+	} @else if $length == 3 {
+		@if $part == top {
+			$return-value: nth($padding-string, 1);
+		} @else if $part == bottom {
+			$return-value: nth($padding-string, 3);
+		} @else {
+			$return-value: nth($padding-string, 2);
+		}
+	} @else if $length == 2 {
+		@if $part == top {
+			$return-value: nth($padding-string, 1);
+		} @else if $part == bottom {
+			$return-value: nth($padding-string, 1);
+		} @else {
+			$return-value: nth($padding-string, 2);
+		}
+	}
+
+	@return $return-value;
+}
+
+// Create a svg+xml data string for a svg
+@function svg-data-string($svg) {
+	@return 'data:image/svg+xml;charset=utf8,#{str-url-encode($svg)}';
+}
+
+// Throw an error if required argument is missing
+@function throw-required-error($param-name, $map-name, $item-key) {
+	@error 'Parameter "#{$param-name}" for the #{$map-name} "#{$item-key}" is required.';
+}
+
+/////////
+// MIXINS
+/////////
+
+// Smart hover only for hover devices
+// @todo: better
+@mixin hover($only-hover: false) {
+	@if $only-hover {
+		html:not(.mobile):not(.tablet) &:hover {
+			@content;
+		}
+	} @else {
+		html:not(.mobile):not(.tablet) &:hover,
+		&:active,
+		&:focus {
+			@content;
+		}
+	}
+}
+
+// Convert map to properties
+@mixin generate-properties($properties) {
+	@each $property-name, $property-value in $properties {
+		@if $property-name != 'breakpoints' {
+			@if is-map($property-value) {
+				#{$property-name} {
+					@include generate-properties($property-value);
+				}
+			} @else {
+				#{$property-name}: #{$property-value};
+			}
+		}
+	}
+
+	@content;
+}
+
+///////
+// TODO
+///////
+
