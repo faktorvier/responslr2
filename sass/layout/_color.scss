@@ -2,13 +2,12 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-$rr-colors-generate-types: (text, bg, border) !default; // text, bg, border
+$rr-colors-generate-types: ('text', 'bg', 'border') !default; // text, bg, border
 
 // Classes
-$rr-color-text-prefix: 'txt-color-' !default;
+$rr-color-text-prefix: 'color-' !default;
 $rr-color-background-prefix: 'bg-color-' !default;
 $rr-color-border-prefix: 'border-color-' !default;
-$rr-color-reset-class: $rr-global-reset-class !default;
 
 // Colors
 $rr-colors: () !default;
@@ -36,7 +35,7 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 }
 
 // Gets an entry by name
-@function color($name: null) {
+@function color-entry($name: null) {
 	$return: null;
 	$name: to-string($name);
 
@@ -57,7 +56,7 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 	$color: null;
 
 	@if is-string($name) {
-		$color: color($name);
+		$color: color-entry($name);
 	} @else {
 		$color: $name;
 	}
@@ -73,6 +72,18 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 	}
 
 	@return $return;
+}
+
+// Get color value by name
+@function color-value($name) {
+	$color: color-entry($name);
+	$color-value: $color;
+
+	@if is-map($color) {
+		$color-value: map-get($color, 'color');
+	}
+
+	@return $color-value;
 }
 
 // Get color property name by type
@@ -143,23 +154,11 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 		$property-classes: map-append(
 			$property-classes,
 			color-to-css-properties(unset, $type),
-			$rr-color-reset-class
+			$rr-global-reset-class
 		);
 	}
 
 	@return $property-classes;
-}
-
-// Get color value by name
-@function color-value($name) {
-	$color: color($name);
-	$color-value: $color;
-
-	@if is-map($color) {
-		$color-value: map-get($color, 'color');
-	}
-
-	@return $color-value;
 }
 
 /////////
@@ -167,16 +166,10 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 /////////
 
 // Output color by name and type
-@mixin color($name: null, $type: text) {
-	$color: color($name);
+@mixin color($name: null, $type: 'text') {
+	$color-value: color-value($name);
 
-	@if is-not-null($color) {
-		$color-value: $color;
-
-		@if is-map($color) {
-			$color-value: map-get($color, 'color');
-		}
-
+	@if is-not-null($color-value) {
 		#{color-property-by-type($type)}: $color-value;
 	}
 }

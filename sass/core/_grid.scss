@@ -8,7 +8,7 @@ $rr-grid-mobile-first: true !default;
 // Classes
 $rr-grid-row-class: 'row' !default;
 $rr-grid-column-class: 'column' !default;
-$rr-grid-column-auto-class: 'auto' !default;
+$rr-grid-column-auto-class: $rr-global-auto-class !default;
 $rr-grid-column-shrink-class: 'shrink' !default;
 $rr-grid-column-normal-class: 'normal' !default;
 //$rr-grid-row-reset-class: 'row-reset' !default;
@@ -18,7 +18,6 @@ $rr-grid-container-class: 'container' !default;
 
 $rr-grid-offset-class-prefix: 'offset-' !default;
 $rr-grid-inset-class-prefix: 'inset-' !default;
-//$rr-grid-order-class-prefix: 'order-' !default;
 
 // Breakpoints
 $rr-grid-default-breakpoints: ();
@@ -136,7 +135,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 }
 
 // Gets an entry by name
-@function grid-breakpoint($name: null) {
+@function grid-breakpoint-entry($name: null) {
 	$return: null;
 
 	@if is-null($name) {
@@ -153,7 +152,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 // Get an entry property value by name
 @function grid-breakpoint-property($name, $property) {
 	$return: null;
-	$breakpoint: grid-breakpoint($name);
+	$breakpoint: grid-breakpoint-entry($name);
 
 	@if is-not-null($breakpoint) {
 		@if map-has-key($breakpoint, $property) {
@@ -172,7 +171,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 }
 
 // Get a breakpoint gutter with optional multiplier by name
-@function grid-gutter($name, $multiplier: 1) {
+@function grid-gutter($name: null, $multiplier: 1) {
 	$gutter: grid-breakpoint-property($name, 'gutter');
 
 	@if is-number($gutter) and is-number($multiplier) {
@@ -246,16 +245,25 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 }
 
 // Adds a breakpoint prefix to a class
-@function grid-class-prefix($breakpoint-name, $class, $add-default: true) {
-	$selector: str-insert($class, '#{$breakpoint-name}:', 2);
+@function grid-class-prefix($breakpoint-name, $class, $use-default: true, $bp-suffix: '') {
+	$selector: '';
 
-	@if grid-is-default($breakpoint-name) and $add-default {
-		@if is-empty($class) {
-			$selector: $class;
-		} @else {
-			$selector: $class + ', ' + $selector;
-		}
+	@if is-empty($breakpoint-name) or (grid-is-default($breakpoint-name) and $use-default) {
+		$selector: $class;
+	} @else {
+		$selector: str-insert($class, '#{$breakpoint-name}#{$bp-suffix}\\:', 2);
 	}
+
+
+	// $selector: str-insert($class, '#{$breakpoint-name}:', 2);
+
+	// @if grid-is-default($breakpoint-name) and $use-default {
+	// 	@if is-empty($class) {
+	// 		$selector: $class;
+	// 	} @else {
+	// 		$selector: $class + ', ' + $selector;
+	// 	}
+	// }
 
 	@return escape-selector($selector);
 }
@@ -436,21 +444,8 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 // 	}
 // }
 
-// Add breakpoint prefixes to class
-@mixin mq-class-prefix($breakpoint-name, $class, $add-default: true, $use-parent: false) {
-	@if $use-parent {
-		&#{grid-class-prefix($breakpoint-name, $class, $add-default)} {
-			@content;
-		}
-	} @else {
-		#{grid-class-prefix($breakpoint-name, $class, $add-default)} {
-			@content;
-		}
-	}
-}
-
 // Generate breakpoint classes for a single property
-@mixin mq-generate-property-classes-simple($property, $values, $class-prefix, $generate: (normal, up, down, only), $add-default: true) {
+@mixin mq-generate-property-classes-simple($property, $values, $class-prefix, $generate: (normal, up, down, only), $use-default: true) {
 	$classes: ();
 
 	@each $value in $values {
@@ -469,11 +464,11 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		));
 	}
 
-	@include mq-generate-property-classes($classes, $class-prefix, $generate, $add-default);
+	@include mq-generate-property-classes($classes, $class-prefix, $generate, $use-default);
 }
 
 // Generate breakpoint classes for multiple properties
-@mixin mq-generate-property-classes($classes, $class-prefix, $generate: (normal, up, down, only), $add-default: true) {
+@mixin mq-generate-property-classes($classes, $class-prefix, $generate: (normal, up, down, only), $use-default: true) {
 	$breakpoint-names: map-keys($rr-grid-breakpoints);
 	$first-breakpoint: nth($breakpoint-names, 1);
 	$last-breakpoint: nth($breakpoint-names, length($breakpoint-names));
@@ -494,7 +489,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 						$breakpoint-properties: map-get($properties, 'breakpoints');
 
 						@if map-not-empty($properties) and map-has-key($breakpoint-properties, $breakpoint-name) {
-							.#{$class-prefix}#{$class-name} {
+							#{escape-selector('.#{$class-prefix}#{$class-name}')} {
 								@content;
 								@include generate-properties(map-get($breakpoint-properties, $breakpoint-name));
 							}
@@ -505,19 +500,19 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 				// Normal breakpoint classes
 				@each $class-name, $properties in $classes {
 					@if not $rr-grid-mobile-first and not $is-last-breakpoint {
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $add-default)},
-						#{grid-class-prefix($breakpoint-name + '-up', '.#{$class-prefix}#{$class-name}', false)} {
+						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $use-default)},
+						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-up')} {
 							@content;
 							@include generate-properties($properties);
 						}
 					} @else if not $rr-grid-mobile-first and not $is-first-breakpoint {
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $add-default)},
-						#{grid-class-prefix($breakpoint-name + '-down', '.#{$class-prefix}#{$class-name}', false)} {
+						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $use-default)},
+						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-down')} {
 							@content;
 							@include generate-properties($properties);
 						}
 					} @else if $class-name != $rr-global-reset-class or not $is-first-breakpoint {
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $add-default)} {
+						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $use-default)} {
 							@content;
 							@include generate-properties($properties);
 						}
@@ -530,7 +525,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		@if not $rr-grid-mobile-first and not $is-largest-breakpoint and not $is-first-breakpoint and in-list($generate, up) {
 			@include mq-up($breakpoint-name) {
 				@each $class-name, $properties in $classes {
-					@include mq-class-prefix($breakpoint-name + '-up', '.#{$class-prefix}#{$class-name}', false) {
+					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-up')} {
 						@content;
 						@include generate-properties($properties);
 					}
@@ -542,7 +537,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		@if $rr-grid-mobile-first and not $is-smallest-breakpoint and not $is-last-breakpoint and in-list($generate, down) {
 			@include mq-down($breakpoint-name) {
 				@each $class-name, $properties in $classes {
-					@include mq-class-prefix($breakpoint-name + '-down', '.#{$class-prefix}#{$class-name}', false) {
+					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-down')} {
 						@content;
 						@include generate-properties($properties);
 					}
@@ -554,7 +549,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		@if not $is-last-breakpoint and in-list($generate, only) {
 			@include mq-only($breakpoint-name) {
 				@each $class-name, $properties in $classes {
-					@include mq-class-prefix($breakpoint-name + '-only', '.#{$class-prefix}#{$class-name}', false) {
+					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-only')} {
 						@content;
 						@include generate-properties($properties);
 					}
@@ -638,35 +633,35 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 			@if $rr-generate-grid-breakpoints-normal {
 				@for $column-index from $breakpoint-columns through 1 {
 					// Offset
-					@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$column-index}', false) {
+					#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$column-index}', false)} {
 						margin-left: $breakpoint-column-width * $column-index;
 					}
 
 					// Inset
-					@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$column-index}', false) {
+					#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$column-index}', false)} {
 						//margin-left: (-$breakpoint-column-width * $column-index) - 0.02%; // @todo: old, is this -0.02 still necessary?
 						margin-left: -$breakpoint-column-width * $column-index;
 					}
 
 					// Breakpoint
-					@include mq-class-prefix($breakpoint-name, '.#{$column-index}', false) {
+					#{grid-class-prefix($breakpoint-name, '.#{$column-index}', false)} {
 						//&, .#{$rr-grid-row-class}.#{$rr-grid-row-reset-class} & {
 							width: $breakpoint-column-width * $column-index;
 
 							@for $sub-column-index from $column-index through 1 {
 								// Offset nested
-								@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$sub-column-index}', false) {
+								#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$sub-column-index}', false)} {
 									margin-left: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
 								}
 
 								// Inset nested
-								@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$sub-column-index}', false) {
+								#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$sub-column-index}', false)} {
 									//margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%) - 0.02%; // @todo: old, is this -0.02 still necessary?
 									margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%);
 								}
 
 								// Breakpoint nested
-								@include mq-class-prefix($breakpoint-name, '.#{$sub-column-index}', false) {
+								#{grid-class-prefix($breakpoint-name, '.#{$sub-column-index}', false)} {
 									width: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
 								}
 							}
@@ -682,17 +677,17 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 						$percent: 100% / $denominator * $numerator;
 
 						// Offset
-						@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$numerator}/#{$denominator}', false) {
+						#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$numerator}\\/#{$denominator}', false)} {
 							margin-left: $percent;
 						}
 
 						// Inset
-						@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$numerator}/#{$denominator}', false) {
+						#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$numerator}\\/#{$denominator}', false)} {
 							margin-left: -($percent);
 						}
 
 						// Breakpoint
-						@include mq-class-prefix($breakpoint-name, '.#{$numerator}/#{$denominator}', false) {
+						#{grid-class-prefix($breakpoint-name, '.#{$numerator}\\/#{$denominator}', false)} {
 							//&, .#{$rr-grid-row-class}.#{$rr-grid-row-reset-class} & {
 								width: $percent;
 							//}
@@ -701,19 +696,8 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 				}
 			}
 
-			// Column (all) order
-			// @for $column-index from $breakpoint-columns through 1 {
-			// 	@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-order-class-prefix}#{$column-index}', false) {
-			// 		order: $column-index;
-			// 	}
-			// }
-
-			// @include mq-class-prefix($breakpoint-name, '.#{$rr-grid-order-class-prefix}#{$rr-grid-reset-class}', false) {
-			// 	order: initial;
-			// }
-
 			// Column (all) reset
-			@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-reset-class}', false) {
+			#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-reset-class}', false)} {
 				&, .#{$rr-grid-column-class} & {
 					margin-left: 0;
 				}
@@ -721,16 +705,16 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 			// Column (all) auto fill width
 			.#{$rr-grid-column-class} {
-				@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-column-auto-class}', true, true) {
+				&#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-column-auto-class}', true)} {
 					flex: 1 1 0px;
 				}
 
-				@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-column-shrink-class}', true, true) {
+				&#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-column-shrink-class}', true)} {
 					flex: 0 0 auto;
 					width: auto;
 				}
 
-				@include mq-class-prefix($breakpoint-name, '.#{$rr-grid-column-normal-class}', true, true) {
+				&#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-column-normal-class}', true)} {
 					flex: 0 0 auto;
 				}
 			}

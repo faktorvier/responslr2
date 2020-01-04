@@ -3,6 +3,9 @@
 ///////////////////
 
 $rr-position-class-prefix: '' !default;
+$rr-position-fill-parent-class: 'fill-parent' !default;
+$rr-position-fill-width-class: 'fill-width' !default;
+$rr-position-fill-height-class: 'fill-height' !default;
 
 $rr-position-properties: (
 	'static',
@@ -26,7 +29,7 @@ $rr-generate-position: $rr-generate-classes !default;
 		$class-prefix: $rr-position-class-prefix
 	);
 
-	.fill-parent {
+	.#{$rr-position-fill-parent-class} {
 		position: absolute;
 		top: 0;
 		right: 0;
@@ -34,15 +37,21 @@ $rr-generate-position: $rr-generate-classes !default;
 		left: 0;
 	}
 
-	.fill-width {
+	.#{$rr-position-fill-width-class} {
 		position: absolute;
 		right: 0;
 		left: 0;
 	}
 
-	.fill-height {
+	.#{$rr-position-fill-height-class} {
 		position: absolute;
 		top: 0;
 		bottom: 0;
 	}
 }
+
+///////
+// TODO
+///////
+
+// PRIO 2: Fill helpers per bp and reset

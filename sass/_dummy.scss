@@ -36,7 +36,7 @@ $rr-generate-dummies: $rr-generate-classes !default;
 }
 
 // Gets an entry by name
-@function dummy($name: null) {
+@function dummy-entry($name: null) {
 	$return: null;
 	$name: to-string($name);
 
@@ -57,7 +57,7 @@ $rr-generate-dummies: $rr-generate-classes !default;
 	$dummy: null;
 
 	@if is-string($name) {
-		$dummy: dummy($name);
+		$dummy: dummy-entry($name);
 	} @else {
 		$dummy: $name;
 	}

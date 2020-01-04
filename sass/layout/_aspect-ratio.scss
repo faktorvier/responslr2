@@ -4,7 +4,6 @@
 
 // Classes
 $rr-aspect-ratio-prefix: 'ar-' !default;
-$rr-aspect-ratio-reset-class: $rr-global-reset-class !default;
 
 // Aspect ratios
 $rr-aspect-ratios: () !default;
@@ -60,7 +59,7 @@ $rr-aspect-ratio-child-reset-class-properties: (
 }
 
 // Gets an entry by name
-@function aspect-ratio($name: null) {
+@function aspect-ratio-entry($name: null) {
 	$return: null;
 	$name: to-string($name);
 
@@ -81,7 +80,7 @@ $rr-aspect-ratio-child-reset-class-properties: (
 	$aspect-ratio: null;
 
 	@if is-string($name) {
-		$aspect-ratio: aspect-ratio($name);
+		$aspect-ratio: aspect-ratio-entry($name);
 	} @else {
 		$aspect-ratio: $name;
 	}
@@ -163,7 +162,7 @@ $rr-aspect-ratio-child-reset-class-properties: (
 		$property-classes: map-append(
 			$property-classes,
 			$reset-property,
-			$rr-aspect-ratio-reset-class
+			$rr-global-reset-class
 		);
 	}
 
@@ -176,7 +175,7 @@ $rr-aspect-ratio-child-reset-class-properties: (
 
 // Output aspect ratio by name
 @mixin aspect-ratio($name: null, $append-child: true) {
-	$aspect-ratio: aspect-ratio($name);
+	$aspect-ratio: aspect-ratio-entry($name);
 
 	@if is-not-null($aspect-ratio) {
 		$ratio-value: $aspect-ratio;

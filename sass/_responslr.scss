@@ -1,13 +1,6 @@
-// Global code variables
-$rr-global-settings: ();
-
-$rr-global-reset-class: 'reset' !default;
-
-$rr-generate-classes: true !default;
-$rr-generate-settings: true !default;
-
 // Load core
-@import 'core/reset';
+@import 'core/core';
+@import 'core/normalize';
 @import 'core/grid';
 
 // Load layout
@@ -38,3 +31,14 @@ $rr-generate-settings: true !default;
 		height: 0;
 	}
 }
+
+///////
+// TODO
+///////
+
+// PRIO 1: str-replace is slow :(
+
+// QUESTION: classic bg-color-red or fancy bg-color=red ?
+// QUESTION: Which bp prefixes to generate?
+// QUESTION: Which reset/normalize should we pick?
+// QUESTION: Option to chose between reset and normalize?

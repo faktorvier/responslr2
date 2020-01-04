@@ -1,7 +1,305 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-spacing-prefix: '' !default;
+$rr-spacings-generate-types: ('mt', 'mr', 'mb', 'ml', 'my', 'mx', 'ma', 'pt', 'pr', 'pb', 'pl', 'py', 'px', 'pa') !default;
+
+$rr-spacing-add-gutter: true !default;
+
+// Spacings
+$rr-spacings: () !default;
+
+// Defaults
+$rr-spacing-map-defaults: (
+	'spacing': null,
+	'types': $rr-spacings-generate-types,
+	'breakpoints': (),
+	'generate': ()
+) !default;
+
+$rr-spacings-default: map-default($rr-spacings) !default;
+
+// Print output for this module
+$rr-generate-spacings: $rr-generate-classes !default;
+$rr-generate-spacings-reset: $rr-generate-spacings !default;
+$rr-generate-spacings-auto: $rr-generate-spacings !default;
+$rr-generate-spacings-gutter: $rr-generate-spacings !default;
+
+////////////
+// FUNCTIONS
+////////////
+
+// Check if an entry exists
+@function spacing-exists($name) {
+	@return map-has-key($rr-spacings, to-string($name));
+}
+
+// Gets an entry by name
+@function spacing-entry($name: null) {
+	$return: null;
+	$name: to-string($name);
+
+	@if is-null($name) {
+		$name: $rr-spacings-default;
+	}
+
+	@if spacing-exists($name) {
+		$return: map-get($rr-spacings, $name);
+	}
+
+	@return $return;
+}
+
+// Get an entry property value by name
+@function spacing-property($name, $property) {
+	$return: null;
+	$spacing: null;
+
+	@if is-string($name) {
+		$spacing: spacing-entry($name);
+	} @else {
+		$spacing: $name;
+	}
+
+	@if is-not-null($spacing) {
+		@if is-map($spacing) and map-has-key($spacing, $property) {
+			$return: map-get($spacing, $property);
+		} @else {
+			$return: map-get($rr-spacing-map-defaults, $property);
+		}
+	} @else {
+		$return: map-get($rr-spacing-map-defaults, $property);
+	}
+
+	@return $return;
+}
+
+// Get spacing value by name
+@function spacing-value($name) {
+	$spacing: spacing-entry($name);
+	$spacing-value: $spacing;
+
+	@if is-map($spacing) {
+		$spacing-value: map-get($spacing, 'spacing');
+	}
+
+	@return $spacing-value;
+}
+
+// Get spacing properties by type
+@function spacing-properties-by-type($spacing, $type) {
+	$spacing-properties: ();
+	$spacing-value: $spacing;
+
+	// Get value from map if not directly defined by list
+	@if is-map($spacing) {
+		$spacing-value: map-get($spacing, 'spacing');
+	}
+
+	@if is-not-null($spacing-value) {
+		@if $type == 'mt' {
+			$spacing-properties: (
+				margin-top: $spacing-value
+			);
+		} @else if $type == 'mr' {
+			$spacing-properties: (
+				margin-right: $spacing-value
+			);
+		} @else if $type == 'mb' {
+			$spacing-properties: (
+				margin-bottom: $spacing-value
+			);
+		} @else if $type == 'ml' {
+			$spacing-properties: (
+				margin-left: $spacing-value
+			);
+		} @else if $type == 'my' {
+			$spacing-properties: (
+				margin-top: $spacing-value,
+				margin-bottom: $spacing-value
+			);
+		} @else if $type == 'mx' {
+			$spacing-properties: (
+				margin-left: $spacing-value,
+				margin-right: $spacing-value
+			);
+		} @else if $type == 'ma' {
+			$spacing-properties: (
+				margin-top: $spacing-value,
+				margin-right: $spacing-value,
+				margin-bottom: $spacing-value,
+				margin-left: $spacing-value
+			);
+		} @else if $type == 'pt' {
+			$spacing-properties: (
+				padding-top: $spacing-value
+			);
+		} @else if $type == 'pr' {
+			$spacing-properties: (
+				padding-right: $spacing-value
+			);
+		} @else if $type == 'pb' {
+			$spacing-properties: (
+				padding-bottom: $spacing-value
+			);
+		} @else if $type == 'pl' {
+			$spacing-properties: (
+				padding-left: $spacing-value
+			);
+		} @else if $type == 'py' {
+			$spacing-properties: (
+				padding-top: $spacing-value,
+				padding-bottom: $spacing-value
+			);
+		} @else if $type == 'px' {
+			$spacing-properties: (
+				padding-left: $spacing-value,
+				padding-right: $spacing-value
+			);
+		}  @else if $type == 'pa' {
+			$spacing-properties: (
+				padding-top: $spacing-value,
+				padding-right: $spacing-value,
+				padding-bottom: $spacing-value,
+				padding-left: $spacing-value
+			);
+		}
+	}
+
+	@return $spacing-properties;
+}
+
+// Convert entry to css properties map
+@function spacing-to-css-properties($spacing, $type) {
+	$spacing-value: $spacing;
+
+	// Get value from map if not directly defined by list
+	@if is-map($spacing) {
+		$spacing-value: map-get($spacing, 'spacing');
+	}
+
+	// Set default properties
+	$return: spacing-properties-by-type($spacing-value, $type);
+
+	// Append generate overwrites if exists
+	$generate-overwrites: spacing-property($spacing, 'generate');
+
+	@if map-not-empty($generate-overwrites) {
+		$return: map-append($return, $generate-overwrites, 'generate');
+	}
+
+	// Append breakpoint overwrites if exists
+	$breakpoint-overwrites: spacing-property($spacing, 'breakpoints');
+
+	@if map-not-empty($breakpoint-overwrites) {
+		$property-breakpoints: ();
+
+		@each $breakpoint-name, $breakpoint-spacing in $breakpoint-overwrites {
+			$property-breakpoints: map-append($property-breakpoints, spacing-to-css-properties($breakpoint-spacing, $type), $breakpoint-name);
+		}
+
+		$return: map-append($return, $property-breakpoints, 'breakpoints');
+	}
+
+	@return $return;
+}
+
+// Prepare map for property classes
+@function spacing-property-classes() {
+	$property-classes: ();
+
+	// Append defined classes
+	@each $class-name, $spacing in $rr-spacings {
+		$types: spacing-property($class-name, 'types');
+
+		@if is-list($types) {
+			@each $type in $types {
+				$property-classes: map-append(
+					$property-classes,
+					spacing-to-css-properties($spacing, $type),
+					$type + '-' + $class-name
+				);
+			}
+		}
+	}
+
+	// Append reset class
+	@if not is-empty($property-classes) and $rr-generate-spacings-reset {
+		@if is-list($rr-spacings-generate-types) {
+			@each $type in $rr-spacings-generate-types {
+				$property-classes: map-append(
+					$property-classes,
+					spacing-to-css-properties(0, $type),
+					$type + '-' + $rr-global-reset-class
+				);
+			}
+		}
+	}
+
+	@return $property-classes;
+}
+
+/////////
+// MIXINS
+/////////
+
+// Output spacing by name
+@mixin spacing($name: null, $type: 'ma') {
+	$spacing-value: spacing-value($name);
+
+	@if is-not-null($spacing-value) {
+		@include generate-properties(spacing-properties-by-type($spacing-value, $type));
+	}
+}
+
+/********************/
+/* OUTPUT: SPACINGS */
+/********************/
+
+@if $rr-generate-spacings and map-not-empty($rr-spacings) {
+	// Append auto classes
+	@if $rr-generate-spacings-auto {
+		$rr-spacings: map-append(
+			$rr-spacings,
+			(
+				'spacing': auto,
+				'types': ('mt', 'mr', 'mb', 'ml', 'my', 'mx', 'ma')
+			),
+			$rr-global-auto-class
+		);
+	}
+
+	// Append gutter classes
+	@if $rr-generate-spacings-gutter {
+		$gutters: ();
+
+		@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+			$gutters: map-append($gutters, grid-gutter($breakpoint-name), $breakpoint-name)
+		}
+
+		$rr-spacings: map-append(
+			$rr-spacings,
+			(
+				'spacing': grid-gutter(),
+				'breakpoints': $gutters
+			),
+			$rr-global-gutter-class
+		);
+	}
+
+	// Generate output
+	@include mq-generate-property-classes(
+		$classes: spacing-property-classes(),
+		$class-prefix: $rr-spacing-prefix
+	);
+}
+
 ///////
 // TODO
 ///////
 
 // PRIO 1: Automatically add grid cutter to spacings
-// PRIO 1: Automatically add column width to spacings
-// PRIO 1: auto margins
+
+// MAYBE: Automatically add column width to spacings

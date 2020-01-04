@@ -5,21 +5,20 @@
 $rr-display-class-prefix: 'd-' !default;
 
 $rr-display-properties: (
-	'none',
-	'inline',
-	'inline-block',
-	'block',
-	'table',
-	'table-row',
-	'table-cell',
-	'flex',
-	'inline-flex',
-	//'grid',
-	//'inline-grid',
-	//'list-item',
-	'contents',
-	'initial',
-	'unset'
+	none,
+	inline,
+	inline-block,
+	block,
+	table,
+	table-row,
+	table-cell,
+	flex,
+	inline-flex,
+	//grid,
+	//inline-grid,
+	//list-item,
+	contents,
+	($rr-global-reset-class unset)
 ) !default;
 
 // Print output for this module

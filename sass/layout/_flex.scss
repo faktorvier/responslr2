@@ -6,21 +6,21 @@
 $rr-flex-direction-class-prefix: 'flex-' !default;
 
 $rr-flex-direction-properties: (
-	'row',
-	'row-reverse',
-	'column',
-	'column-reverse',
-	'unset'
+	row,
+	row-reverse,
+	column,
+	column-reverse,
+	($rr-global-reset-class unset)
 ) !default;
 
 // Flex wrap
 $rr-flex-wrap-class-prefix: 'flex-' !default;
 
 $rr-flex-wrap-properties: (
-	'nowrap',
-	'wrap',
-	'wrap-reverse',
-	'unset'
+	nowrap,
+	wrap,
+	wrap-reverse,
+	($rr-global-reset-class unset)
 ) !default;
 
 // Flex justify
@@ -29,10 +29,10 @@ $rr-flex-justify-class-prefix: 'justify-' !default;
 $rr-flex-justify-properties: (
 	('start' flex-start),
 	('end' flex-end),
-	'center',
-	'space-between',
-	'space-around',
-	'unset'
+	center,
+	space-between,
+	space-around,
+	($rr-global-reset-class unset)
 ) !default;
 
 // Flex align
@@ -41,10 +41,10 @@ $rr-flex-align-class-prefix: 'align-' !default;
 $rr-flex-align-properties: (
 	('start' flex-start),
 	('end' flex-end),
-	'center',
-	'baseline',
-	'stretch',
-	'unset'
+	center,
+	baseline,
+	stretch,
+	($rr-global-reset-class unset)
 ) !default;
 
 // Flex align content
@@ -53,24 +53,24 @@ $rr-flex-align-content-class-prefix: 'align-content-' !default;
 $rr-flex-align-content-properties: (
 	('start' flex-start),
 	('end' flex-end),
-	'center',
-	'space-between',
-	'space-around',
-	'stretch',
-	'unset'
+	center,
+	space-between,
+	space-around,
+	stretch,
+	($rr-global-reset-class unset)
 ) !default;
 
 // Flex align self
 $rr-flex-align-self-class-prefix: 'align-self-' !default;
 
 $rr-flex-align-self-properties: (
-	'auto',
+	auto,
 	('start' flex-start),
 	('end' flex-end),
-	'center',
-	'baseline',
-	'stretch',
-	'unset'
+	center,
+	baseline,
+	stretch,
+	($rr-global-reset-class unset)
 ) !default;
 
 // Flex grow
@@ -97,7 +97,7 @@ $rr-flex-order-max: 12 !default;
 $rr-flex-order-properties: (
 	('first' -1),
 	('last' $rr-flex-order-max + 1),
-	'unset'
+	($rr-global-reset-class unset)
 ) !default;
 
 // Print output for this module

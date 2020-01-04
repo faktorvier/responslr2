@@ -4,16 +4,47 @@
 
 // Escape selector
 @function escape-selector($selector) {
-	$map: (':', '/', '@');
+	@return $selector;
+
+	$map: (
+		// Left trailing numbers
+		// '.0': '.\\30',
+		// '.1': '.\\31',
+		// '.2': '.\\32',
+		// '.3': '.\\33',
+		// '.4': '.\\34',
+		// '.5': '.\\35',
+		// '.6': '.\\36',
+		// '.7': '.\\37',
+		// '.8': '.\\38',
+		// '.9': '.\\39',
+		// '#0': '#\\30',
+		// '#1': '#\\31',
+		// '#2': '#\\32',
+		// '#3': '#\\33',
+		// '#4': '#\\34',
+		// '#5': '#\\35',
+		// '#6': '#\\36',
+		// '#7': '#\\37',
+		// '#8': '#\\38',
+		// '#9': '#\\39',
+
+		// Special chars
+		':': '\\:',
+		'/': '\\/',
+		//'@': '\\@',
+		//'=': '\\='
+	);
 
     $selector-replaced: $selector;
 
-    @each $search in $map {
-        $selector-replaced: str-replace($selector-replaced, $search, '\\#{$search}');
+    @each $search, $replace in $map {
+        $selector-replaced: str-replace($selector-replaced, $search, $replace);
     }
 
 	@return $selector-replaced;
 }
+
 
 // Split padding or margin shorthand
 @function split-shorthand($padding-string, $part) {
@@ -61,6 +92,24 @@
 	@error 'Parameter "#{$param-name}" for the #{$map-name} "#{$item-key}" is required.';
 }
 
+// Check if a property class can be generated
+// @todo: currently not needed
+@function class-can-be-generated($properties, $generate) {
+	$can-be-generated: false;
+
+	@if not map-has-key($properties, 'generate') {
+		$can-be-generated: true;
+	} @else {
+		$property-generate: map-get($properties, 'generate');
+
+		@if in-list($property-generate, $generate) {
+			$can-be-generated: true;
+		}
+	}
+
+	@return $can-be-generated;
+}
+
 /////////
 // MIXINS
 /////////
@@ -84,7 +133,7 @@
 // Convert map to properties
 @mixin generate-properties($properties) {
 	@each $property-name, $property-value in $properties {
-		@if $property-name != 'breakpoints' {
+		@if $property-name != 'breakpoints' and $property-name != 'generate' {
 			@if is-map($property-value) {
 				#{$property-name} {
 					@include generate-properties($property-value);

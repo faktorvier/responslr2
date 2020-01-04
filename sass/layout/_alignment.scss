@@ -6,28 +6,26 @@
 $rr-alignment-h-class-prefix: 'h-' !default;
 
 $rr-alignment-h-properties: (
-	'left',
-	'right',
-	'center',
-	//'justify',
+	left,
+	right,
+	center,
+	justify,
 	//'justify-all',
-	'initial',
-	'unset'
+	($rr-global-reset-class unset)
 ) !default;
 
 // Vertical alignments
 $rr-alignment-v-class-prefix: 'v-' !default;
 
 $rr-alignment-v-properties: (
-	'baseline',
-	'top',
-	'middle',
-	'bottom',
-	'sub',
+	baseline,
+	top,
+	middle,
+	bottom,
+	sub,
 	//'text-top',
 	//'text-bottom',
-	'initial',
-	'unset'
+	($rr-global-reset-class unset)
 ) !default;
 
 // Print output for this module
