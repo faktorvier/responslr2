@@ -20,7 +20,51 @@ $rr-global-breakpoint-classes: ();
 // FUNCTIONS
 ////////////
 
-// @todo
+// Check if map entry exists
+@function entry-exists($map, $name) {
+	@return map-has-key($map, to-string($name));
+}
+
+// Get map entry by name
+@function get-entry-by-name($map, $name: null, $default: null) {
+	$return: null;
+
+	@if is-null($name) and not is-null($default) {
+		$name: $default;
+	}
+
+	$name: to-string($name);
+
+	@if entry-exists($map, $name) {
+		$return: map-get($map, $name);
+	}
+
+	@return $return;
+}
+
+// Get a map entry value by name
+@function get-entry-property($map, $name, $property, $defaults: (), $default-name: null) {
+	$return: null;
+	$entry: null;
+
+	@if is-map($name) {
+		$entry: $name;
+	} @else {
+		$entry: get-entry-by-name($map, $name, $default-name);
+	}
+
+	@if is-not-null($entry) {
+		@if is-map($entry) and map-has-key($entry, $property) {
+			$return: map-get($entry, $property);
+		} @else {
+			$return: map-get($defaults, $property);
+		}
+	} @else {
+		$return: map-get($defaults, $property);
+	}
+
+	@return $return;
+}
 
 /////////
 // MIXINS

@@ -33,47 +33,23 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 
 // Check if an entry exists
 @function spacing-exists($name) {
-	@return map-has-key($rr-spacings, to-string($name));
+	@return entry-exists($rr-spacings, $name);
 }
 
 // Gets an entry by name
 @function spacing-entry($name: null) {
-	$return: null;
-	$name: to-string($name);
-
-	@if is-null($name) {
-		$name: $rr-spacings-default;
-	}
-
-	@if spacing-exists($name) {
-		$return: map-get($rr-spacings, $name);
-	}
-
-	@return $return;
+	@return get-entry-by-name($rr-spacings, $name, $rr-spacings-default);
 }
 
 // Get an entry property value by name
 @function spacing-property($name, $property) {
-	$return: null;
-	$spacing: null;
-
-	@if is-string($name) {
-		$spacing: spacing-entry($name);
-	} @else {
-		$spacing: $name;
-	}
-
-	@if is-not-null($spacing) {
-		@if is-map($spacing) and map-has-key($spacing, $property) {
-			$return: map-get($spacing, $property);
-		} @else {
-			$return: map-get($rr-spacing-map-defaults, $property);
-		}
-	} @else {
-		$return: map-get($rr-spacing-map-defaults, $property);
-	}
-
-	@return $return;
+	@return get-entry-property(
+		$rr-spacings,
+		$name,
+		$property,
+		$rr-spacing-map-defaults,
+		$rr-spacings-default
+	);
 }
 
 // Get spacing value by name
@@ -225,6 +201,47 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 		}
 	}
 
+	// Append gutter classes
+	@if $rr-generate-spacings-gutter {
+		@if is-list($rr-spacings-generate-types) {
+			$gutters: ();
+
+			@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+				$gutters: map-append($gutters, grid-gutter($breakpoint-name), $breakpoint-name)
+			}
+
+			@each $type in $rr-spacings-generate-types {
+				//@debug grid-gutter();
+
+				$gutter-spacing: (
+					'spacing': grid-gutter(),
+					'breakpoints': $gutters
+				);
+
+				$property-classes: map-append(
+					$property-classes,
+					spacing-to-css-properties($gutter-spacing, $type),
+					$type + '-' + $rr-global-gutter-class
+				);
+			}
+		}
+	}
+
+	// Append auto classes
+	@if $rr-generate-spacings-auto {
+		@if is-list($rr-spacings-generate-types) {
+			@each $type in $rr-spacings-generate-types {
+				@if in-list(('mt', 'mr', 'mb', 'ml', 'my', 'mx', 'ma'), $type) {
+					$property-classes: map-append(
+						$property-classes,
+						spacing-to-css-properties(auto, $type),
+						$type + '-' + $rr-global-auto-class
+					);
+				}
+			}
+		}
+	}
+
 	// Append reset class
 	@if not is-empty($property-classes) and $rr-generate-spacings-reset {
 		@if is-list($rr-spacings-generate-types) {
@@ -259,47 +276,8 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 /********************/
 
 @if $rr-generate-spacings and map-not-empty($rr-spacings) {
-	// Append auto classes
-	@if $rr-generate-spacings-auto {
-		$rr-spacings: map-append(
-			$rr-spacings,
-			(
-				'spacing': auto,
-				'types': ('mt', 'mr', 'mb', 'ml', 'my', 'mx', 'ma')
-			),
-			$rr-global-auto-class
-		);
-	}
-
-	// Append gutter classes
-	@if $rr-generate-spacings-gutter {
-		$gutters: ();
-
-		@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-			$gutters: map-append($gutters, grid-gutter($breakpoint-name), $breakpoint-name)
-		}
-
-		$rr-spacings: map-append(
-			$rr-spacings,
-			(
-				'spacing': grid-gutter(),
-				'breakpoints': $gutters
-			),
-			$rr-global-gutter-class
-		);
-	}
-
-	// Generate output
 	@include mq-generate-property-classes(
 		$classes: spacing-property-classes(),
 		$class-prefix: $rr-spacing-prefix
 	);
 }
-
-///////
-// TODO
-///////
-
-// PRIO 1: Automatically add grid cutter to spacings
-
-// MAYBE: Automatically add column width to spacings

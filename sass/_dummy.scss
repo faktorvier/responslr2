@@ -11,6 +11,7 @@ $rr-dummies: () !default;
 // Defaults
 $rr-dummy-map-defaults: (
 	'xyz': null,
+	'breakpoints': ()
 ) !default;
 
 $rr-dummies-default: map-default($rr-dummies) !default;
@@ -32,47 +33,23 @@ $rr-generate-dummies: $rr-generate-classes !default;
 
 // Check if an entry exists
 @function dummy-exists($name) {
-	@return map-has-key($rr-dummies, to-string($name));
+	@return entry-exists($rr-dummies, $name);
 }
 
 // Gets an entry by name
 @function dummy-entry($name: null) {
-	$return: null;
-	$name: to-string($name);
-
-	@if is-null($name) {
-		$name: $rr-dummies-default;
-	}
-
-	@if dummy-exists($name) {
-		$return: map-get($rr-dummies, $name);
-	}
-
-	@return $return;
+	@return get-entry-by-name($rr-dummies, $name, $rr-dummies-default);
 }
 
 // Get an entry property value by name
 @function dummy-property($name, $property) {
-	$return: null;
-	$dummy: null;
-
-	@if is-string($name) {
-		$dummy: dummy-entry($name);
-	} @else {
-		$dummy: $name;
-	}
-
-	@if is-not-null($dummy) {
-		@if is-map($dummy) and map-has-key($dummy, $property) {
-			$return: map-get($dummy, $property);
-		} @else {
-			$return: map-get($rr-dummy-map-defaults, $property);
-		}
-	} @else {
-		$return: map-get($rr-dummy-map-defaults, $property);
-	}
-
-	@return $return;
+	@return get-entry-property(
+		$rr-dummies,
+		$name,
+		$property,
+		$rr-dummy-map-defaults,
+		$rr-dummies-default
+	);
 }
 
 // @todo

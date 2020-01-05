@@ -31,47 +31,23 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 
 // Check if an entry exists
 @function color-exists($name) {
-	@return map-has-key($rr-colors, to-string($name));
+	@return entry-exists($rr-colors, $name);
 }
 
 // Gets an entry by name
 @function color-entry($name: null) {
-	$return: null;
-	$name: to-string($name);
-
-	@if is-null($name) {
-		$name: $rr-colors-default;
-	}
-
-	@if color-exists($name) {
-		$return: map-get($rr-colors, $name);
-	}
-
-	@return $return;
+	@return get-entry-by-name($rr-colors, $name, $rr-colors-default);
 }
 
 // Get an entry property value by name
 @function color-property($name, $property) {
-	$return: null;
-	$color: null;
-
-	@if is-string($name) {
-		$color: color-entry($name);
-	} @else {
-		$color: $name;
-	}
-
-	@if is-not-null($color) {
-		@if is-map($color) and map-has-key($color, $property) {
-			$return: map-get($color, $property);
-		} @else {
-			$return: map-get($rr-color-map-defaults, $property);
-		}
-	} @else {
-		$return: map-get($rr-color-map-defaults, $property);
-	}
-
-	@return $return;
+	@return get-entry-property(
+		$rr-colors,
+		$name,
+		$property,
+		$rr-color-map-defaults,
+		$rr-colors-default
+	);
 }
 
 // Get color value by name

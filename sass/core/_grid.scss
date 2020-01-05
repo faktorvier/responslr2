@@ -130,39 +130,24 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 ////////////
 
 // Check if an entry exists
-@function grid-breakpoint-exists($breakpoint) {
-	@return map-has-key($rr-grid-breakpoints, $breakpoint);
+@function grid-breakpoint-exists($name) {
+	@return entry-exists($rr-grid-breakpoints, $name);
 }
 
 // Gets an entry by name
 @function grid-breakpoint-entry($name: null) {
-	$return: null;
-
-	@if is-null($name) {
-		$name: $rr-grid-breakpoints-default;
-	}
-
-	@if grid-breakpoint-exists($name) {
-		$return: map-get($rr-grid-breakpoints, $name);
-	}
-
-	@return $return;
+	@return get-entry-by-name($rr-grid-breakpoints, $name, $rr-grid-breakpoints-default);
 }
 
 // Get an entry property value by name
 @function grid-breakpoint-property($name, $property) {
-	$return: null;
-	$breakpoint: grid-breakpoint-entry($name);
-
-	@if is-not-null($breakpoint) {
-		@if map-has-key($breakpoint, $property) {
-			$return: map-get($breakpoint, $property);
-		} @else {
-			$return: map-get($rr-grid-breakpoint-map-defaults, $property);
-		}
-	}
-
-	@return $return;
+	@return get-entry-property(
+		$rr-grid-breakpoints,
+		$name,
+		$property,
+		$rr-grid-breakpoint-map-defaults,
+		$rr-grid-breakpoints-default
+	);
 }
 
 // Check if breakpoint is default breakpoint
@@ -206,7 +191,11 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 		@if $breakpoint-index > 0 and $breakpoint-index <= length($rr-grid-breakpoints) {
 			$min-width-name: nth(map-keys($rr-grid-breakpoints), $breakpoint-index);
-			$return-min-width: grid-breakpoint-property($min-width-name, 'max-width') + 1;
+			$max-width-value: grid-breakpoint-property($min-width-name, 'max-width');
+
+			@if is-number($max-width-value) {
+				$return-min-width: $max-width-value + 1;
+			}
 		}
 
 		$min-width: $return-min-width;
@@ -225,7 +214,11 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 		@if $breakpoint-index > 0 and $breakpoint-index <= length($rr-grid-breakpoints) {
 			$max-width-name: nth(map-keys($rr-grid-breakpoints), $breakpoint-index);
-			$return-max-width: grid-breakpoint-property($max-width-name, 'min-width') - 1;
+			$min-width-value: grid-breakpoint-property($max-width-name, 'min-width');
+
+			@if is-number($min-width-value) {
+				$return-max-width: $min-width-value - 1;
+			}
 		}
 
 		$max-width: $return-max-width;
@@ -266,6 +259,19 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	// }
 
 	@return escape-selector($selector);
+}
+
+// Get properties by breakpoint
+@function grid-properties-by-breakpoint($properties, $breakpoint-name) {
+	@if map-has-key($properties, 'breakpoints') and $breakpoint-name != $rr-grid-breakpoints-default {
+		$breakpoint-properties: map-get($properties, 'breakpoints');
+
+		@if map-not-empty($properties) and map-has-key($breakpoint-properties, $breakpoint-name) {
+			$properties: map-get($breakpoint-properties, $breakpoint-name);
+		}
+	}
+
+	@return $properties;
 }
 
 /////////
@@ -475,7 +481,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	$single-breakpoint: $first-breakpoint == $last-breakpoint;
 
 	@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-		$is-first-breakpoint: $breakpoint-name == $first-breakpoint;
+		$is-first-breakpoint: $breakpoint-name == $rr-grid-breakpoints-default;
 		$is-last-breakpoint: $breakpoint-name == $last-breakpoint;
 		$is-smallest-breakpoint: if($rr-grid-mobile-first, $is-first-breakpoint, $is-last-breakpoint) or $single-breakpoint;
 		$is-largest-breakpoint: if($rr-grid-mobile-first, $is-last-breakpoint, $is-first-breakpoint) or $single-breakpoint;
@@ -485,7 +491,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 			@include mq($breakpoint-name) {
 				// Breakpoint overwrites
 				@each $class-name, $properties in $classes {
-					@if map-has-key($properties, 'breakpoints') {
+					@if map-has-key($properties, 'breakpoints') and not $is-first-breakpoint {
 						$breakpoint-properties: map-get($properties, 'breakpoints');
 
 						@if map-not-empty($properties) and map-has-key($breakpoint-properties, $breakpoint-name) {
@@ -499,6 +505,9 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 				// Normal breakpoint classes
 				@each $class-name, $properties in $classes {
+					// Breakpoint overwrites
+					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+
 					@if not $rr-grid-mobile-first and not $is-last-breakpoint {
 						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $use-default)},
 						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-up')} {
@@ -525,6 +534,9 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		@if not $rr-grid-mobile-first and not $is-largest-breakpoint and not $is-first-breakpoint and in-list($generate, up) {
 			@include mq-up($breakpoint-name) {
 				@each $class-name, $properties in $classes {
+					// Breakpoint overwrites
+					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+
 					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-up')} {
 						@content;
 						@include generate-properties($properties);
@@ -537,6 +549,9 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		@if $rr-grid-mobile-first and not $is-smallest-breakpoint and not $is-last-breakpoint and in-list($generate, down) {
 			@include mq-down($breakpoint-name) {
 				@each $class-name, $properties in $classes {
+					// Breakpoint overwrites
+					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+
 					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-down')} {
 						@content;
 						@include generate-properties($properties);
@@ -549,6 +564,9 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		@if not $is-last-breakpoint and in-list($generate, only) {
 			@include mq-only($breakpoint-name) {
 				@each $class-name, $properties in $classes {
+					// Breakpoint overwrites
+					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+
 					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-only')} {
 						@content;
 						@include generate-properties($properties);

@@ -55,47 +55,23 @@ $rr-aspect-ratio-child-reset-class-properties: (
 
 // Check if an entry exists
 @function aspect-ratio-exists($name) {
-	@return map-has-key($rr-aspect-ratios, to-string($name));
+	@return entry-exists($rr-aspect-ratios, $name);
 }
 
 // Gets an entry by name
 @function aspect-ratio-entry($name: null) {
-	$return: null;
-	$name: to-string($name);
-
-	@if is-null($name) {
-		$name: $rr-aspect-ratios-default;
-	}
-
-	@if aspect-ratio-exists($name) {
-		$return: map-get($rr-aspect-ratios, $name);
-	}
-
-	@return $return;
+	@return get-entry-by-name($rr-aspect-ratios, $name, $rr-aspect-ratios-default);
 }
 
 // Get an entry value by name
 @function aspect-ratio-property($name, $property) {
-	$return: null;
-	$aspect-ratio: null;
-
-	@if is-string($name) {
-		$aspect-ratio: aspect-ratio-entry($name);
-	} @else {
-		$aspect-ratio: $name;
-	}
-
-	@if is-not-null($aspect-ratio) {
-		@if is-map($aspect-ratio) and map-has-key($aspect-ratio, $property) {
-			$return: map-get($aspect-ratio, $property);
-		} @else {
-			$return: map-get($rr-aspect-ratio-map-defaults, $property);
-		}
-	} @else {
-		$return: map-get($rr-aspect-ratio-map-defaults, $property);
-	}
-
-	@return $return;
+	@return get-entry-property(
+		$rr-aspect-ratios,
+		$name,
+		$property,
+		$rr-aspect-ratio-map-defaults,
+		$rr-aspect-ratios-default
+	);
 }
 
 // Calculate aspect ratio
