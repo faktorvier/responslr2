@@ -75,8 +75,14 @@ $rr-aspect-ratio-child-reset-class-properties: (
 }
 
 // Get value by name
-@function aspect-ratio-value($name: null) {
-	@return get-entry-value($rr-aspect-ratios, $name, 'ratio', $rr-aspect-ratios-default);
+@function aspect-ratio-value($name: null, $calculated: false) {
+	$value: get-entry-value($rr-aspect-ratios, $name, 'ratio', $rr-aspect-ratios-default);
+
+	@if $calculated {
+		$value: aspect-ratio-calculate(nth($value, 1), nth($value, 2));
+	}
+
+	@return $value;
 }
 
 // Calculate aspect ratio
@@ -90,22 +96,21 @@ $rr-aspect-ratio-child-reset-class-properties: (
 
 // Convert entry to css properties map
 @function aspect-ratio-to-css-properties($aspect-ratio) {
-	// Get value
-	$ratio-value: aspect-ratio-value($aspect-ratio);
-
 	// Set properties
-	$return: $rr-aspect-ratio-class-properties;
-
 	$return: map-merge(
 		$rr-aspect-ratio-class-properties,
 		(
-			padding-top: aspect-ratio-calculate(nth($ratio-value, 1), nth($ratio-value, 2)),
+			padding-top: aspect-ratio-value($aspect-ratio, true),
 			'> *': $rr-aspect-ratio-child-class-properties
 		)
 	);
 
 	// Append breakpoint overwrites if exists
-	$return: append-breakpoint-overwrites($aspect-ratio, $return, 'aspect-ratio-to-css-properties');
+	$return: append-entry-breakpoint-overwrites(
+		$aspect-ratio,
+		$return,
+		'aspect-ratio-to-css-properties'
+	);
 
 	@return $return;
 }
@@ -208,6 +213,5 @@ $rr-aspect-ratio-child-reset-class-properties: (
 ///////
 
 // PRIO 2: aspect-ratio mixin should generate all breakpoints
-// PRIO 2: Overhead if breakpoint overwrites for breakpoints larger than s (child is defined every time again)
 
 // MAYBE: aspect-ratio on .column? gutter etc?

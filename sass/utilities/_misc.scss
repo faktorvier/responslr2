@@ -8,32 +8,32 @@
 
 	$map: (
 		// Left trailing numbers
-		// '.0': '.\\30',
-		// '.1': '.\\31',
-		// '.2': '.\\32',
-		// '.3': '.\\33',
-		// '.4': '.\\34',
-		// '.5': '.\\35',
-		// '.6': '.\\36',
-		// '.7': '.\\37',
-		// '.8': '.\\38',
-		// '.9': '.\\39',
-		// '#0': '#\\30',
-		// '#1': '#\\31',
-		// '#2': '#\\32',
-		// '#3': '#\\33',
-		// '#4': '#\\34',
-		// '#5': '#\\35',
-		// '#6': '#\\36',
-		// '#7': '#\\37',
-		// '#8': '#\\38',
-		// '#9': '#\\39',
+		'.0': '.\\30',
+		'.1': '.\\31',
+		'.2': '.\\32',
+		'.3': '.\\33',
+		'.4': '.\\34',
+		'.5': '.\\35',
+		'.6': '.\\36',
+		'.7': '.\\37',
+		'.8': '.\\38',
+		'.9': '.\\39',
+		'#0': '#\\30',
+		'#1': '#\\31',
+		'#2': '#\\32',
+		'#3': '#\\33',
+		'#4': '#\\34',
+		'#5': '#\\35',
+		'#6': '#\\36',
+		'#7': '#\\37',
+		'#8': '#\\38',
+		'#9': '#\\39',
 
 		// Special chars
 		':': '\\:',
 		'/': '\\/',
-		//'@': '\\@',
-		//'=': '\\='
+		'@': '\\@',
+		'=': '\\='
 	);
 
     $selector-replaced: $selector;
@@ -90,24 +90,6 @@
 // Throw an error if required argument is missing
 @function throw-required-error($param-name, $map-name, $item-key) {
 	@error 'Parameter "#{$param-name}" for the #{$map-name} "#{$item-key}" is required.';
-}
-
-// Check if a property class can be generated
-// @todo: currently not needed
-@function class-can-be-generated($properties, $generate) {
-	$can-be-generated: false;
-
-	@if not map-has-key($properties, 'generate') {
-		$can-be-generated: true;
-	} @else {
-		$property-generate: map-get($properties, 'generate');
-
-		@if in-list($property-generate, $generate) {
-			$can-be-generated: true;
-		}
-	}
-
-	@return $can-be-generated;
 }
 
 /////////

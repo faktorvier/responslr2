@@ -3,18 +3,21 @@
 @import 'core/normalize';
 @import 'core/grid';
 
-// Load layout
-@import 'layout/alignment';
-@import 'layout/aspect-ratio';
-@import 'layout/color';
-@import 'layout/display';
-@import 'layout/flex';
-@import 'layout/helpers';
-@import 'layout/position';
-@import 'layout/spacing';
-@import 'layout/typo';
-@import 'layout/transition';
-@import 'layout/visibility';
+// Load helpers
+@import 'helpers/alignment';
+@import 'helpers/display';
+@import 'helpers/flex';
+@import 'helpers/misc';
+@import 'helpers/position';
+@import 'helpers/visibility';
+
+// Load modules
+@import 'modules/aspect-ratio';
+@import 'modules/color';
+@import 'modules/custom';
+@import 'modules/spacing';
+@import 'modules/typo';
+@import 'modules/transition';
 
 // Load components
 @import 'components/list';

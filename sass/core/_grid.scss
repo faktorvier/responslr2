@@ -501,12 +501,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 							@each $overwrite-property, $overwrite-value in $properties-overwrite-raw {
 								$original-value: map-get($properties, $overwrite-property);
 
-								// @debug $class-name;
-								// @debug $overwrite-property;
-								// @debug $overwrite-value;
-								// @debug '------------------------------------------------------------';
-
-								@if $overwrite-property == 'generate' or is-null($original-value) or $original-value != $overwrite-value {
+								@if is-null($original-value) or $original-value != $overwrite-value {
 									$properties-overwrite: map-append($properties-overwrite, $overwrite-value, $overwrite-property);
 								}
 							}
@@ -547,34 +542,34 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		}
 
 		// Up
-		@if not $rr-grid-mobile-first and not $is-largest-breakpoint and not $is-first-breakpoint and in-list($generate, up) {
-			@include mq-up($breakpoint-name) {
-				@each $class-name, $properties in $classes {
-					// Breakpoint overwrites
-					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+		// @if not $rr-grid-mobile-first and not $is-largest-breakpoint and not $is-first-breakpoint and in-list($generate, up) {
+		// 	@include mq-up($breakpoint-name) {
+		// 		@each $class-name, $properties in $classes {
+		// 			// Breakpoint overwrites
+		// 			$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
 
-					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-up')} {
-						@content;
-						@include generate-properties($properties);
-					}
-				}
-			}
-		}
+		// 			#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-up')} {
+		// 				@content;
+		// 				@include generate-properties($properties);
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		// Down
-		@if $rr-grid-mobile-first and not $is-smallest-breakpoint and not $is-last-breakpoint and in-list($generate, down) {
-			@include mq-down($breakpoint-name) {
-				@each $class-name, $properties in $classes {
-					// Breakpoint overwrites
-					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+		// @if $rr-grid-mobile-first and not $is-smallest-breakpoint and not $is-last-breakpoint and in-list($generate, down) {
+		// 	@include mq-down($breakpoint-name) {
+		// 		@each $class-name, $properties in $classes {
+		// 			// Breakpoint overwrites
+		// 			$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
 
-					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-down')} {
-						@content;
-						@include generate-properties($properties);
-					}
-				}
-			}
-		}
+		// 			#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-down')} {
+		// 				@content;
+		// 				@include generate-properties($properties);
+		// 			}
+		// 		}
+		// 	}
+		// }
 
 		// Only
 		@if not $is-last-breakpoint and in-list($generate, only) {

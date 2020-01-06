@@ -86,14 +86,18 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 	// Get type property
 	$property-name: color-property-by-type($type);
 
-	// Get value
-	$color-value: color-value($color);
-
 	// Set properties
-	$return: ($property-name: $color-value);
+	$return: (
+		$property-name: color-value($color)
+	);
 
 	// Append breakpoint overwrites if exists
-	$return: append-breakpoint-overwrites($color, $return, 'color-to-css-properties', $type);
+	$return: append-entry-breakpoint-overwrites(
+		$color,
+		$return,
+		'color-to-css-properties',
+		$type
+	);
 
 	@return $return;
 }
@@ -156,5 +160,5 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 ///////
 
 // PRIO 2: hover, focus, active states
-// PRIO 2: aspect-ratio mixin should generate all breakpoints
+// PRIO 2: color mixin should generate all breakpoints
 // PRIO 3: steps/lighten/darken

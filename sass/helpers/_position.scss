@@ -12,7 +12,8 @@ $rr-position-properties: (
 	'relative',
 	'absolute',
 	'fixed',
-	'sticky'
+	'sticky',
+	($rr-global-reset-class unset)
 ) !default;
 
 // Print output for this module
@@ -55,3 +56,4 @@ $rr-generate-position: $rr-generate-classes !default;
 ///////
 
 // PRIO 2: Fill helpers per bp and reset
+// PRIO 2: top, bottom, left, right, topleft, topright, bottomleft, bottomright etc...

@@ -85,7 +85,7 @@ $rr-global-breakpoint-classes: ();
 }
 
 // Append breakpoint overwrites for an entry
-@function append-breakpoint-overwrites($entry, $properties, $function, $args...) {
+@function append-entry-breakpoint-overwrites($entry, $properties, $function, $args...) {
 	@if is-map($entry) and map-has-key($entry, 'breakpoints') {
 		$entry-breakpoints: map-get($entry, 'breakpoints');
 		$breakpoints: ();

@@ -15,8 +15,7 @@ $rr-spacings: () !default;
 $rr-spacing-map-defaults: (
 	'spacing': null,
 	'types': $rr-spacings-generate-types,
-	'breakpoints': (),
-	'generate': ()
+	'breakpoints': ()
 ) !default;
 
 $rr-spacings-default: map-default($rr-spacings) !default;
@@ -140,39 +139,25 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 	@return $spacing-properties;
 }
 
+/////////////////////
+// INTERNAL FUNCTIONS
+/////////////////////
+
 // Convert entry to css properties map
 @function spacing-to-css-properties($spacing, $type) {
-	$spacing-value: $spacing;
-
-	// Get value from map if not directly defined by list
-	@if is-map($spacing) {
-		$spacing-value: map-get($spacing, 'spacing');
-	}
-
-	// Set default properties
-	$return: spacing-properties-by-type($spacing-value, $type);
-
-	// Append generate overwrites if exists
-	$generate-overwrites: spacing-property($spacing, 'generate');
-
-	@if map-not-empty($generate-overwrites) {
-		$return: map-append($return, $generate-overwrites, 'generate');
-	}
+	// Set properties
+	$return: spacing-properties-by-type(
+		spacing-value($spacing),
+		$type
+	);
 
 	// Append breakpoint overwrites if exists
-	$return: append-breakpoint-overwrites($spacing, $return, 'spacing-to-css-properties', $type);
-
-	// $breakpoint-overwrites: spacing-property($spacing, 'breakpoints');
-
-	// @if map-not-empty($breakpoint-overwrites) {
-	// 	$property-breakpoints: ();
-
-	// 	@each $breakpoint-name, $breakpoint-spacing in $breakpoint-overwrites {
-	// 		$property-breakpoints: map-append($property-breakpoints, spacing-to-css-properties($breakpoint-spacing, $type), $breakpoint-name);
-	// 	}
-
-	// 	$return: map-append($return, $property-breakpoints, 'breakpoints');
-	// }
+	$return: append-entry-breakpoint-overwrites(
+		$spacing,
+		$return,
+		'spacing-to-css-properties',
+		$type
+	);
 
 	@return $return;
 }
