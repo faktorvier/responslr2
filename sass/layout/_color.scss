@@ -25,6 +25,15 @@ $rr-colors-default: map-default($rr-colors) !default;
 $rr-generate-colors: $rr-generate-classes !default;
 $rr-generate-colors-reset: $rr-generate-colors !default;
 
+///////
+// INIT
+///////
+
+// Append reset class
+@if not is-empty($rr-colors) and $rr-generate-colors-reset {
+	$rr-colors: map-append($rr-colors, unset, $rr-global-reset-class);
+}
+
 ////////////
 // FUNCTIONS
 ////////////
@@ -50,16 +59,9 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 	);
 }
 
-// Get color value by name
-@function color-value($name) {
-	$color: color-entry($name);
-	$color-value: $color;
-
-	@if is-map($color) {
-		$color-value: map-get($color, 'color');
-	}
-
-	@return $color-value;
+// Get value by name
+@function color-value($name: null) {
+	@return get-entry-value($rr-colors, $name, 'color', $rr-colors-default);
 }
 
 // Get color property name by type
@@ -75,35 +77,23 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 	@return $property-name;
 }
 
+/////////////////////
+// INTERNAL FUNCTIONS
+/////////////////////
+
 // Convert entry to css properties map
 @function color-to-css-properties($color, $type) {
-	$color-value: $color;
-
 	// Get type property
 	$property-name: color-property-by-type($type);
 
-	// Get value from map if not directly defined by list
-	@if is-map($color) {
-		$color-value: map-get($color, 'color');
-	}
+	// Get value
+	$color-value: color-value($color);
 
-	// Set default property
-	$return: (
-		$property-name: $color-value
-	);
+	// Set properties
+	$return: ($property-name: $color-value);
 
 	// Append breakpoint overwrites if exists
-	$breakpoint-entries: color-property($color, 'breakpoints');
-
-	@if map-not-empty($breakpoint-entries) {
-		$property-breakpoints: ();
-
-		@each $breakpoint-name, $breakpoint-color in $breakpoint-entries {
-			$property-breakpoints: map-append($property-breakpoints, color-to-css-properties($breakpoint-color, $type), $breakpoint-name);
-		}
-
-		$return: map-append($return, $property-breakpoints, 'breakpoints');
-	}
+	$return: append-breakpoint-overwrites($color, $return, 'color-to-css-properties', $type);
 
 	@return $return;
 }
@@ -112,7 +102,6 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 @function color-property-classes($type) {
 	$property-classes: ();
 
-	// Append defined classes
 	@each $class-name, $color in $rr-colors {
 		$types: color-property($class-name, 'types');
 
@@ -123,15 +112,6 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 				$class-name
 			);
 		}
-	}
-
-	// Append reset class
-	@if not is-empty($property-classes) and $rr-generate-colors-reset {
-		$property-classes: map-append(
-			$property-classes,
-			color-to-css-properties(unset, $type),
-			$rr-global-reset-class
-		);
 	}
 
 	@return $property-classes;
@@ -150,9 +130,9 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 	}
 }
 
-/*****************/
+/******************/
 /* OUTPUT: COLORS */
-/*****************/
+/******************/
 
 @if $rr-generate-colors and map-not-empty($rr-colors) {
 	@include mq-generate-property-classes(
@@ -176,4 +156,5 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 ///////
 
 // PRIO 2: hover, focus, active states
-// PRIO 3: steps
+// PRIO 2: aspect-ratio mixin should generate all breakpoints
+// PRIO 3: steps/lighten/darken

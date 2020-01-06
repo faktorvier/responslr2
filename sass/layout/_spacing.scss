@@ -53,15 +53,8 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 }
 
 // Get spacing value by name
-@function spacing-value($name) {
-	$spacing: spacing-entry($name);
-	$spacing-value: $spacing;
-
-	@if is-map($spacing) {
-		$spacing-value: map-get($spacing, 'spacing');
-	}
-
-	@return $spacing-value;
+@function spacing-value($name: null) {
+	@return get-entry-value($rr-spacings, $name, 'spacing', $rr-spacings-default);
 }
 
 // Get spacing properties by type
@@ -167,17 +160,19 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 	}
 
 	// Append breakpoint overwrites if exists
-	$breakpoint-overwrites: spacing-property($spacing, 'breakpoints');
+	$return: append-breakpoint-overwrites($spacing, $return, 'spacing-to-css-properties', $type);
 
-	@if map-not-empty($breakpoint-overwrites) {
-		$property-breakpoints: ();
+	// $breakpoint-overwrites: spacing-property($spacing, 'breakpoints');
 
-		@each $breakpoint-name, $breakpoint-spacing in $breakpoint-overwrites {
-			$property-breakpoints: map-append($property-breakpoints, spacing-to-css-properties($breakpoint-spacing, $type), $breakpoint-name);
-		}
+	// @if map-not-empty($breakpoint-overwrites) {
+	// 	$property-breakpoints: ();
 
-		$return: map-append($return, $property-breakpoints, 'breakpoints');
-	}
+	// 	@each $breakpoint-name, $breakpoint-spacing in $breakpoint-overwrites {
+	// 		$property-breakpoints: map-append($property-breakpoints, spacing-to-css-properties($breakpoint-spacing, $type), $breakpoint-name);
+	// 	}
+
+	// 	$return: map-append($return, $property-breakpoints, 'breakpoints');
+	// }
 
 	@return $return;
 }
@@ -211,8 +206,6 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 			}
 
 			@each $type in $rr-spacings-generate-types {
-				//@debug grid-gutter();
-
 				$gutter-spacing: (
 					'spacing': grid-gutter(),
 					'breakpoints': $gutters
@@ -281,3 +274,9 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 		$class-prefix: $rr-spacing-prefix
 	);
 }
+
+///////
+// TODO
+///////
+
+// PRIO 2: color mixin should generate all breakpoints

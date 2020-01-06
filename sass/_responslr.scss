@@ -20,7 +20,10 @@
 @import 'components/list';
 @import 'components/table';
 
-// Output JSON settings
+/*************************/
+/* OUTPUT: JSON SETTINGS */
+/*************************/
+
 @if $rr-generate-settings != false and $rr-global-settings != () {
 	html::before {
 		content: json-encode($rr-global-settings);
@@ -36,9 +39,3 @@
 // TODO
 ///////
 
-// PRIO 1: str-replace is slow :(
-
-// QUESTION: classic bg-color-red or fancy bg-color=red ?
-// QUESTION: Which bp prefixes to generate?
-// QUESTION: Which reset/normalize should we pick?
-// QUESTION: Option to chose between reset and normalize?

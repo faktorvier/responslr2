@@ -3,7 +3,7 @@
 ///////////////////
 
 // Classes
-$rr-dummy-prefix: 'dummy-' !default;
+$rr-dummy-class-prefix: 'dummy-' !default;
 
 // Dummies
 $rr-dummies: () !default;
@@ -52,11 +52,21 @@ $rr-generate-dummies: $rr-generate-classes !default;
 	);
 }
 
+// Get an entry value by name
+@function dummy-value($name: null) {
+	@return get-entry-value($rr-dummies, $name, 'dummy', $rr-dummies-default);
+}
+
 // @todo
 
 /////////
 // MIXINS
 /////////
+
+// Output dummy by name
+@mixin dummy($name: null) {
+
+}
 
 // @todo
 

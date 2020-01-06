@@ -35,13 +35,15 @@ $rr-generate-alignments: $rr-generate-classes !default;
 /* OUTPUT: ALIGNMENTS */
 /**********************/
 
-@if $rr-generate-alignments {
+@if $rr-generate-alignments and map-not-empty($rr-alignment-h-properties) {
 	@include mq-generate-property-classes-simple(
 		$property: 'text-align',
 		$values: $rr-alignment-h-properties,
 		$class-prefix: $rr-alignment-h-class-prefix
 	);
+}
 
+@if $rr-generate-alignments and map-not-empty($rr-alignment-v-properties) {
 	@include mq-generate-property-classes-simple(
 		$property: 'vertical-align',
 		$values: $rr-alignment-v-properties,

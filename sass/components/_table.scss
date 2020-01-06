@@ -1,0 +1,30 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-table-class: 'table' !default;
+
+// Print output for this module
+$rr-generate-tables: $rr-generate-classes !default;
+
+/////////
+// MIXINS
+/////////
+
+// Output table
+@mixin table() {
+	display: block;
+	width: 100%;
+	overflow-x: auto;
+}
+
+/*****************/
+/* OUTPUT: TABLE */
+/*****************/
+
+@if $rr-generate-tables {
+	.#{$rr-table-class} {
+		@include table();
+	}
+}

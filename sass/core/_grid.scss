@@ -495,9 +495,25 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 						$breakpoint-properties: map-get($properties, 'breakpoints');
 
 						@if map-not-empty($properties) and map-has-key($breakpoint-properties, $breakpoint-name) {
+							$properties-overwrite-raw: map-get($breakpoint-properties, $breakpoint-name);
+							$properties-overwrite: ();
+
+							@each $overwrite-property, $overwrite-value in $properties-overwrite-raw {
+								$original-value: map-get($properties, $overwrite-property);
+
+								// @debug $class-name;
+								// @debug $overwrite-property;
+								// @debug $overwrite-value;
+								// @debug '------------------------------------------------------------';
+
+								@if $overwrite-property == 'generate' or is-null($original-value) or $original-value != $overwrite-value {
+									$properties-overwrite: map-append($properties-overwrite, $overwrite-value, $overwrite-property);
+								}
+							}
+
 							#{escape-selector('.#{$class-prefix}#{$class-name}')} {
 								@content;
-								@include generate-properties(map-get($breakpoint-properties, $breakpoint-name));
+								@include generate-properties($properties-overwrite);
 							}
 						}
 					}
@@ -881,9 +897,6 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 // PRIO 3: collapse cells (remove gutter per bp) (on row)
 // PRIO 3: remove unneeded output (reset on default bp etc.)
 // PRIO 3: merge duplicate output
-
-// MAYBE: retina/hidpi queries
-// MAYBE: row reset definitions still necessary?
 
 // https://medium.com/@ferie/detect-a-touch-device-with-only-css-9f8e30fa1134
 // https://css-tricks.com/touch-devices-not-judged-size/
