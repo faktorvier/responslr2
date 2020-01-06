@@ -23,6 +23,7 @@ $rr-colors-default: map-default($rr-colors) !default;
 
 // Print output for this module
 $rr-generate-colors: $rr-generate-classes !default;
+$rr-generate-colors-hover: $rr-generate-classes !default;
 $rr-generate-colors-reset: $rr-generate-colors !default;
 
 ///////
@@ -86,8 +87,11 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 	// Get type property
 	$property-name: color-property-by-type($type);
 
+	$return: ();
+
 	// Set properties
 	$return: (
+		'hover': $rr-generate-colors-hover,
 		$property-name: color-value($color)
 	);
 
@@ -159,6 +163,5 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 // TODO
 ///////
 
-// PRIO 2: hover, focus, active states
 // PRIO 2: color mixin should generate all breakpoints
 // PRIO 3: steps/lighten/darken

@@ -5,6 +5,7 @@
 $rr-global-reset-class: 'reset' !default;
 $rr-global-auto-class: 'auto' !default;
 $rr-global-gutter-class: 'gutter' !default;
+$rr-global-hover-suffix-class: '-hover' !default;
 
 $rr-generate-classes: true !default;
 $rr-generate-settings: true !default;
@@ -105,28 +106,3 @@ $rr-global-breakpoint-classes: ();
 /////////
 // MIXINS
 /////////
-
-// @todo: maybe used later, but only for testing now
-@mixin rr-add-simple-breakpoint-classes($property, $values, $class-prefix: '', $generate: (normal, up, down, only), $first-default: true) {
-	@each $value in $values {
-		$class-name: $value;
-		$property-value: $value;
-
-		@if is-list($value) {
-			$class-name: nth($value, 1);
-			$property-value: nth($value, 2);
-		}
-
-		$class-name: $class-prefix + $class-name;
-
-		$rr-global-breakpoint-classes: map-merge($rr-global-breakpoint-classes, (
-			$class-name: (
-				'properties': (
-					'first-default': $first-default,
-					'generate': $generate,
-					$property: $property-value
-				)
-			)
-		)) !global;
-	}
-}

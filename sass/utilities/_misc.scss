@@ -97,16 +97,16 @@
 /////////
 
 // Smart hover only for hover devices
-// @todo: better
 @mixin hover($only-hover: false) {
-	@if $only-hover {
-		html:not(.mobile):not(.tablet) &:hover {
-			@content;
-		}
-	} @else {
-		html:not(.mobile):not(.tablet) &:hover,
+	@if not $only-hover {
 		&:active,
 		&:focus {
+			@content;
+		}
+	}
+
+	@include mq-hover(true) {
+		&:hover {
 			@content;
 		}
 	}
@@ -115,7 +115,7 @@
 // Convert map to properties
 @mixin generate-properties($properties) {
 	@each $property-name, $property-value in $properties {
-		@if $property-name != 'breakpoints' and $property-name != 'generate' {
+		@if $property-name != 'breakpoints' and $property-name != 'generate' and $property-name != 'hover'  {
 			@if is-map($property-value) {
 				#{$property-name} {
 					@include generate-properties($property-value);

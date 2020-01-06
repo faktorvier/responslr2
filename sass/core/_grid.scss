@@ -6,6 +6,7 @@
 $rr-grid-mobile-first: true !default;
 
 // Classes
+$rr-grid-breakpoint-only-suffix-prefix: '-only' !default;
 $rr-grid-row-class: 'row' !default;
 $rr-grid-column-class: 'column' !default;
 $rr-grid-column-auto-class: $rr-global-auto-class !default;
@@ -86,6 +87,8 @@ $rr-grid-breakpoints-default: map-default($rr-grid-breakpoints) !default;
 
 // Percentage columns steps
 $rr-grid-breakpoint-fraction-steps: 6 !default;
+
+$rr-grid-breakpoint-generate: (normal, only);
 
 // Grid helper
 $rr-grid-helper-z-index: 100000 !default;
@@ -406,40 +409,47 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	}
 }
 
-// Media query main pointer is mouse
-@mixin mq-mouse() {
-	@include mq($min-width: $name, $max-width: $name, $pointer: mouse) {
+// Media query primary input mechanism can hover
+@mixin mq-hover($can-hover: true) {
+	@media (hover: if($can-hover, hover, none)) {
 		@content;
 	}
-
-	// @media (pointer: fine) {
-	//     /* ... */
-	// }
 }
+
+// Media query main pointer is mouse
+// @mixin mq-mouse() {
+// 	@include mq($min-width: $name, $max-width: $name, $pointer: mouse) {
+// 		@content;
+// 	}
+
+// 	// @media (pointer: fine) {
+// 	//     /* ... */
+// 	// }
+// }
 
 // Media query main pointer is finger
-@mixin mq-touch() {
-	@include mq($min-width: $name, $max-width: $name, $pointer: finger) {
-		@content;
-	}
+// @mixin mq-touch() {
+// 	@include mq($min-width: $name, $max-width: $name, $pointer: finger) {
+// 		@content;
+// 	}
 
-	// /* smartphones, touchscreens */
-	// @media (hover: none) and (pointer: coarse) {
-	//     /* ... */
-	// }
-}
+// 	// /* smartphones, touchscreens */
+// 	// @media (hover: none) and (pointer: coarse) {
+// 	//     /* ... */
+// 	// }
+// }
 
 // Media query main pointer is stylus
-@mixin mq-stylus() {
-	@include mq($min-width: $name, $max-width: $name, $pointer: stylus) {
-		@content;
-	}
+// @mixin mq-stylus() {
+// 	@include mq($min-width: $name, $max-width: $name, $pointer: stylus) {
+// 		@content;
+// 	}
 
-	// /* stylus-based screens */
-	// @media (hover: none) and (pointer: fine) {
-	//     /* ... */
-	// }
-}
+// 	// /* stylus-based screens */
+// 	// @media (hover: none) and (pointer: fine) {
+// 	//     /* ... */
+// 	// }
+// }
 
 // Output for every breakpoint (not working with the current sass version)
 // @mixin mq-clone-output() {
@@ -451,7 +461,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 // }
 
 // Generate breakpoint classes for a single property
-@mixin mq-generate-property-classes-simple($property, $values, $class-prefix, $generate: (normal, up, down, only), $use-default: true) {
+@mixin mq-generate-property-classes-simple($property, $values, $class-prefix, $generate: $rr-grid-breakpoint-generate, $use-default: true) {
 	$classes: ();
 
 	@each $value in $values {
@@ -474,7 +484,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 }
 
 // Generate breakpoint classes for multiple properties
-@mixin mq-generate-property-classes($classes, $class-prefix, $generate: (normal, up, down, only), $use-default: true) {
+@mixin mq-generate-property-classes($classes, $class-prefix, $generate: $rr-grid-breakpoint-generate, $use-default: true) {
 	$breakpoint-names: map-keys($rr-grid-breakpoints);
 	$first-breakpoint: nth($breakpoint-names, 1);
 	$last-breakpoint: nth($breakpoint-names, length($breakpoint-names));
@@ -519,57 +529,26 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 					// Breakpoint overwrites
 					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
 
-					@if not $rr-grid-mobile-first and not $is-last-breakpoint {
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $use-default)},
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-up')} {
-							@content;
-							@include generate-properties($properties);
-						}
-					} @else if not $rr-grid-mobile-first and not $is-first-breakpoint {
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $use-default)},
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-down')} {
-							@content;
-							@include generate-properties($properties);
-						}
-					} @else if $class-name != $rr-global-reset-class or not $is-first-breakpoint {
+					@if $class-name != $rr-global-reset-class or not $is-first-breakpoint {
+						// Generate normal classes
 						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $use-default)} {
 							@content;
 							@include generate-properties($properties);
+						}
+
+						// Generate hover classes
+						@if map-has-key($properties, 'hover') {
+							#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}', $use-default)} {
+								@include hover {
+									@content;
+									@include generate-properties($properties);
+								}
+							}
 						}
 					}
 				}
 			}
 		}
-
-		// Up
-		// @if not $rr-grid-mobile-first and not $is-largest-breakpoint and not $is-first-breakpoint and in-list($generate, up) {
-		// 	@include mq-up($breakpoint-name) {
-		// 		@each $class-name, $properties in $classes {
-		// 			// Breakpoint overwrites
-		// 			$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
-
-		// 			#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-up')} {
-		// 				@content;
-		// 				@include generate-properties($properties);
-		// 			}
-		// 		}
-		// 	}
-		// }
-
-		// Down
-		// @if $rr-grid-mobile-first and not $is-smallest-breakpoint and not $is-last-breakpoint and in-list($generate, down) {
-		// 	@include mq-down($breakpoint-name) {
-		// 		@each $class-name, $properties in $classes {
-		// 			// Breakpoint overwrites
-		// 			$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
-
-		// 			#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-down')} {
-		// 				@content;
-		// 				@include generate-properties($properties);
-		// 			}
-		// 		}
-		// 	}
-		// }
 
 		// Only
 		@if not $is-last-breakpoint and in-list($generate, only) {
@@ -578,9 +557,20 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 					// Breakpoint overwrites
 					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
 
-					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, '-only')} {
+					// Generate normal classes
+					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, $rr-grid-breakpoint-only-suffix-prefix)} {
 						@content;
 						@include generate-properties($properties);
+					}
+
+					// Generate hover classes
+					@if map-has-key($properties, 'hover') {
+						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}', false, $rr-grid-breakpoint-only-suffix-prefix)} {
+							@include hover {
+								@content;
+								@include generate-properties($properties);
+							}
+						}
 					}
 				}
 			}
@@ -886,9 +876,8 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 // TODOS
 ////////
 
+// PRIO 1: better mq + pointer media queries in mq
 // PRIO 2: column widths on row optionally
-// PRIO 2: better mq + pointer media queries in mq
-
 // PRIO 3: collapse cells (remove gutter per bp) (on row)
 // PRIO 3: remove unneeded output (reset on default bp etc.)
 // PRIO 3: merge duplicate output
