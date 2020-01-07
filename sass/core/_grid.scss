@@ -12,7 +12,6 @@ $rr-grid-column-class: 'column' !default;
 $rr-grid-column-auto-class: $rr-global-auto-class !default;
 $rr-grid-column-shrink-class: 'shrink' !default;
 $rr-grid-column-normal-class: 'normal' !default;
-//$rr-grid-row-reset-class: 'row-reset' !default;
 $rr-grid-reset-class: $rr-global-reset-class !default;
 $rr-grid-line-break-class: 'column-break' !default;
 $rr-grid-container-class: 'container' !default;
@@ -461,7 +460,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 // }
 
 // Generate breakpoint classes for a single property
-@mixin mq-generate-property-classes-simple($property, $values, $class-prefix, $generate: $rr-grid-breakpoint-generate, $use-default: true) {
+@mixin mq-generate-property-classes-simple($property, $values, $class-prefix: '', $generate: $rr-grid-breakpoint-generate, $use-default: true) {
 	$classes: ();
 
 	@each $value in $values {
@@ -531,14 +530,22 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 					@if $class-name != $rr-global-reset-class or not $is-first-breakpoint {
 						// Generate normal classes
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', $use-default)} {
+						#{grid-class-prefix(
+							$breakpoint-name,
+							'.#{$class-prefix}#{$class-name}',
+							$use-default
+						)} {
 							@content;
 							@include generate-properties($properties);
 						}
 
 						// Generate hover classes
 						@if map-has-key($properties, 'hover') {
-							#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}', $use-default)} {
+							#{grid-class-prefix(
+								$breakpoint-name,
+								'.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}',
+								$use-default
+							)} {
 								@include hover {
 									@content;
 									@include generate-properties($properties);
@@ -558,14 +565,24 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
 
 					// Generate normal classes
-					#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}', false, $rr-grid-breakpoint-only-suffix-prefix)} {
+					#{grid-class-prefix(
+						$breakpoint-name,
+						'.#{$class-prefix}#{$class-name}',
+						false,
+						$rr-grid-breakpoint-only-suffix-prefix
+					)} {
 						@content;
 						@include generate-properties($properties);
 					}
 
 					// Generate hover classes
 					@if map-has-key($properties, 'hover') {
-						#{grid-class-prefix($breakpoint-name, '.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}', false, $rr-grid-breakpoint-only-suffix-prefix)} {
+						#{grid-class-prefix(
+							$breakpoint-name,
+							'.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}',
+							false,
+							$rr-grid-breakpoint-only-suffix-prefix
+						)} {
 							@include hover {
 								@content;
 								@include generate-properties($properties);
@@ -652,39 +669,61 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 			@if $rr-generate-grid-breakpoints-normal {
 				@for $column-index from $breakpoint-columns through 1 {
 					// Offset
-					#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$column-index}', false)} {
+					#{grid-class-prefix(
+						$breakpoint-name,
+						'.#{$rr-grid-offset-class-prefix}#{$column-index}',
+						false
+					)} {
 						margin-left: $breakpoint-column-width * $column-index;
 					}
 
 					// Inset
-					#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$column-index}', false)} {
+					#{grid-class-prefix(
+						$breakpoint-name,
+						'.#{$rr-grid-inset-class-prefix}#{$column-index}',
+						false
+					)} {
 						//margin-left: (-$breakpoint-column-width * $column-index) - 0.02%; // @todo: old, is this -0.02 still necessary?
 						margin-left: -$breakpoint-column-width * $column-index;
 					}
 
 					// Breakpoint
-					#{grid-class-prefix($breakpoint-name, '.#{$column-index}', false)} {
-						//&, .#{$rr-grid-row-class}.#{$rr-grid-row-reset-class} & {
-							width: $breakpoint-column-width * $column-index;
+					#{grid-class-prefix(
+						$breakpoint-name,
+						'.#{$column-index}',
+						false
+					)} {
+						width: $breakpoint-column-width * $column-index;
 
-							@for $sub-column-index from $column-index through 1 {
-								// Offset nested
-								#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$sub-column-index}', false)} {
-									margin-left: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
-								}
-
-								// Inset nested
-								#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$sub-column-index}', false)} {
-									//margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%) - 0.02%; // @todo: old, is this -0.02 still necessary?
-									margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%);
-								}
-
-								// Breakpoint nested
-								#{grid-class-prefix($breakpoint-name, '.#{$sub-column-index}', false)} {
-									width: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
-								}
+						@for $sub-column-index from $column-index through 1 {
+							// Offset nested
+							#{grid-class-prefix(
+								$breakpoint-name,
+								'.#{$rr-grid-offset-class-prefix}#{$sub-column-index}',
+								false
+							)} {
+								margin-left: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
 							}
-						//}
+
+							// Inset nested
+							#{grid-class-prefix(
+								$breakpoint-name,
+								'.#{$rr-grid-inset-class-prefix}#{$sub-column-index}',
+								false
+							)} {
+								//margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%) - 0.02%; // @todo: old, is this -0.02 still necessary?
+								margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%);
+							}
+
+							// Breakpoint nested
+							#{grid-class-prefix(
+								$breakpoint-name,
+								'.#{$sub-column-index}',
+								false
+							)} {
+								width: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
+							}
+						}
 					}
 				}
 			}
@@ -696,27 +735,41 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 						$percent: 100% / $denominator * $numerator;
 
 						// Offset
-						#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-offset-class-prefix}#{$numerator}\\/#{$denominator}', false)} {
+						#{grid-class-prefix(
+							$breakpoint-name,
+							'.#{$rr-grid-offset-class-prefix}#{$numerator}\\/#{$denominator}',
+							false
+						)} {
 							margin-left: $percent;
 						}
 
 						// Inset
-						#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-inset-class-prefix}#{$numerator}\\/#{$denominator}', false)} {
+						#{grid-class-prefix(
+							$breakpoint-name,
+							'.#{$rr-grid-inset-class-prefix}#{$numerator}\\/#{$denominator}',
+							false
+						)} {
 							margin-left: -($percent);
 						}
 
 						// Breakpoint
-						#{grid-class-prefix($breakpoint-name, '.#{$numerator}\\/#{$denominator}', false)} {
-							//&, .#{$rr-grid-row-class}.#{$rr-grid-row-reset-class} & {
-								width: $percent;
-							//}
+						#{grid-class-prefix(
+							$breakpoint-name,
+							'.#{$numerator}\\/#{$denominator}',
+							false
+						)} {
+							width: $percent;
 						}
 					}
 				}
 			}
 
 			// Column (all) reset
-			#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-reset-class}', false)} {
+			#{grid-class-prefix(
+				$breakpoint-name,
+				'.#{$rr-grid-reset-class}',
+				false
+			)} {
 				&, .#{$rr-grid-column-class} & {
 					margin-left: 0;
 				}
@@ -724,16 +777,28 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 			// Column (all) auto fill width
 			.#{$rr-grid-column-class} {
-				&#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-column-auto-class}', true)} {
+				&#{grid-class-prefix(
+					$breakpoint-name,
+					'.#{$rr-grid-column-auto-class}',
+					true
+				)} {
 					flex: 1 1 0px;
 				}
 
-				&#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-column-shrink-class}', true)} {
+				&#{grid-class-prefix(
+					$breakpoint-name,
+					'.#{$rr-grid-column-shrink-class}',
+					true
+				)} {
 					flex: 0 0 auto;
 					width: auto;
 				}
 
-				&#{grid-class-prefix($breakpoint-name, '.#{$rr-grid-column-normal-class}', true)} {
+				&#{grid-class-prefix(
+					$breakpoint-name,
+					'.#{$rr-grid-column-normal-class}',
+					true
+				)} {
 					flex: 0 0 auto;
 				}
 			}

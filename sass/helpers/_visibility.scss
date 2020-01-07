@@ -1,6 +1,32 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-visibility-class-prefix: '' !default;
+$rr-visibility-show-class: 'show' !default;
+$rr-visibility-hide-class: 'hide' !default;
+
+// Print output for this module
+$rr-generate-visibility: $rr-generate-classes !default;
+
+/**********************/
+/* OUTPUT: VISIBILITY */
+/**********************/
+
+@if $rr-generate-visibility {
+	@include mq-generate-property-classes-simple(
+		$property: 'display',
+		$values: (
+			$rr-visibility-show-class: unset,
+			$rr-visibility-show-class + '.' + $rr-grid-row-class: flex,
+			$rr-visibility-hide-class: none
+		),
+		$class-prefix: $rr-visibility-class-prefix
+	);
+}
+
 ///////
 // TODO
 ///////
 
-// PRIO 1: Visibility classes
-// PRIO 2: Exceptions for showers on special classes (.row etc.)

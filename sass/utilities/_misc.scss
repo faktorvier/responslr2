@@ -97,32 +97,18 @@
 /////////
 
 // Smart hover only for hover devices
-// @todo: mq-hover makes the file 10kb larger...
-@mixin hover($only-hover: false) {
+@mixin hover($only-hover: $rr-generate-only-hover) {
 	@if $only-hover {
-		html:not(.mobile):not(.tablet) &:hover {
+		html.can-hover &:hover {
 			@content;
 		}
 	} @else {
-		html:not(.mobile):not(.tablet) &:hover,
-		&:active,
-		&:focus {
+		html.can-hover &:hover,
+		&:focus,
+		&:active {
 			@content;
 		}
 	}
-
-	// @if not $only-hover {
-	// 	&:active,
-	// 	&:focus {
-	// 		@content;
-	// 	}
-	// }
-
-	// @include mq-hover(true) {
-	// 	&:hover {
-	// 		@content;
-	// 	}
-	// }
 }
 
 // Convert map to properties

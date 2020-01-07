@@ -38,7 +38,20 @@
 	}
 }
 
+// Hover
+:root {
+	--rr-has-hover: 0;
+}
+
+@include mq-hover() {
+	:root {
+		--rr-has-hover: 1;
+	}
+}
+
 ///////
 // TODO
 ///////
 
+// PRIO 1: Save settings in css variables, not content before
+// PRIO 1: Set css variable for has-touch via new media query for js
