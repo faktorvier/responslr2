@@ -1,7 +1,134 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-font-family-class-prefix: 'txt-' !default;
+$rr-font-size-class-prefix: 'txt-size-' !default;
+
+// Font families
+$rr-font-families: () !default;
+$rr-font-sizes: () !default;
+
+// Defaults
+$rr-font-family-map-defaults: (
+	'face': null,
+	'family': null,
+	'weight': null,
+	'style': null,
+	'line-height': null,
+	'letter-spacing': null,
+	'word-spacing': null
+) !default;
+
+$rr-font-size-map-defaults: (
+	'size': null,
+	'line-height': null,
+	'letter-spacing': null
+) !default;
+
+$rr-font-families-default: map-default($rr-font-families) !default;
+$rr-font-sizes-default: map-default($rr-font-sizes) !default;
+
+// Print output for this module
+$rr-generate-font-families: $rr-generate-classes !default;
+$rr-generate-font-sizes: $rr-generate-classes !default;
+
+////////////
+// FUNCTIONS
+////////////
+
+// Check if a font family exists
+@function font-family-exists($name) {
+	@return entry-exists($rr-font-families, $name);
+}
+
+// Check if a font size exists
+@function font-size-exists($name) {
+	@return entry-exists($rr-font-sizes, $name);
+}
+
+// Gets a font family by name
+@function font-family-entry($name: null) {
+	@return get-entry-by-name($rr-font-families, $name, $rr-font-families-default);
+}
+
+// Gets a font size by name
+@function font-size-entry($name: null) {
+	@return get-entry-by-name($rr-font-sizes, $name, $rr-font-sizes-default);
+}
+
+// Get a font family property value by name
+@function font-family-property($name, $property) {
+	@return get-entry-property(
+		$rr-font-families,
+		$name,
+		$property,
+		$rr-font-family-map-defaults,
+		$rr-font-families-default
+	);
+}
+
+// Get a font size property value by name
+@function font-size-property($name, $property) {
+	@return get-entry-property(
+		$rr-font-sizes,
+		$name,
+		$property,
+		$rr-font-size-map-defaults,
+		$rr-font-sizes-default
+	);
+}
+
+// Get a font family value by name
+@function font-family-value($name: null) {
+	@return get-entry-value($rr-font-families, $name, 'family', $rr-font-families-default);
+}
+
+// Get a font size value by name
+@function font-size-value($name: null) {
+	@return get-entry-value($rr-font-sizes, $name, 'size', $rr-font-sizes-default);
+}
+
+/////////
+// MIXINS
+/////////
+
+// Output font family by name
+@mixin font-family($name: null) {
+
+}
+
+// Output font size by name
+@mixin font-size($name: null) {
+
+}
+
+/*************************/
+/* OUTPUT: FONT FAMILIES */
+/*************************/
+
+@if $rr-generate-font-families and map-not-empty($rr-font-families) {
+	// @todo
+}
+
+/**********************/
+/* OUTPUT: FONT SIZES */
+/**********************/
+
+@if $rr-generate-font-sizes and map-not-empty($rr-font-sizes) {
+	// @todo
+}
+
 ///////
 // TODO
 ///////
 
 // PRIO 1: Font families
 // PRIO 1: Font sizes
-// PRIO 1: Text reset (everything 0 and child reset)
+
+// PRIO 2: Text reset (everything 0 and child reset)
+// PRIO 2: Text transform
+// PRIO 2: Text weight?
+
+// PRIO 3: Disable user select
