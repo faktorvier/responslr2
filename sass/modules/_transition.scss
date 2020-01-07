@@ -1,0 +1,207 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-transition-class-prefix: 'transition-' !default;
+
+// Transitions
+$rr-transitions: () !default;
+
+// Defaults
+$rr-transitions-default-duration: 0.25s !default;
+$rr-transitions-default-delay: null !default;
+$rr-transitions-default-timing-function: null !default;
+$rr-transitions-default-hardware-acceleration: true !default;
+
+$rr-transition-map-defaults: (
+	'property': null,
+	'duration': $rr-transitions-default-duration,
+	'delay': $rr-transitions-default-delay,
+	'timing-function': $rr-transitions-default-timing-function,
+	'hardware-acceleration': $rr-transitions-default-hardware-acceleration
+) !default;
+
+$rr-transitions-default: map-default($rr-transitions) !default;
+
+// Print output for this module
+$rr-generate-transitions: $rr-generate-classes !default;
+$rr-generate-transitions-breakpoints: false !default;
+
+////////////
+// FUNCTIONS
+////////////
+
+// Check if an entry exists
+@function transition-exists($name) {
+	@return entry-exists($rr-transitions, $name);
+}
+
+// Gets an entry by name
+@function transition-entry($name: null) {
+	@return get-entry-by-name($rr-transitions, $name, $rr-transitions-default);
+}
+
+// Get an entry property value by name
+@function transition-property($name, $property) {
+	@return get-entry-property(
+		$rr-transitions,
+		$name,
+		$property,
+		$rr-transition-map-defaults,
+		$rr-transitions-default
+	);
+}
+
+// Get an entry value by name
+@function transition-value($name: null) {
+	@return get-entry-value($rr-transitions, $name, 'property', $rr-transitions-default);
+}
+
+/////////////////////
+// INTERNAL FUNCTIONS
+/////////////////////
+
+// Get timing function by name
+@function transition-timing-function-by-name($names) {
+	$timing-function: ();
+
+	@each $name in $names {
+		@if is-not-null($name) {
+			@if $name == 'easeInQuad' {
+				$timing-function: append($timing-function, cubic-bezier(0.550, 0.085, 0.680, 0.530));
+			} @else if $name == 'easeInCubic' {
+				$timing-function: append($timing-function, cubic-bezier(0.550, 0.055, 0.675, 0.190));
+			} @else if $name == 'easeInQuart' {
+				$timing-function: append($timing-function, cubic-bezier(0.895, 0.030, 0.685, 0.220));
+			} @else if $name == 'easeInQuint' {
+				$timing-function: append($timing-function, cubic-bezier(0.755, 0.050, 0.855, 0.060));
+			} @else if $name == 'easeInSine' {
+				$timing-function: append($timing-function, cubic-bezier(0.470, 0.000, 0.745, 0.715));
+			} @else if $name == 'easeInExpo' {
+				$timing-function: append($timing-function, cubic-bezier(0.950, 0.050, 0.795, 0.035));
+			} @else if $name == 'easeInCirc' {
+				$timing-function: append($timing-function, cubic-bezier(0.600, 0.040, 0.980, 0.335));
+			} @else if $name == 'easeInBack' {
+				$timing-function: append($timing-function, cubic-bezier(0.600, -0.280, 0.735, 0.045));
+			} @else if $name == 'easeOutQuad' {
+				$timing-function: append($timing-function, cubic-bezier(0.250, 0.460, 0.450, 0.940));
+			} @else if $name == 'easeOutCubic' {
+				$timing-function: append($timing-function, cubic-bezier(0.215, 0.610, 0.355, 1.000));
+			} @else if $name == 'easeOutQuart' {
+				$timing-function: append($timing-function, cubic-bezier(0.165, 0.840, 0.440, 1.000));
+			} @else if $name == 'easeOutQuint' {
+				$timing-function: append($timing-function, cubic-bezier(0.230, 1.000, 0.320, 1.000));
+			} @else if $name == 'easeOutSine' {
+				$timing-function: append($timing-function, cubic-bezier(0.390, 0.575, 0.565, 1.000));
+			} @else if $name == 'easeOutExpo' {
+				$timing-function: append($timing-function, cubic-bezier(0.190, 1.000, 0.220, 1.000));
+			} @else if $name == 'easeOutCirc' {
+				$timing-function: append($timing-function, cubic-bezier(0.075, 0.820, 0.165, 1.000));
+			} @else if $name == 'easeOutBack' {
+				$timing-function: append($timing-function, cubic-bezier(0.175, 0.885, 0.320, 1.275));
+			} @else if $name == 'easeInOutQuad' {
+				$timing-function: append($timing-function, cubic-bezier(0.455, 0.030, 0.515, 0.955));
+			} @else if $name == 'easeInOutCubic' {
+				$timing-function: append($timing-function, cubic-bezier(0.645, 0.045, 0.355, 1.000));
+			} @else if $name == 'easeInOutQuart' {
+				$timing-function: append($timing-function, cubic-bezier(0.770, 0.000, 0.175, 1.000));
+			} @else if $name == 'easeInOutQuint' {
+				$timing-function: append($timing-function, cubic-bezier(0.860, 0.000, 0.070, 1.000));
+			} @else if $name == 'easeInOutSine' {
+				$timing-function: append($timing-function, cubic-bezier(0.445, 0.050, 0.550, 0.950));
+			} @else if $name == 'easeInOutExpo' {
+				$timing-function: append($timing-function, cubic-bezier(1.000, 0.000, 0.000, 1.000));
+			} @else if $name == 'easeInOutCirc' {
+				$timing-function: append($timing-function, cubic-bezier(0.785, 0.135, 0.150, 0.860));
+			} @else if $name == 'easeInOutBack' {
+				$timing-function: append($timing-function, cubic-bezier(0.680, -0.550, 0.265, 1.550));
+			} @else {
+				$timing-function: append($timing-function, $name);
+			}
+		} @else {
+			$timing-function: null;
+		}
+	}
+
+	@return $timing-function;
+}
+
+// Get css properties by name
+@function transition-css-properties-by-name($name) {
+	// Get transition property
+	$transition-property: transition-value($name);
+	$transition-duration: transition-property($name, 'duration');
+	$transition-delay: transition-property($name, 'delay');
+	$transition-timing-function: transition-timing-function-by-name(transition-property($name, 'timing-function'));
+	$transition-hardware-acceleration: transition-property($name, 'hardware-acceleration');
+
+	$return: (
+		transition-property: list-comma($transition-property),
+		transition-duration: list-comma($transition-duration),
+		transition-delay: list-comma($transition-delay),
+		transition-timing-function: list-comma($transition-timing-function)
+	);
+
+	@if $transition-hardware-acceleration {
+		$return: map-append($return, 'translateZ(0)', 'transform');
+	}
+
+	@return $return;
+}
+
+// Convert entry to css properties map
+@function transition-to-css-properties($transition) {
+	// Get properties
+	$return: transition-css-properties-by-name($transition);
+
+	// Append breakpoint overwrites if exists
+	$return: append-entry-breakpoint-overwrites(
+		$transition,
+		$return,
+		'transition-to-css-properties'
+	);
+
+	@return $return;
+}
+
+// Prepare map for property classes
+@function transition-property-classes() {
+	$property-classes: ();
+
+	@each $class-name, $transition in $rr-transitions {
+		$property-classes: map-append(
+			$property-classes,
+			transition-to-css-properties($transition),
+			$class-name
+		);
+	}
+
+	@return $property-classes;
+}
+
+/////////
+// MIXINS
+/////////
+
+// Output transition hardware acceleration
+@mixin transition-hardware-acceleration() {
+	transform: translateZ(0);
+}
+
+// Output transition by name
+@mixin transition($name: null) {
+	@include generate-properties(transition-css-properties-by-name($name));
+}
+
+/***********************/
+/* OUTPUT: TRANSITIONS */
+/***********************/
+
+@if $rr-generate-transitions and map-not-empty($rr-transitions) {
+	@include mq-generate-property-classes(
+		$classes: transition-property-classes(),
+		$class-prefix: $rr-transition-class-prefix,
+		$ignore-breakpoints: not $rr-generate-transitions-breakpoints
+	);
+}

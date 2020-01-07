@@ -1,0 +1,85 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-custom-class-prefix: '' !default;
+
+// Customs
+$rr-customs: () !default;
+
+// Defaults
+$rr-custom-map-defaults: () !default;
+
+$rr-customs-default: map-default($rr-customs) !default;
+
+// Print output for this module
+$rr-generate-customs: $rr-generate-classes !default;
+
+////////////
+// FUNCTIONS
+////////////
+
+// Check if an entry exists
+@function custom-exists($name) {
+	@return entry-exists($rr-customs, $name);
+}
+
+// Gets an entry by name
+@function custom-entry($name: null) {
+	@return get-entry-by-name($rr-customs, $name, $rr-customs-default);
+}
+
+// Get an entry property value by name
+@function custom-property($name, $property) {
+	@return get-entry-property(
+		$rr-customs,
+		$name,
+		$property,
+		$rr-custom-map-defaults,
+		$rr-customs-default
+	);
+}
+
+/////////
+// MIXINS
+/////////
+
+// Output custom by name
+@mixin custom($name: null) {
+	$custom: custom-entry($name);
+
+	@if is-not-null($custom) {
+		@include generate-properties($custom);
+	}
+}
+
+/*******************/
+/* OUTPUT: CUSTOMS */
+/*******************/
+
+@if $rr-generate-customs and map-not-empty($rr-customs) {
+	@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+		@include mq($breakpoint-name) {
+			@each $class-name, $properties in $rr-customs {
+				// Breakpoint overwrites
+				$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+
+				// Generate normal class
+				#{escape-selector('.#{$rr-custom-class-prefix}#{$class-name}')} {
+					@include generate-properties($properties);
+				}
+
+				// Generate hover classes
+				@if map-has-key($properties, 'hover') {
+					#{escape-selector('.#{$rr-custom-class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}')} {
+						@include hover {
+							@include generate-properties($properties);
+						}
+					}
+				}
+			}
+		}
+	}
+
+}

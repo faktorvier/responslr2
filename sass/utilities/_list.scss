@@ -21,3 +21,8 @@
 @function list-get-last($list) {
 	@return nth($list, length($list));
 }
+
+// Change list separator to comma
+@function list-comma($list) {
+	@return join($list, (), $separator: 'comma');
+}

@@ -52,7 +52,7 @@ $rr-global-breakpoint-classes: ();
 
 	@if is-map($name) {
 		$entry: $name;
-	} @else {
+	} @else if entry-exists($map, $name) or is-null($name) {
 		$entry: get-entry-by-name($map, $name, $default-name);
 	}
 

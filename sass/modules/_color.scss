@@ -5,9 +5,9 @@
 $rr-colors-generate-types: ('text', 'bg', 'border') !default; // text, bg, border
 
 // Classes
-$rr-color-text-prefix: 'color-' !default;
-$rr-color-background-prefix: 'bg-color-' !default;
-$rr-color-border-prefix: 'border-color-' !default;
+$rr-color-text-class-prefix: 'color-' !default;
+$rr-color-background-class-prefix: 'bg-color-' !default;
+$rr-color-border-class-prefix: 'border-color-' !default;
 
 // Colors
 $rr-colors: () !default;
@@ -16,7 +16,6 @@ $rr-colors: () !default;
 $rr-color-map-defaults: (
 	'color': null,
 	'types': $rr-colors-generate-types,
-	'breakpoints': ()
 ) !default;
 
 $rr-colors-default: map-default($rr-colors) !default;
@@ -87,8 +86,6 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 	// Get type property
 	$property-name: color-property-by-type($type);
 
-	$return: ();
-
 	// Set properties
 	$return: (
 		'hover': $rr-generate-colors-hover,
@@ -145,17 +142,17 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 @if $rr-generate-colors and map-not-empty($rr-colors) {
 	@include mq-generate-property-classes(
 		$classes: color-property-classes('text'),
-		$class-prefix: $rr-color-text-prefix
+		$class-prefix: $rr-color-text-class-prefix
 	);
 
 	@include mq-generate-property-classes(
 		$classes: color-property-classes('bg'),
-		$class-prefix: $rr-color-background-prefix
+		$class-prefix: $rr-color-background-class-prefix
 	);
 
 	@include mq-generate-property-classes(
 		$classes: color-property-classes('border'),
-		$class-prefix: $rr-color-border-prefix
+		$class-prefix: $rr-color-border-class-prefix
 	);
 }
 

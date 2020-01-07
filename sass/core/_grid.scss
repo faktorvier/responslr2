@@ -6,7 +6,7 @@
 $rr-grid-mobile-first: true !default;
 
 // Classes
-$rr-grid-breakpoint-only-suffix-prefix: '-only' !default;
+$rr-grid-breakpoint-only-class-suffix: '-only' !default;
 $rr-grid-row-class: 'row' !default;
 $rr-grid-column-class: 'column' !default;
 $rr-grid-column-auto-class: $rr-global-auto-class !default;
@@ -483,57 +483,113 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 }
 
 // Generate breakpoint classes for multiple properties
-@mixin mq-generate-property-classes($classes, $class-prefix, $generate: $rr-grid-breakpoint-generate, $use-default: true) {
-	$breakpoint-names: map-keys($rr-grid-breakpoints);
-	$first-breakpoint: nth($breakpoint-names, 1);
-	$last-breakpoint: nth($breakpoint-names, length($breakpoint-names));
-	$single-breakpoint: $first-breakpoint == $last-breakpoint;
+@mixin mq-generate-property-classes($classes, $class-prefix, $generate: $rr-grid-breakpoint-generate, $use-default: true, $ignore-breakpoints: false) {
+	@if $ignore-breakpoints {
+		@each $class-name, $properties in $classes {
+			@if $class-name != $rr-global-reset-class {
+				#{escape-selector('.#{$class-prefix}#{$class-name}')} {
+					@content;
+					@include generate-properties($properties);
+				}
 
-	@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-		$is-first-breakpoint: $breakpoint-name == $rr-grid-breakpoints-default;
-		$is-last-breakpoint: $breakpoint-name == $last-breakpoint;
-		$is-smallest-breakpoint: if($rr-grid-mobile-first, $is-first-breakpoint, $is-last-breakpoint) or $single-breakpoint;
-		$is-largest-breakpoint: if($rr-grid-mobile-first, $is-last-breakpoint, $is-first-breakpoint) or $single-breakpoint;
+				// Generate hover classes
+				@if map-has-key($properties, 'hover') {
+					#{escape-selector('.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}')} {
+						@include hover {
+							@content;
+							@include generate-properties($properties);
+						}
+					}
+				}
+			}
+		}
+	} @else {
+		$breakpoint-names: map-keys($rr-grid-breakpoints);
+		$first-breakpoint: nth($breakpoint-names, 1);
+		$last-breakpoint: nth($breakpoint-names, length($breakpoint-names));
+		$single-breakpoint: $first-breakpoint == $last-breakpoint;
 
-		// Normal
-		@if in-list($generate, normal) {
-			@include mq($breakpoint-name) {
-				// Breakpoint overwrites
-				@each $class-name, $properties in $classes {
-					@if map-has-key($properties, 'breakpoints') and not $is-first-breakpoint {
-						$breakpoint-properties: map-get($properties, 'breakpoints');
+		@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+			$is-first-breakpoint: $breakpoint-name == $rr-grid-breakpoints-default;
+			$is-last-breakpoint: $breakpoint-name == $last-breakpoint;
+			$is-smallest-breakpoint: if($rr-grid-mobile-first, $is-first-breakpoint, $is-last-breakpoint) or $single-breakpoint;
+			$is-largest-breakpoint: if($rr-grid-mobile-first, $is-last-breakpoint, $is-first-breakpoint) or $single-breakpoint;
 
-						@if map-not-empty($properties) and map-has-key($breakpoint-properties, $breakpoint-name) {
-							$properties-overwrite-raw: map-get($breakpoint-properties, $breakpoint-name);
-							$properties-overwrite: ();
+			// Normal
+			@if in-list($generate, normal) {
+				@include mq($breakpoint-name) {
+					// Breakpoint overwrites
+					@each $class-name, $properties in $classes {
+						@if map-has-key($properties, 'breakpoints') and not $is-first-breakpoint {
+							$breakpoint-properties: map-get($properties, 'breakpoints');
 
-							@each $overwrite-property, $overwrite-value in $properties-overwrite-raw {
-								$original-value: map-get($properties, $overwrite-property);
+							@if map-not-empty($properties) and map-has-key($breakpoint-properties, $breakpoint-name) {
+								$properties-overwrite-raw: map-get($breakpoint-properties, $breakpoint-name);
+								$properties-overwrite: ();
 
-								@if is-null($original-value) or $original-value != $overwrite-value {
-									$properties-overwrite: map-append($properties-overwrite, $overwrite-value, $overwrite-property);
+								@each $overwrite-property, $overwrite-value in $properties-overwrite-raw {
+									$original-value: map-get($properties, $overwrite-property);
+
+									@if is-null($original-value) or $original-value != $overwrite-value {
+										$properties-overwrite: map-append($properties-overwrite, $overwrite-value, $overwrite-property);
+									}
+								}
+
+								#{escape-selector('.#{$class-prefix}#{$class-name}')} {
+									@content;
+									@include generate-properties($properties-overwrite);
 								}
 							}
+						}
+					}
 
-							#{escape-selector('.#{$class-prefix}#{$class-name}')} {
+					// Normal breakpoint classes
+					@each $class-name, $properties in $classes {
+						// Breakpoint overwrites
+						$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+
+						@if $class-name != $rr-global-reset-class or not $is-first-breakpoint {
+							// Generate normal classes
+							#{grid-class-prefix(
+								$breakpoint-name,
+								'.#{$class-prefix}#{$class-name}',
+								$use-default
+							)} {
 								@content;
-								@include generate-properties($properties-overwrite);
+								@include generate-properties($properties);
+							}
+
+							// Generate hover classes
+							@if map-has-key($properties, 'hover') {
+								#{grid-class-prefix(
+									$breakpoint-name,
+									'.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}',
+									$use-default
+								)} {
+									@include hover {
+										@content;
+										@include generate-properties($properties);
+									}
+								}
 							}
 						}
 					}
 				}
+			}
 
-				// Normal breakpoint classes
-				@each $class-name, $properties in $classes {
-					// Breakpoint overwrites
-					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
+			// Only
+			@if not $is-last-breakpoint and in-list($generate, only) {
+				@include mq-only($breakpoint-name) {
+					@each $class-name, $properties in $classes {
+						// Breakpoint overwrites
+						$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
 
-					@if $class-name != $rr-global-reset-class or not $is-first-breakpoint {
 						// Generate normal classes
 						#{grid-class-prefix(
 							$breakpoint-name,
 							'.#{$class-prefix}#{$class-name}',
-							$use-default
+							false,
+							$rr-grid-breakpoint-only-class-suffix
 						)} {
 							@content;
 							@include generate-properties($properties);
@@ -544,48 +600,13 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 							#{grid-class-prefix(
 								$breakpoint-name,
 								'.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}',
-								$use-default
+								false,
+								$rr-grid-breakpoint-only-class-suffix
 							)} {
 								@include hover {
 									@content;
 									@include generate-properties($properties);
 								}
-							}
-						}
-					}
-				}
-			}
-		}
-
-		// Only
-		@if not $is-last-breakpoint and in-list($generate, only) {
-			@include mq-only($breakpoint-name) {
-				@each $class-name, $properties in $classes {
-					// Breakpoint overwrites
-					$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
-
-					// Generate normal classes
-					#{grid-class-prefix(
-						$breakpoint-name,
-						'.#{$class-prefix}#{$class-name}',
-						false,
-						$rr-grid-breakpoint-only-suffix-prefix
-					)} {
-						@content;
-						@include generate-properties($properties);
-					}
-
-					// Generate hover classes
-					@if map-has-key($properties, 'hover') {
-						#{grid-class-prefix(
-							$breakpoint-name,
-							'.#{$class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}',
-							false,
-							$rr-grid-breakpoint-only-suffix-prefix
-						)} {
-							@include hover {
-								@content;
-								@include generate-properties($properties);
 							}
 						}
 					}

@@ -10,8 +10,7 @@ $rr-dummies: () !default;
 
 // Defaults
 $rr-dummy-map-defaults: (
-	'xyz': null,
-	'breakpoints': ()
+	'xyz': null
 ) !default;
 
 $rr-dummies-default: map-default($rr-dummies) !default;

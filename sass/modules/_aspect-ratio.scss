@@ -3,15 +3,14 @@
 ///////////////////
 
 // Classes
-$rr-aspect-ratio-prefix: 'ar-' !default;
+$rr-aspect-ratio-class-prefix: 'ar-' !default;
 
 // Aspect ratios
 $rr-aspect-ratios: () !default;
 
 // Defaults
 $rr-aspect-ratio-map-defaults: (
-	'ratio': null,
-	'breakpoints': ()
+	'ratio': null
 ) !default;
 
 $rr-aspect-ratios-default: map-default($rr-aspect-ratios) !default;
@@ -204,7 +203,7 @@ $rr-aspect-ratio-child-reset-class-properties: (
 @if $rr-generate-aspect-ratios and map-not-empty($rr-aspect-ratios) {
 	@include mq-generate-property-classes(
 		$classes: aspect-ratio-property-classes(),
-		$class-prefix: $rr-aspect-ratio-prefix
+		$class-prefix: $rr-aspect-ratio-class-prefix
 	);
 }
 

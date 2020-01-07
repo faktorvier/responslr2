@@ -3,7 +3,7 @@
 ///////////////////
 
 // Classes
-$rr-spacing-prefix: '' !default;
+$rr-spacing-class-prefix: '' !default;
 $rr-spacings-generate-types: ('mt', 'mr', 'mb', 'ml', 'my', 'mx', 'ma', 'pt', 'pr', 'pb', 'pl', 'py', 'px', 'pa') !default;
 
 $rr-spacing-add-gutter: true !default;
@@ -14,8 +14,7 @@ $rr-spacings: () !default;
 // Defaults
 $rr-spacing-map-defaults: (
 	'spacing': null,
-	'types': $rr-spacings-generate-types,
-	'breakpoints': ()
+	'types': $rr-spacings-generate-types
 ) !default;
 
 $rr-spacings-default: map-default($rr-spacings) !default;
@@ -256,7 +255,7 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 @if $rr-generate-spacings and map-not-empty($rr-spacings) {
 	@include mq-generate-property-classes(
 		$classes: spacing-property-classes(),
-		$class-prefix: $rr-spacing-prefix
+		$class-prefix: $rr-spacing-class-prefix
 	);
 }
 

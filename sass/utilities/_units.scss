@@ -21,6 +21,15 @@
 	@return $value != null;
 }
 
+// Check if value is zero
+@function is-zero($value) {
+	@if type-of($value) == 'number' and not unitless($value) {
+		@return ($value / ($value * 0 + 1)) == 0;
+	}
+
+	@return $value == 0;
+}
+
 // Check if value is specific unit
 @function is-unit($value, $unit) {
 	@return is-number($value) and unit($value) == $unit;
