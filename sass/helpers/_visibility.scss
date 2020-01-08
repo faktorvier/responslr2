@@ -4,8 +4,8 @@
 
 // Classes
 $rr-visibility-class-prefix: '' !default;
-$rr-visibility-show-class: 'show' !default;
-$rr-visibility-hide-class: 'hide' !default;
+$rr-visibility-show-class: $rr-global-show-class !default;
+$rr-visibility-hide-class: $rr-global-hide-class !default;
 
 // Print output for this module
 $rr-generate-visibility: $rr-generate-classes !default;
@@ -25,8 +25,3 @@ $rr-generate-visibility: $rr-generate-classes !default;
 		$class-prefix: $rr-visibility-class-prefix
 	);
 }
-
-///////
-// TODO
-///////
-

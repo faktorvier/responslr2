@@ -28,6 +28,14 @@ $rr-transitions-default: map-default($rr-transitions) !default;
 $rr-generate-transitions: $rr-generate-classes !default;
 $rr-generate-transitions-breakpoints: false !default;
 
+///////////////////
+// CLASS PROPERTIES
+///////////////////
+
+$rr-transition-hardware-acceleration-class-properties: (
+	transform: translateZ(0)
+) !default;
+
 ////////////
 // FUNCTIONS
 ////////////
@@ -144,7 +152,7 @@ $rr-generate-transitions-breakpoints: false !default;
 	);
 
 	@if $transition-hardware-acceleration {
-		$return: map-append($return, 'translateZ(0)', 'transform');
+		$return: map-merge($return, $rr-transition-hardware-acceleration-class-properties);
 	}
 
 	@return $return;
@@ -186,7 +194,7 @@ $rr-generate-transitions-breakpoints: false !default;
 
 // Output transition hardware acceleration
 @mixin transition-hardware-acceleration() {
-	transform: translateZ(0);
+	@include generate-properties($rr-transition-hardware-acceleration-class-properties);
 }
 
 // Output transition by name

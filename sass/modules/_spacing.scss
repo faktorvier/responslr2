@@ -94,10 +94,7 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 			);
 		} @else if $type == 'ma' {
 			$spacing-properties: (
-				margin-top: $spacing-value,
-				margin-right: $spacing-value,
-				margin-bottom: $spacing-value,
-				margin-left: $spacing-value
+				margin: $spacing-value
 			);
 		} @else if $type == 'pt' {
 			$spacing-properties: (
@@ -127,10 +124,7 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 			);
 		}  @else if $type == 'pa' {
 			$spacing-properties: (
-				padding-top: $spacing-value,
-				padding-right: $spacing-value,
-				padding-bottom: $spacing-value,
-				padding-left: $spacing-value
+				padding: $spacing-value
 			);
 		}
 	}
@@ -220,7 +214,7 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 	}
 
 	// Append reset class
-	@if not is-empty($property-classes) and $rr-generate-spacings-reset {
+	@if $rr-generate-spacings-reset {
 		@if is-list($rr-spacings-generate-types) {
 			@each $type in $rr-spacings-generate-types {
 				$property-classes: map-append(

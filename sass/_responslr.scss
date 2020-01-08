@@ -10,13 +10,15 @@
 @import 'helpers/misc';
 @import 'helpers/position';
 @import 'helpers/visibility';
+@import 'helpers/typo';
 
 // Load modules
 @import 'modules/aspect-ratio';
 @import 'modules/color';
 @import 'modules/custom';
 @import 'modules/spacing';
-@import 'modules/typo';
+@import 'modules/typo-family';
+@import 'modules/typo-size';
 @import 'modules/transition';
 
 // Load components
@@ -41,6 +43,7 @@
 // Hover
 :root {
 	--rr-has-hover: 0;
+	--rr-settings: json-encode($rr-global-settings);
 }
 
 @include mq-hover() {

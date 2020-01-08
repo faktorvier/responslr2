@@ -1,0 +1,27 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+$rr-font-transform-class-prefix: 'txt-transform-' !default;
+
+$rr-font-transform-properties: (
+	none,
+	capitalize,
+	uppercase,
+	lowercase,
+	($rr-global-reset-class unset)
+) !default;
+
+$rr-generate-font-transform: $rr-generate-classes !default;
+
+/************************/
+/* OUTPUT: TYPO HELPERS */
+/************************/
+
+@if $rr-generate-font-transform {
+	@include mq-generate-property-classes-simple(
+		$property: 'text-transform',
+		$values: $rr-font-transform-properties,
+		$class-prefix: $rr-font-transform-class-prefix
+	);
+}

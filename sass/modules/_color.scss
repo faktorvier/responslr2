@@ -25,15 +25,6 @@ $rr-generate-colors: $rr-generate-classes !default;
 $rr-generate-colors-hover: $rr-generate-classes !default;
 $rr-generate-colors-reset: $rr-generate-colors !default;
 
-///////
-// INIT
-///////
-
-// Append reset class
-@if not is-empty($rr-colors) and $rr-generate-colors-reset {
-	$rr-colors: map-append($rr-colors, unset, $rr-global-reset-class);
-}
-
 ////////////
 // FUNCTIONS
 ////////////
@@ -107,6 +98,7 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 @function color-property-classes($type) {
 	$property-classes: ();
 
+	// Append defined classes
 	@each $class-name, $color in $rr-colors {
 		$types: color-property($class-name, 'types');
 
@@ -115,6 +107,17 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 				$property-classes,
 				color-to-css-properties($color, $type),
 				$class-name
+			);
+		}
+	}
+
+	// Append reset class
+	@if $rr-generate-colors-reset {
+		@if in-list($rr-colors-generate-types, $type) {
+			$property-classes: map-append(
+				$property-classes,
+				color-to-css-properties(unset, $type),
+				$rr-global-reset-class
 			);
 		}
 	}
