@@ -3,9 +3,8 @@
 ///////////////////
 
 $rr-position-class-prefix: '' !default;
-$rr-position-fill-parent-class: 'fill-parent' !default;
-$rr-position-fill-width-class: 'fill-width' !default;
-$rr-position-fill-height-class: 'fill-height' !default;
+$rr-position-fill-class-prefix: 'fill-' !default;
+$rr-position-positions-class-prefix: 'position-' !default;
 
 $rr-position-properties: (
 	'static',
@@ -13,11 +12,71 @@ $rr-position-properties: (
 	'absolute',
 	'fixed',
 	'sticky',
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
 ) !default;
 
 // Print output for this module
 $rr-generate-position: $rr-generate-classes !default;
+
+// Fills
+$rr-position-fill-properties: (
+	'parent': (
+		position: absolute,
+		top: 0,
+		right: 0,
+		bottom: 0,
+		left: 0
+	),
+	'height': (
+		position: absolute,
+		top: 0,
+		right: unset,
+		bottom: 0,
+		left: unset
+	),
+	'width': (
+		position: absolute,
+		top: unset,
+		right: 0,
+		bottom: unset,
+		left: 0
+	),
+	$rr-global-unset-class: (
+		position: unset,
+		top: unset,
+		right: unset,
+		bottom: unset,
+		left: unset
+	),
+) !default;
+
+// Positions
+$rr-position-positions-properties: (
+	'top': (
+		top: 0,
+	),
+	'right': (
+		right: 0,
+	),
+	'bottom': (
+		bottom: 0,
+	),
+	'left': (
+		left: 0
+	),
+	'top-' + $rr-global-unset-class: (
+		top: unset
+	),
+	'right-' + $rr-global-unset-class: (
+		right: unset
+	),
+	'bottom-' + $rr-global-unset-class: (
+		bottom: unset
+	),
+	'left-' + $rr-global-unset-class: (
+		left: unset
+	)
+) !default;
 
 /*********************/
 /* OUTPUT: POSITIONS */
@@ -30,24 +89,14 @@ $rr-generate-position: $rr-generate-classes !default;
 		$class-prefix: $rr-position-class-prefix
 	);
 
-	.#{$rr-position-fill-parent-class} {
-		position: absolute;
-		top: 0;
-		right: 0;
-		bottom: 0;
-		left: 0;
-	}
+	@include mq-generate-property-classes(
+		$classes: $rr-position-fill-properties,
+		$class-prefix: $rr-position-fill-class-prefix
+	);
 
-	.#{$rr-position-fill-width-class} {
-		position: absolute;
-		right: 0;
-		left: 0;
-	}
-
-	.#{$rr-position-fill-height-class} {
-		position: absolute;
-		top: 0;
-		bottom: 0;
-	}
+	@include mq-generate-property-classes(
+		$classes: $rr-position-positions-properties,
+		$class-prefix: $rr-position-positions-class-prefix
+	);
 }
 

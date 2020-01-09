@@ -10,7 +10,7 @@ $rr-flex-direction-properties: (
 	row-reverse,
 	column,
 	column-reverse,
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
 ) !default;
 
 // Flex wrap
@@ -20,7 +20,7 @@ $rr-flex-wrap-properties: (
 	nowrap,
 	wrap,
 	wrap-reverse,
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
 ) !default;
 
 // Flex justify
@@ -32,7 +32,7 @@ $rr-flex-justify-properties: (
 	center,
 	space-between,
 	space-around,
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
 ) !default;
 
 // Flex align
@@ -44,7 +44,7 @@ $rr-flex-align-properties: (
 	center,
 	baseline,
 	stretch,
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
 ) !default;
 
 // Flex align content
@@ -57,7 +57,7 @@ $rr-flex-align-content-properties: (
 	space-between,
 	space-around,
 	stretch,
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
 ) !default;
 
 // Flex align self
@@ -65,12 +65,27 @@ $rr-flex-align-self-class-prefix: 'align-self-' !default;
 
 $rr-flex-align-self-properties: (
 	auto,
+	normal,
 	('start' flex-start),
 	('end' flex-end),
 	center,
 	baseline,
 	stretch,
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
+) !default;
+
+// Flex justify self
+$rr-flex-justify-self-class-prefix: 'justify-self-' !default;
+
+$rr-flex-justify-self-properties: (
+	auto,
+	normal,
+	start,
+	end,
+	center,
+	baseline,
+	stretch,
+	($rr-global-unset-class unset)
 ) !default;
 
 // Flex grow
@@ -97,7 +112,7 @@ $rr-flex-order-max: 12 !default;
 $rr-flex-order-properties: (
 	('first' -1),
 	('last' $rr-flex-order-max + 1),
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
 ) !default;
 
 // Print output for this module
@@ -145,6 +160,12 @@ $rr-generate-flex: $rr-generate-classes !default;
 	);
 
 	@include mq-generate-property-classes-simple(
+		$property: 'justify-self',
+		$values: $rr-flex-justify-self-properties,
+		$class-prefix: $rr-flex-justify-self-class-prefix
+	);
+
+	@include mq-generate-property-classes-simple(
 		$property: 'flex-grow',
 		$values: $rr-flex-grow-properties,
 		$class-prefix: $rr-flex-grow-class-prefix
@@ -166,9 +187,3 @@ $rr-generate-flex: $rr-generate-classes !default;
 		$class-prefix: $rr-flex-order-class-prefix
 	);
 }
-
-///////
-// TODO
-///////
-
-// MAYBE: justify-self

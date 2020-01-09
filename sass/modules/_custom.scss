@@ -3,7 +3,7 @@
 ///////////////////
 
 // Classes
-$rr-custom-class-prefix: '' !default;
+$rr-custom-class-prefix: 'custom-' !default;
 
 // Customs
 $rr-customs: () !default;
@@ -59,27 +59,8 @@ $rr-generate-customs: $rr-generate-classes !default;
 /*******************/
 
 @if $rr-generate-customs and map-not-empty($rr-customs) {
-	@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-		@include mq($breakpoint-name) {
-			@each $class-name, $properties in $rr-customs {
-				// Breakpoint overwrites
-				$properties: grid-properties-by-breakpoint($properties, $breakpoint-name);
-
-				// Generate normal class
-				#{escape-selector('.#{$rr-custom-class-prefix}#{$class-name}')} {
-					@include generate-properties($properties);
-				}
-
-				// Generate hover classes
-				@if map-has-key($properties, 'hover') {
-					#{escape-selector('.#{$rr-custom-class-prefix}#{$class-name}#{$rr-global-hover-suffix-class}')} {
-						@include hover {
-							@include generate-properties($properties);
-						}
-					}
-				}
-			}
-		}
-	}
-
+	@include mq-generate-property-classes-custom(
+		$classes: $rr-customs,
+		$class-prefix: $rr-custom-class-prefix
+	);
 }

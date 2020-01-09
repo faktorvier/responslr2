@@ -21,7 +21,7 @@ $rr-spacings-default: map-default($rr-spacings) !default;
 
 // Print output for this module
 $rr-generate-spacings: $rr-generate-classes !default;
-$rr-generate-spacings-reset: $rr-generate-spacings !default;
+$rr-generate-spacings-unset: $rr-generate-spacings !default;
 $rr-generate-spacings-auto: $rr-generate-spacings !default;
 $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 
@@ -213,14 +213,14 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 		}
 	}
 
-	// Append reset class
-	@if $rr-generate-spacings-reset {
+	// Append unset class
+	@if $rr-generate-spacings-unset {
 		@if is-list($rr-spacings-generate-types) {
 			@each $type in $rr-spacings-generate-types {
 				$property-classes: map-append(
 					$property-classes,
 					spacing-to-css-properties(0, $type),
-					$type + '-' + $rr-global-reset-class
+					$type + '-' + $rr-global-unset-class
 				);
 			}
 		}

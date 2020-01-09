@@ -1,9 +1,44 @@
-///////
-// TODO
-///////
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
 
-// PRIO 2: overflow
-// PRIO 2: full-height, full-width
-// PRIO 2: Background sizes, background-positions
-// PRIO 2: Cursors
-// PRIO 2: Disable user selection
+// User select
+$rr-misc-user-select-disable-class: 'no-user-select' !default;
+
+// Full width/height
+$rr-misc-full-prefix-class: 'full-' !default;
+
+$rr-misc-full-properties: (
+	'width': (
+		width: 100%
+	),
+	'height': (
+		height: 100%
+	),
+	$rr-global-unset-class: (
+		height: unset,
+		width: unset
+	)
+) !default;
+
+
+// Print output for this module
+$rr-generate-misc-helpers: $rr-generate-classes !default;
+
+/************************/
+/* OUTPUT: MISC HELPERS */
+/************************/
+
+@if $rr-generate-misc-helpers {
+	// User select
+	.#{$rr-misc-user-select-disable-class} {
+		user-select: none;
+	}
+
+	// Full width/height
+	@include mq-generate-property-classes(
+		$classes: $rr-misc-full-properties,
+		$class-prefix: $rr-misc-full-prefix-class
+	);
+}
+

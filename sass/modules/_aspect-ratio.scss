@@ -17,7 +17,7 @@ $rr-aspect-ratios-default: map-default($rr-aspect-ratios) !default;
 
 // Print output for this module
 $rr-generate-aspect-ratios: $rr-generate-classes !default;
-$rr-generate-aspect-ratios-reset: $rr-generate-aspect-ratios !default;
+$rr-generate-aspect-ratios-unset: $rr-generate-aspect-ratios !default;
 
 ///////////////////
 // CLASS PROPERTIES
@@ -35,12 +35,12 @@ $rr-aspect-ratio-child-class-properties: (
 	right: 0
 ) !default;
 
-$rr-aspect-ratio-reset-class-properties: (
+$rr-aspect-ratio-unset-class-properties: (
 	position: unset,
 	padding-top: unset
 ) !default;
 
-$rr-aspect-ratio-child-reset-class-properties: (
+$rr-aspect-ratio-child-unset-class-properties: (
 	position: unset,
 	top: unset,
 	left: unset,
@@ -127,18 +127,18 @@ $rr-aspect-ratio-child-reset-class-properties: (
 		);
 	}
 
-	// Append reset class
-	@if not is-empty($property-classes) and $rr-generate-aspect-ratios-reset {
-		$reset-property: map-append(
-			$rr-aspect-ratio-reset-class-properties,
-			$rr-aspect-ratio-child-reset-class-properties,
+	// Append unset class
+	@if not is-empty($property-classes) and $rr-generate-aspect-ratios-unset {
+		$unset-property: map-append(
+			$rr-aspect-ratio-unset-class-properties,
+			$rr-aspect-ratio-child-unset-class-properties,
 			'> *'
 		);
 
 		$property-classes: map-append(
 			$property-classes,
-			$reset-property,
-			$rr-global-reset-class
+			$unset-property,
+			$rr-global-unset-class
 		);
 	}
 
@@ -181,19 +181,19 @@ $rr-aspect-ratio-child-reset-class-properties: (
 }
 
 // Output custom aspect ratio
-@mixin aspect-ratio-reset($append-child: true) {
-	@include generate-properties($rr-aspect-ratio-reset-class-properties);
+@mixin aspect-ratio-unset($append-child: true) {
+	@include generate-properties($rr-aspect-ratio-unset-class-properties);
 
 	@if $append-child {
 		> * {
-			@include aspect-ratio-child-reset();
+			@include aspect-ratio-child-unset();
 		}
 	}
 }
 
-// Output aspect ratio child reset
-@mixin aspect-ratio-child-reset() {
-	@include generate-properties($rr-aspect-ratio-child-reset-class-properties);
+// Output aspect ratio child unset
+@mixin aspect-ratio-child-unset() {
+	@include generate-properties($rr-aspect-ratio-child-unset-class-properties);
 }
 
 /*************************/

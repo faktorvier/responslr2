@@ -19,13 +19,13 @@ $rr-font-sizes-default: map-default($rr-font-sizes) !default;
 
 // Print output for this module
 $rr-generate-font-sizes: $rr-generate-classes !default;
-$rr-generate-font-sizes-reset: $rr-generate-font-sizes !default;
+$rr-generate-font-sizes-unset: $rr-generate-font-sizes !default;
 
 ///////////////////
 // CLASS PROPERTIES
 ///////////////////
 
-$rr-font-size-reset-class-properties: (
+$rr-font-size-unset-class-properties: (
 	font-size: unset,
 	line-height: unset
 ) !default;
@@ -99,12 +99,12 @@ $rr-font-size-reset-class-properties: (
 		);
 	}
 
-	// Append reset class
-	@if $rr-generate-font-sizes-reset {
+	// Append unset class
+	@if $rr-generate-font-sizes-unset {
 		$property-classes: map-append(
 			$property-classes,
-			$rr-font-size-reset-class-properties,
-			$rr-global-reset-class
+			$rr-font-size-unset-class-properties,
+			$rr-global-unset-class
 		);
 	}
 

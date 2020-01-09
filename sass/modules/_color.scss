@@ -23,7 +23,7 @@ $rr-colors-default: map-default($rr-colors) !default;
 // Print output for this module
 $rr-generate-colors: $rr-generate-classes !default;
 $rr-generate-colors-hover: $rr-generate-classes !default;
-$rr-generate-colors-reset: $rr-generate-colors !default;
+$rr-generate-colors-unset: $rr-generate-colors !default;
 
 ////////////
 // FUNCTIONS
@@ -111,13 +111,13 @@ $rr-generate-colors-reset: $rr-generate-colors !default;
 		}
 	}
 
-	// Append reset class
-	@if $rr-generate-colors-reset {
+	// Append unset class
+	@if $rr-generate-colors-unset {
 		@if in-list($rr-colors-generate-types, $type) {
 			$property-classes: map-append(
 				$property-classes,
 				color-to-css-properties(unset, $type),
-				$rr-global-reset-class
+				$rr-global-unset-class
 			);
 		}
 	}

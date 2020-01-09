@@ -9,7 +9,7 @@ $rr-font-transform-properties: (
 	capitalize,
 	uppercase,
 	lowercase,
-	($rr-global-reset-class unset)
+	($rr-global-unset-class unset)
 ) !default;
 
 $rr-generate-font-transform: $rr-generate-classes !default;

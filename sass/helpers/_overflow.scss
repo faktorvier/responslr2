@@ -1,0 +1,48 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+$rr-overflow-class-prefix: 'overflow-' !default;
+$rr-overflow-x-class-prefix: 'overflow-x-' !default;
+$rr-overflow-y-class-prefix: 'overflow-y-' !default;
+
+$rr-overflow-properties: (
+	visible,
+	hidden,
+	scroll,
+	auto,
+	($rr-global-unset-class unset)
+) !default;
+
+// Print output for this module
+$rr-generate-overflow: $rr-generate-classes !default;
+
+/*********************/
+/* OUTPUT: OVERFLOWS */
+/*********************/
+
+@if $rr-generate-overflow {
+	@if map-not-empty($rr-overflow-properties) {
+		@include mq-generate-property-classes-simple(
+			$property: 'overflow',
+			$values: $rr-overflow-properties,
+			$class-prefix: $rr-overflow-class-prefix
+		);
+	}
+
+	@if map-not-empty($rr-overflow-properties) {
+		@include mq-generate-property-classes-simple(
+			$property: 'overflow-x',
+			$values: $rr-overflow-properties,
+			$class-prefix: $rr-overflow-x-class-prefix
+		);
+	}
+
+	@if map-not-empty($rr-overflow-properties) {
+		@include mq-generate-property-classes-simple(
+			$property: 'overflow-y',
+			$values: $rr-overflow-properties,
+			$class-prefix: $rr-overflow-y-class-prefix
+		);
+	}
+}

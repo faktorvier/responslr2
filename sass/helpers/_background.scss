@@ -1,0 +1,75 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Background size
+$rr-background-size-class-prefix: 'bg-' !default;
+
+$rr-background-size-properties: (
+	cover,
+	contain,
+	auto,
+	($rr-global-unset-class unset)
+) !default;
+
+// Background position
+$rr-background-position-class-prefix: 'bg-position-' !default;
+
+$rr-background-position-properties: (
+	't': (
+		background-position: top
+	),
+	'r': (
+		background-position: right
+	),
+	'b': (
+		background-position: bottom
+	),
+	'l': (
+		background-position: left
+	),
+	'c': (
+		background-position: center
+	),
+	'lt': (
+		background-position: left top
+	),
+	'rt': (
+		background-position: right top
+	),
+	'lb': (
+		background-position: left bottom
+	),
+	'rb': (
+		background-position: right bottom
+	),
+	$rr-global-unset-class: (
+		background-position: unset
+	)
+) !default;
+
+// Print output for this module
+$rr-generate-background: $rr-generate-classes !default;
+
+/**********************/
+/* OUTPUT: BACKGROUND */
+/**********************/
+
+@if $rr-generate-background {
+	// Background size
+	@if map-not-empty($rr-background-size-properties) {
+		@include mq-generate-property-classes-simple(
+			$property: 'background-size',
+			$values: $rr-background-size-properties,
+			$class-prefix: $rr-background-size-class-prefix
+		);
+	}
+
+	// Background position
+	@if map-not-empty($rr-background-size-properties) {
+		@include mq-generate-property-classes(
+			$classes: $rr-background-position-properties,
+			$class-prefix: $rr-background-position-class-prefix
+		);
+	}
+}
