@@ -99,11 +99,11 @@
 // Smart hover only for hover devices
 @mixin hover($only-hover: $rr-generate-only-hover) {
 	@if $only-hover {
-		html.can-hover &:hover {
+		html.#{$rr-global-can-hover-class} &:hover {
 			@content;
 		}
 	} @else {
-		html.can-hover &:hover,
+		html.#{$rr-global-can-hover-class} &:hover,
 		&:focus,
 		&:active {
 			@content;

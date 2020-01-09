@@ -2,6 +2,7 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+$rr-font-fix-class: 'font-fix' !default;
 $rr-font-transform-class-prefix: 'txt-transform-' !default;
 
 $rr-font-transform-properties: (
@@ -14,10 +15,28 @@ $rr-font-transform-properties: (
 
 $rr-generate-font-transform: $rr-generate-classes !default;
 
+/////////
+// MIXINS
+/////////
+
+@mixin font-fix() {
+	font-smooth: always;
+	font-smoothing: antialiased;
+	-webkit-font-smoothing: antialiased;
+	-moz-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+
 /************************/
 /* OUTPUT: TYPO HELPERS */
 /************************/
 
+// Font fix
+.#{$rr-font-fix-class} {
+	@include font-fix();
+}
+
+// Text transform
 @if $rr-generate-font-transform {
 	@include mq-generate-property-classes-simple(
 		$property: 'text-transform',
@@ -25,3 +44,5 @@ $rr-generate-font-transform: $rr-generate-classes !default;
 		$class-prefix: $rr-font-transform-class-prefix
 	);
 }
+
+

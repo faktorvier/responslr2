@@ -19,6 +19,8 @@ $rr-grid-container-class: 'container' !default;
 $rr-grid-offset-class-prefix: 'offset-' !default;
 $rr-grid-inset-class-prefix: 'inset-' !default;
 
+$rr-grid-column-prefix-delimiter: '\\:' !default;
+
 // Breakpoints
 $rr-grid-default-breakpoints: ();
 
@@ -90,24 +92,18 @@ $rr-grid-breakpoint-fraction-steps: 6 !default;
 $rr-grid-breakpoint-generate: (normal, only);
 
 // Grid helper
-$rr-grid-helper-z-index: 100000 !default;
+$rr-grid-helper-z-index: 1000000 !default;
 $rr-grid-helper-column-background-color: rgba(36,156,213,.5) !default;
-$rr-grid-helper-column-border-color: $rr-grid-helper-column-background-color !default;
+$rr-grid-helper-column-border-color: rgba(36,156,213,.8) !default;
 $rr-grid-helper-gutter-background-color: rgba(39,174,96,.25) !default;
 
-$rr-grid-helper-info-z-index: 100001 !default;
-$rr-grid-helper-info-background-color: rgba(0,0,0,.7) !default;
-$rr-grid-helper-info-text-color: white !default;
-$rr-grid-helper-info-text-size: 18px !default;
-$rr-grid-helper-info-padding: 5px !default;
+$rr-grid-helper-info-z-index: 1000001 !default;
 $rr-grid-helper-info-position-top: auto !default;
-$rr-grid-helper-info-position-right: 10px !default;
-$rr-grid-helper-info-position-bottom: 10px !default;
-$rr-grid-helper-info-position-left: auto !default;
+$rr-grid-helper-info-position-right: auto !default;
+$rr-grid-helper-info-position-bottom: 0px !default;
+$rr-grid-helper-info-position-left: 0px !default;
 
-$rr-grid-helper-show: true !default;
-$rr-grid-helper-show-grid: $rr-grid-helper-show !default;
-$rr-grid-helper-show-breakpoint: $rr-grid-helper-show !default;
+$rr-grid-helper-enabled: true !default;
 
 $rr-grid-helper-info-class: 'responslr-grid-helper-info' !default;
 $rr-grid-helper-grid-class: 'responslr-grid-helper' !default;
@@ -246,7 +242,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	@if is-empty($breakpoint-name) or (grid-is-default($breakpoint-name) and $use-default) {
 		$selector: $class;
 	} @else {
-		$selector: str-insert($class, '#{$breakpoint-name}#{$bp-suffix}\\:', 2);
+		$selector: str-insert($class, '#{$breakpoint-name}#{$bp-suffix}#{$rr-grid-column-prefix-delimiter}', 2);
 	}
 
 
@@ -357,7 +353,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		}
 
 		//$media: 'only screen' + $breakpoint-min + $breakpoint-max + $breakpoint-orientation + ', print';
-		$media: 'only screen' + $breakpoint-min + $breakpoint-max + $breakpoint-orientation;
+		$media: 'screen' + $breakpoint-min + $breakpoint-max + $breakpoint-orientation;
 
 		@media #{$media} { @content; };
 	} @else {
@@ -416,6 +412,13 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	}
 }
 
+// Media query primary input mechanism cant hover
+@mixin mq-touch() {
+	@media (hover: none) {
+		@content;
+	}
+}
+
 // Media query main pointer is mouse
 // @mixin mq-mouse() {
 // 	@include mq($min-width: $name, $max-width: $name, $pointer: mouse) {
@@ -426,12 +429,6 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 // 	//     /* ... */
 // 	// }
 // }
-
-// Media query main pointer is finger
-// @mixin mq-touch() {
-// 	@include mq($min-width: $name, $max-width: $name, $pointer: finger) {
-// 		@content;
-// 	}
 
 // 	// /* smartphones, touchscreens */
 // 	// @media (hover: none) and (pointer: coarse) {
@@ -654,13 +651,13 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	}
 
 	// Row
-	.#{$rr-grid-row-class}:not(tr) {
+	.#{$rr-grid-row-class} {
 		display: flex;
 		flex-wrap: wrap;
 	}
 
 	// Column
-	.#{$rr-grid-column-class}:not(td):not(th) {
+	.#{$rr-grid-column-class} {
 		flex: 0 0 auto;
 		width: 100%;
 	}
@@ -868,35 +865,42 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 @if $rr-generate-grid-helper {
 	.#{$rr-grid-helper-info-class} {
+		display: inline-flex;
+		align-items: center;;
 		position: fixed;
 		z-index: $rr-grid-helper-info-z-index;
-		padding: $rr-grid-helper-info-padding;
-		background-color: $rr-grid-helper-info-background-color;
-		color: $rr-grid-helper-info-text-color;
-		font-size: $rr-grid-helper-info-text-size;
-		line-height: 1;
+		top: $rr-grid-helper-info-position-top;
+		right: $rr-grid-helper-info-position-right;
+		bottom: $rr-grid-helper-info-position-bottom;
+		left: $rr-grid-helper-info-position-left;
+		padding: 7px;
+		background-color: rgba(black, 0.7);
+		color: white;
+		font-size: 18px;
+		font-family: 'Courier New', monospace;
+		font-weight: bold;
+		line-height: 14px;
 
-		@if is-number($rr-grid-helper-info-position-top) {
-			top: $rr-grid-helper-info-position-top;
+		&::before {
+			font-size: 1em;
+			text-transform: uppercase;
+			content: var(--rr-current-breakpoint);
 		}
 
-		@if is-number($rr-grid-helper-info-position-right) {
-			right: $rr-grid-helper-info-position-right;
-		}
-
-		@if is-number($rr-grid-helper-info-position-bottom) {
-			bottom: $rr-grid-helper-info-position-bottom;
-		}
-
-		@if is-number($rr-grid-helper-info-position-left) {
-			left: $rr-grid-helper-info-position-left;
-		}
-
-		span + input[type=checkbox] {
+		input[type=checkbox] {
 			margin: 0 !important;
-			margin-left: $rr-grid-helper-info-padding !important;
-			height: 1em !important;
-			width: 1em !important;
+			margin-left: 8px !important;
+			height: 15px !important;
+			width: 15px  !important;
+			background-color: white !important;
+			border: 1px solid rgba(black, 0.8);
+			appearance: none !important;
+			outline: none !important;
+			box-shadow: none !important;
+
+			&:checked {
+				background-color: #17d996 !important;
+			}
 		}
 	}
 
@@ -916,10 +920,11 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		}
 
 		.#{$rr-grid-column-class} {
-			display: inline-block;
 			height: 100%;
 
-			div {
+			&::before {
+				content: '';
+				display: block;
 				height: 100%;
 				background-color: $rr-grid-helper-column-background-color;
 				border-left: 1px solid $rr-grid-helper-column-border-color;
@@ -954,11 +959,11 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 		$breakpoint-map: (
 			$breakpoint-key: (
-				name: $breakpoint-key,
-				maxWidth: $max-width-value,
-				minWidth: $min-width-value,
-				columns: grid-breakpoint-property($breakpoint-key, 'columns'),
-				gutter: grid-gutter($breakpoint-key)
+				'name': $breakpoint-key,
+				'maxWidth': $max-width-value,
+				'minWidth': $min-width-value,
+				'columns': grid-breakpoint-property($breakpoint-key, 'columns'),
+				'gutter': grid-gutter($breakpoint-key)
 			)
 		);
 
@@ -966,19 +971,18 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	}
 
 	$grid-settings: (
-		mobileFirst: $rr-grid-mobile-first,
-		containerClass: $rr-grid-container-class,
-		rowClass: $rr-grid-row-class,
-		columnClass: $rr-grid-column-class,
-		breakpoints: $grid-breakpoints,
-		helper: (
-			infoId: $rr-grid-helper-info-class,
-			gridId: $rr-grid-helper-grid-class,
-			gridShowerClass: $rr-grid-helper-grid-shower-class,
-
-			show: $rr-grid-helper-show,
-			gridShow: $rr-grid-helper-show-grid,
-			breakpointShow: $rr-grid-helper-show-breakpoint
+		'breakpoints': $grid-breakpoints,
+		'classes': (
+			'container': $rr-grid-container-class,
+			'row': $rr-grid-row-class,
+			'column': $rr-grid-column-class,
+			'delimiter': $rr-grid-column-prefix-delimiter
+		),
+		'helper': (
+			'enabled': $rr-grid-helper-enabled,
+			'infoClass': $rr-grid-helper-info-class,
+			'gridClass': $rr-grid-helper-grid-class,
+			'gridShowerClass': $rr-grid-helper-grid-shower-class,
 		)
 	);
 
@@ -986,7 +990,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 }
 
 ///////
-// TODO
+// INFO
 ///////
 
 // https://medium.com/@ferie/detect-a-touch-device-with-only-css-9f8e30fa1134
