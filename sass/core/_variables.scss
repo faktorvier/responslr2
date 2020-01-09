@@ -1,0 +1,43 @@
+// Add core settings
+$rr-global-settings: map-merge(
+	$rr-global-settings,
+	(
+		'core': (
+			'canHoverClass': $rr-global-can-hover-class,
+			'canTouchClass': $rr-global-can-touch-class
+		)
+	)
+);
+
+// Main settings
+:root {
+	--rr-can-hover: false;
+	--rr-can-touch: false;
+
+	@if $rr-generate-settings and is-not-empty($rr-generate-settings) {
+		--rr-settings: '#{inspect(json-encode($rr-global-settings))}';
+	}
+}
+
+// Breakpoint settings
+@each $breakpoint-key, $breakpoint-list in $rr-grid-breakpoints {
+	@include mq($breakpoint-key) {
+		:root {
+			--rr-current-breakpoint: '#{inspect($breakpoint-key)}';
+		}
+	}
+}
+
+// Features
+@include mq-hover() {
+	:root {
+		--rr-can-hover: true;
+	}
+}
+
+@include mq-touch() {
+	:root {
+		--rr-can-touch: true;
+	}
+}
+
