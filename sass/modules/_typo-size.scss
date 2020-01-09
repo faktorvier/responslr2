@@ -21,6 +21,15 @@ $rr-font-sizes-default: map-default($rr-font-sizes) !default;
 $rr-generate-font-sizes: $rr-generate-classes !default;
 $rr-generate-font-sizes-reset: $rr-generate-font-sizes !default;
 
+///////////////////
+// CLASS PROPERTIES
+///////////////////
+
+$rr-font-size-reset-class-properties: (
+	font-size: unset,
+	line-height: unset
+) !default;
+
 ////////////
 // FUNCTIONS
 ////////////
@@ -90,6 +99,15 @@ $rr-generate-font-sizes-reset: $rr-generate-font-sizes !default;
 		);
 	}
 
+	// Append reset class
+	@if $rr-generate-font-sizes-reset {
+		$property-classes: map-append(
+			$property-classes,
+			$rr-font-size-reset-class-properties,
+			$rr-global-reset-class
+		);
+	}
+
 	@return $property-classes;
 }
 
@@ -127,8 +145,3 @@ $rr-generate-font-sizes-reset: $rr-generate-font-sizes !default;
 	);
 }
 
-///////
-// TODO
-///////
-
-// PRIO 2: Text reset

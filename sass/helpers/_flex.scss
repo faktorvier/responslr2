@@ -74,7 +74,7 @@ $rr-flex-align-self-properties: (
 ) !default;
 
 // Flex grow
-$rr-flex-grow-class-prefix: 'flex-grow-' !default;
+$rr-flex-grow-class-prefix: 'grow-' !default;
 
 $rr-flex-grow-properties: (
 	0,
@@ -82,7 +82,7 @@ $rr-flex-grow-properties: (
 ) !default;
 
 // Flex shrink
-$rr-flex-shrink-class-prefix: 'flex-shrink-' !default;
+$rr-flex-shrink-class-prefix: 'shrink-' !default;
 
 $rr-flex-shrink-properties: (
 	0,

@@ -356,7 +356,8 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 			$breakpoint-orientation: ' and (orientation: #{$media-orientation})';
 		}
 
-		$media: 'only screen' + $breakpoint-min + $breakpoint-max + $breakpoint-orientation + ', print';
+		//$media: 'only screen' + $breakpoint-min + $breakpoint-max + $breakpoint-orientation + ', print';
+		$media: 'only screen' + $breakpoint-min + $breakpoint-max + $breakpoint-orientation;
 
 		@media #{$media} { @content; };
 	} @else {
@@ -958,15 +959,9 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	$rr-global-settings: map-merge($rr-global-settings, ( grid: $grid-settings ) ) !global;
 }
 
-////////
-// TODOS
-////////
-
-// PRIO 1: better mq + pointer media queries in mq
-// PRIO 2: column widths on row optionally
-// PRIO 3: collapse cells (remove gutter per bp) (on row)
-// PRIO 3: remove unneeded output (reset on default bp etc.)
-// PRIO 3: merge duplicate output
+///////
+// TODO
+///////
 
 // https://medium.com/@ferie/detect-a-touch-device-with-only-css-9f8e30fa1134
 // https://css-tricks.com/touch-devices-not-judged-size/
