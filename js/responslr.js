@@ -32,7 +32,15 @@ function Responslr() {
 			value = defaultValue;
 		}
 
-		return JSON.parse(value.replace(/^\s+|\s+$/g,''));
+		value = value.replace(/^\s+|\s+$/g,'');
+
+		try {
+			if(value.indexOf('"') === 0 || value.indexOf("'") === 0) {
+				value = value.substring(1, value.length - 1);
+			}
+		} catch(e) {}
+
+		return value;
 	};
 
 	/* Public: Add class to root element */
@@ -52,7 +60,7 @@ function Responslr() {
 		let settings = null;
 
 		try {
-			settings = JSON.parse(settingsJson);
+			settings = JSON.parse(settingsJson.replace(/\\/g, ''));
 		} catch(e) {}
 
 		self.settings = settings;
