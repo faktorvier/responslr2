@@ -20,6 +20,7 @@ $rr-grid-offset-class-prefix: 'offset-' !default;
 $rr-grid-inset-class-prefix: 'inset-' !default;
 
 $rr-grid-column-prefix-delimiter: '\\:' !default;
+$rr-grid-column-prefix-delimiter-json: ':' !default;
 
 // Breakpoints
 $rr-grid-default-breakpoints: ();
@@ -976,7 +977,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 			'container': $rr-grid-container-class,
 			'row': $rr-grid-row-class,
 			'column': $rr-grid-column-class,
-			'delimiter': $rr-grid-column-prefix-delimiter
+			'delimiter': $rr-grid-column-prefix-delimiter-json
 		),
 		'helper': (
 			'enabled': $rr-grid-helper-enabled,

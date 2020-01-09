@@ -23,7 +23,7 @@ $rr-global-settings: map-merge(
 @each $breakpoint-key, $breakpoint-list in $rr-grid-breakpoints {
 	@include mq($breakpoint-key) {
 		:root {
-			--rr-current-breakpoint: '#{inspect($breakpoint-key)}';
+			--rr-current-breakpoint: "#{inspect($breakpoint-key)}";
 		}
 	}
 }

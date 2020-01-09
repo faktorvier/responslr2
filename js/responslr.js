@@ -209,6 +209,7 @@ function ResponslrGrid() {
 	/* Public properties */
 	this.settings = {};
 	this.breakpoint = null;
+	this.breakpointPrevious = null;
 	this.breakpoints = {};
 	this.breakpointNames = [];
 
@@ -228,17 +229,13 @@ function ResponslrGrid() {
 		self.breakpointNames = Object.keys(self.breakpoints);
 
 		// Add changed.breakpoint event
-		let previousBreakpoint = self.breakpoint;
-
 		jQuery(window).off('resize.responslr').on('resize.responslr', function() {
 			self.breakpoint = responslr.getCssVariable('current-breakpoint');
 
-			if(self.breakpoint !== previousBreakpoint) {
+			if(self.breakpoint !== self.breakpointPrevious) {
 				setHelperColumns();
-				jQuery(window).trigger('changed.breakpoint', [previousBreakpoint, self.breakpoint]);
+				self.breakpointChanged();
 			}
-
-			previousBreakpoint = self.breakpoint;
 		});
 	};
 
@@ -255,6 +252,12 @@ function ResponslrGrid() {
 	/* Public: Check if current breakpoint down */
 	this.down = function(name) {
 		return self.breakpointNames.indexOf(self.breakpoint) <= self.breakpointNames.indexOf(name);
+	};
+
+	/* Public: Trigger breakpoint change */
+	this.breakpointChanged = function() {
+		jQuery(window).trigger('changed.breakpoint', [self.breakpointPrevious, self.breakpoint]);
+		self.breakpointPrevious = self.breakpoint;
 	};
 
 	/* Private: Set helper columns */
@@ -308,16 +311,10 @@ function ResponslrGrid() {
 
 	/* Public: Hide helper */
 	this.hideHelper = function() {
-		$('.' + self.settings.helper.infoClass).remove();
-		$('.' + self.settings.helper.gridClass).remove();
+		jQuery('.' + self.settings.helper.infoClass).remove();
+		jQuery('.' + self.settings.helper.gridClass).remove();
 	};
 }
 
 var responslr = new Responslr();
 
-///////
-// TODO
-///////
-
-// MAYBE: Is document.addEventListener('touchstart', function(){}, true); still needed? (Touch device hover fix)
-// MAYBE: Is one resize trigger on load still useful/needed?
