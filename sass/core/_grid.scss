@@ -100,8 +100,10 @@ $rr-grid-helper-gutter-background-color: rgba(39,174,96,.25) !default;
 $rr-grid-helper-info-z-index: 1000001 !default;
 $rr-grid-helper-info-position-top: auto !default;
 $rr-grid-helper-info-position-right: auto !default;
-$rr-grid-helper-info-position-bottom: 0px !default;
-$rr-grid-helper-info-position-left: 0px !default;
+$rr-grid-helper-info-position-bottom: 5px !default;
+$rr-grid-helper-info-position-left: 5px !default;
+$rr-grid-helper-info-primary-color: $rr-primary-color !default;
+$rr-grid-helper-info-secondary-color: white !default;
 
 $rr-grid-helper-enabled: true !default;
 
@@ -866,7 +868,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 @if $rr-generate-grid-helper {
 	.#{$rr-grid-helper-info-class} {
 		display: inline-flex;
-		align-items: center;;
+		align-items: center;
 		position: fixed;
 		z-index: $rr-grid-helper-info-z-index;
 		top: $rr-grid-helper-info-position-top;
@@ -874,17 +876,19 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 		bottom: $rr-grid-helper-info-position-bottom;
 		left: $rr-grid-helper-info-position-left;
 		padding: 7px;
-		background-color: rgba(black, 0.7);
-		color: white;
+		background-color: rgba($rr-grid-helper-info-primary-color, 0.8);
+		border: 1px solid darken($rr-grid-helper-info-primary-color, 20%);
+		color: $rr-grid-helper-info-secondary-color;
 		font-size: 18px;
 		font-family: 'Courier New', monospace;
 		font-weight: bold;
 		line-height: 14px;
+		cursor: pointer;
 
 		&::before {
 			font-size: 1em;
 			text-transform: uppercase;
-			content: var(--rr-current-breakpoint);
+			content: var(--rr-current-breakpoint) ' ' attr(data-rr-window-width);
 		}
 
 		input[type=checkbox] {
@@ -892,14 +896,19 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 			margin-left: 8px !important;
 			height: 15px !important;
 			width: 15px  !important;
-			background-color: white !important;
-			border: 1px solid rgba(black, 0.8);
+			background-color: $rr-grid-helper-info-secondary-color !important;
+			border: 1px solid darken($rr-grid-helper-info-primary-color, 20%);
 			appearance: none !important;
 			outline: none !important;
 			box-shadow: none !important;
+			cursor: pointer !important;
+
+			&:hover {
+				background-color: lighten($rr-grid-helper-info-primary-color, 20%) !important;
+			}
 
 			&:checked {
-				background-color: #17d996 !important;
+				background-color: darken($rr-grid-helper-info-primary-color, 20%) !important;
 			}
 		}
 	}
@@ -959,11 +968,7 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 		$breakpoint-map: (
 			$breakpoint-key: (
-				'name': $breakpoint-key,
-				'maxWidth': $max-width-value,
-				'minWidth': $min-width-value,
-				'columns': grid-breakpoint-property($breakpoint-key, 'columns'),
-				'gutter': grid-gutter($breakpoint-key)
+				'columns': grid-breakpoint-property($breakpoint-key, 'columns')
 			)
 		);
 

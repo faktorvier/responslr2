@@ -22,6 +22,36 @@ function Responslr() {
 		self.grid.init();
 	};
 
+	/* Public: Check if host name is exactly */
+	this.hostIs = function(...hosts) {
+		var match = false;
+
+		for(hostIndex in hosts) {
+			match = document.location.hostname.match(new RegExp('^' + hosts[hostIndex] + '$', 'i')) !== null;
+
+			if(match) {
+				break;
+			}
+		}
+
+		return match;
+	}
+
+	/* Public: Check if host name begins with */
+	this.hostBeginsWith = function(...hosts) {
+		var match = false;
+
+		for(hostIndex in hosts) {
+			match = document.location.hostname.match(new RegExp('^' + hosts[hostIndex], 'i')) !== null;
+
+			if(match) {
+				break;
+			}
+		}
+
+		return match;
+	}
+
 	/* Public: Get css variable */
 	this.getCssVariable = function(name, defaultValue) {
 		defaultValue = defaultValue || null;
@@ -223,6 +253,7 @@ function ResponslrGrid() {
 
 	/* Private properties */
 	let self = this;
+	let $helperInfo = null;
 
 	/* Public: Init responslr */
 	this.init = function() {
@@ -238,12 +269,7 @@ function ResponslrGrid() {
 
 		// Add changed.breakpoint event
 		jQuery(window).off('resize.responslr').on('resize.responslr', function() {
-			self.breakpoint = responslr.getCssVariable('current-breakpoint');
-
-			if(self.breakpoint !== self.breakpointPrevious) {
-				setHelperColumns();
-				self.breakpointChanged();
-			}
+			self.checkBreakpointChange();
 		});
 	};
 
@@ -262,6 +288,25 @@ function ResponslrGrid() {
 		return self.breakpointNames.indexOf(self.breakpoint) <= self.breakpointNames.indexOf(name);
 	};
 
+	/* Public: Trigger breakpoint init */
+	this.initBreakpoints = function() {
+		self.checkBreakpointChange();
+	};
+
+	/* Public: Check for breakpoint change */
+	this.checkBreakpointChange = function() {
+		self.breakpoint = responslr.getCssVariable('current-breakpoint');
+
+		if(self.breakpoint !== self.breakpointPrevious) {
+			setHelperColumns();
+			self.breakpointChanged();
+		}
+
+		if(self.settings.helper.enabled) {
+			$helperInfo.attr('data-rr-window-width', window.innerWidth);
+		}
+	};
+
 	/* Public: Trigger breakpoint change */
 	this.breakpointChanged = function() {
 		jQuery(window).trigger('changed.breakpoint', [self.breakpointPrevious, self.breakpoint]);
@@ -271,7 +316,13 @@ function ResponslrGrid() {
 	/* Private: Set helper columns */
 	var setHelperColumns = function() {
 		if(self.settings.helper.enabled) {
-			let $row = jQuery('.responslr-grid-helper').children();
+			let columnsCount = self.settings.breakpoints[self.breakpoint].columns;
+			let $row = jQuery('.' + self.settings.helper.gridClass).children();
+
+			// Skip if column count not changed
+			if(columnsCount === $row.children().length) {
+				return;
+			}
 
 			// Reset previous columns
 			$row.html('');
@@ -284,7 +335,7 @@ function ResponslrGrid() {
 			});
 
 			// Append columns
-			for(let columnIndex = 1; columnIndex <= self.settings.breakpoints[self.breakpoint].columns; columnIndex++) {
+			for(let columnIndex = 1; columnIndex <= columnsCount; columnIndex++) {
 				jQuery('<div class="' + classes.join(' ') + '"></div>').appendTo($row);
 			}
 		}
@@ -299,9 +350,27 @@ function ResponslrGrid() {
 			let $grid = jQuery('<div class="' + self.settings.helper.gridClass + '"></div>');
 			let $row = jQuery('<div class="' + self.settings.classes.row + ' ' + self.settings.classes.container + '"></div>');
 
-			// Bind toggle event
+			// Bind events
 			$toggle.on('change.responslr', function() {
 				$grid.toggleClass(self.settings.helper.gridShowerClass);
+			});
+
+			$toggle.on('click.responslr', function(e) {
+				e.stopPropagation();
+			});
+
+			$info.on('click.responslr', function(e) {
+				if($info.css('left') !== 'auto') {
+					$info.css({
+						'left': 'auto',
+						'right': $info.css('left')
+					});
+				} else {
+					$info.css({
+						'left': $info.css('right'),
+						'right': 'auto'
+					});
+				}
 			});
 
 			// Append grid to document
@@ -311,6 +380,8 @@ function ResponslrGrid() {
 			// Append info to document
 			$toggle.appendTo($info);
 			$info.appendTo('body');
+
+			$helperInfo = $info;
 
 			// Set columns
 			setHelperColumns();
