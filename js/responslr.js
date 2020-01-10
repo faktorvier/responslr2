@@ -359,19 +359,19 @@ function ResponslrGrid() {
 				e.stopPropagation();
 			});
 
-			$info.on('click.responslr', function(e) {
-				if($info.css('left') !== 'auto') {
-					$info.css({
-						'left': 'auto',
-						'right': $info.css('left')
-					});
-				} else {
-					$info.css({
-						'left': $info.css('right'),
-						'right': 'auto'
-					});
-				}
-			});
+			// $info.on('click.responslr', function(e) {
+			// 	if($info.css('left') !== 'auto') {
+			// 		$info.css({
+			// 			'left': 'auto',
+			// 			'right': $info.css('left')
+			// 		});
+			// 	} else {
+			// 		$info.css({
+			// 			'left': $info.css('right'),
+			// 			'right': 'auto'
+			// 		});
+			// 	}
+			// });
 
 			// Append grid to document
 			$row.appendTo($grid);
