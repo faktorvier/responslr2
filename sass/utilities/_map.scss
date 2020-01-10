@@ -32,6 +32,17 @@
 	@return $map-default;
 }
 
+// Map maybe get
+@function map-maybe-get($map, $key, $default: null) {
+	$return: $default;
+
+	@if map-has-key($map, $key) {
+		$return: map-get($map, $key);
+	}
+
+	@return $return;
+}
+
 // Append item to map
 @function map-append($map, $item, $key) {
 	$map: map-merge($map, (

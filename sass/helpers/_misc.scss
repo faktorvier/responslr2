@@ -21,24 +21,29 @@ $rr-misc-full-properties: (
 	)
 ) !default;
 
-
 // Print output for this module
 $rr-generate-misc-helpers: $rr-generate-classes !default;
 
-/************************/
-/* OUTPUT: MISC HELPERS */
-/************************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-misc-helpers {
 	// User select
-	.#{$rr-misc-user-select-disable-class} {
-		user-select: none;
-	}
+	@include add-breakpoint-classes-custom(
+		$classes: (
+			$rr-misc-user-select-disable-class: (
+				user-select: none
+			)
+		),
+		$ignore-breakpoints: true
+	);
 
-	// Full width/height
-	@include mq-generate-property-classes(
+	// Full
+	@include add-breakpoint-classes-custom(
 		$classes: $rr-misc-full-properties,
-		$class-prefix: $rr-misc-full-prefix-class
+		$class-prefix: $rr-misc-full-prefix-class,
+		$ignore-breakpoints: false
 	);
 }
 

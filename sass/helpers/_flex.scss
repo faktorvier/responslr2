@@ -118,72 +118,72 @@ $rr-flex-order-properties: (
 // Print output for this module
 $rr-generate-flex: $rr-generate-classes !default;
 
-/****************/
-/* OUTPUT: FLEX */
-/****************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-flex {
-	@include mq-generate-property-classes-simple(
-		$property: 'flex-direction',
-		$values: $rr-flex-direction-properties,
-		$class-prefix: $rr-flex-direction-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'flex-direction',
+		$class-prefix: $rr-flex-direction-class-prefix,
+		$values: $rr-flex-direction-properties
 	);
 
-	@include mq-generate-property-classes-simple(
-		$property: 'flex-wrap',
-		$values: $rr-flex-wrap-properties,
-		$class-prefix: $rr-flex-wrap-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'flex-wrap',
+		$class-prefix: $rr-flex-wrap-class-prefix,
+		$values: $rr-flex-wrap-properties
 	);
 
-	@include mq-generate-property-classes-simple(
-		$property: 'justify-content',
-		$values: $rr-flex-justify-properties,
-		$class-prefix: $rr-flex-justify-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'justify-content',
+		$class-prefix: $rr-flex-justify-class-prefix,
+		$values: $rr-flex-justify-properties
 	);
 
-	@include mq-generate-property-classes-simple(
-		$property: 'align-items',
-		$values: $rr-flex-align-properties,
-		$class-prefix: $rr-flex-align-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'align-items',
+		$class-prefix: $rr-flex-align-class-prefix,
+		$values: $rr-flex-align-properties
 	);
 
-	@include mq-generate-property-classes-simple(
-		$property: 'align-content',
-		$values: $rr-flex-align-content-properties,
-		$class-prefix: $rr-flex-align-content-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'align-content',
+		$class-prefix: $rr-flex-align-content-class-prefix,
+		$values: $rr-flex-align-content-properties
 	);
 
-	@include mq-generate-property-classes-simple(
-		$property: 'align-self',
-		$values: $rr-flex-align-self-properties,
-		$class-prefix: $rr-flex-align-self-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'align-self',
+		$class-prefix: $rr-flex-align-self-class-prefix,
+		$values: $rr-flex-align-self-properties
 	);
 
-	@include mq-generate-property-classes-simple(
-		$property: 'justify-self',
-		$values: $rr-flex-justify-self-properties,
-		$class-prefix: $rr-flex-justify-self-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'justify-self',
+		$class-prefix: $rr-flex-justify-self-class-prefix,
+		$values: $rr-flex-justify-self-properties
 	);
 
-	@include mq-generate-property-classes-simple(
-		$property: 'flex-grow',
-		$values: $rr-flex-grow-properties,
-		$class-prefix: $rr-flex-grow-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'flex-grow',
+		$class-prefix: $rr-flex-grow-class-prefix,
+		$values: $rr-flex-grow-properties
 	);
 
-	@include mq-generate-property-classes-simple(
-		$property: 'flex-shrink',
-		$values: $rr-flex-shrink-properties,
-		$class-prefix: $rr-flex-shrink-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'flex-shrink',
+		$class-prefix: $rr-flex-shrink-class-prefix,
+		$values: $rr-flex-shrink-properties
 	);
 
 	@for $order from 0 to $rr-flex-order-max + 1 {
 		$rr-flex-order-properties: append($rr-flex-order-properties, $order);
 	}
 
-	@include mq-generate-property-classes-simple(
-		$property: 'order',
-		$values: $rr-flex-order-properties,
-		$class-prefix: $rr-flex-order-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'order',
+		$class-prefix: $rr-flex-order-class-prefix,
+		$values: $rr-flex-order-properties
 	);
 }

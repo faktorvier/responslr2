@@ -78,25 +78,27 @@ $rr-position-positions-properties: (
 	)
 ) !default;
 
-/*********************/
-/* OUTPUT: POSITIONS */
-/*********************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-position {
-	@include mq-generate-property-classes-simple(
-		$property: 'position',
-		$values: $rr-position-properties,
-		$class-prefix: $rr-position-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'position',
+		$class-prefix: $rr-position-class-prefix,
+		$values: $rr-position-properties
 	);
 
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: $rr-position-fill-properties,
-		$class-prefix: $rr-position-fill-class-prefix
+		$class-prefix: $rr-position-fill-class-prefix,
+		$ignore-breakpoints: false
 	);
 
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: $rr-position-positions-properties,
-		$class-prefix: $rr-position-positions-class-prefix
+		$class-prefix: $rr-position-positions-class-prefix,
+		$ignore-breakpoints: false
 	);
 }
 

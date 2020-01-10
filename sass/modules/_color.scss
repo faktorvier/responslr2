@@ -138,24 +138,27 @@ $rr-generate-colors-unset: $rr-generate-colors !default;
 	}
 }
 
-/******************/
-/* OUTPUT: COLORS */
-/******************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-colors and map-not-empty($rr-colors) {
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: color-property-classes('text'),
-		$class-prefix: $rr-color-text-class-prefix
+		$class-prefix: $rr-color-text-class-prefix,
+		$ignore-breakpoints: false
 	);
 
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: color-property-classes('bg'),
-		$class-prefix: $rr-color-background-class-prefix
+		$class-prefix: $rr-color-background-class-prefix,
+		$ignore-breakpoints: false
 	);
 
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: color-property-classes('border'),
-		$class-prefix: $rr-color-border-class-prefix
+		$class-prefix: $rr-color-border-class-prefix,
+		$ignore-breakpoints: false
 	);
 }
 

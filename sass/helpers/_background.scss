@@ -51,25 +51,27 @@ $rr-background-position-properties: (
 // Print output for this module
 $rr-generate-background: $rr-generate-classes !default;
 
-/**********************/
-/* OUTPUT: BACKGROUND */
-/**********************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-background {
 	// Background size
 	@if map-not-empty($rr-background-size-properties) {
-		@include mq-generate-property-classes-simple(
-			$property: 'background-size',
-			$values: $rr-background-size-properties,
-			$class-prefix: $rr-background-size-class-prefix
+		@include add-breakpoint-classes-simple(
+			$property-name: 'background-size',
+			$class-prefix: $rr-background-size-class-prefix,
+			$values: $rr-background-size-properties
 		);
 	}
 
 	// Background position
 	@if map-not-empty($rr-background-size-properties) {
-		@include mq-generate-property-classes(
+		@include add-breakpoint-classes-custom(
 			$classes: $rr-background-position-properties,
-			$class-prefix: $rr-background-position-class-prefix
+			$class-prefix: $rr-background-position-class-prefix,
+			$ignore-breakpoints: false
 		);
+
 	}
 }

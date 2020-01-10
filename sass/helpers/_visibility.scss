@@ -10,18 +10,18 @@ $rr-visibility-hide-class: $rr-global-hide-class !default;
 // Print output for this module
 $rr-generate-visibility: $rr-generate-classes !default;
 
-/**********************/
-/* OUTPUT: VISIBILITY */
-/**********************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-visibility {
-	@include mq-generate-property-classes-simple(
-		$property: 'display',
+	@include add-breakpoint-classes-simple(
+		$property-name: 'display',
+		$class-prefix: $rr-visibility-class-prefix,
 		$values: (
 			$rr-visibility-show-class: unset,
 			$rr-visibility-show-class + '.' + $rr-grid-row-class: flex,
 			$rr-visibility-hide-class: none
-		),
-		$class-prefix: $rr-visibility-class-prefix
+		)
 	);
 }

@@ -26,6 +26,17 @@ $rr-generate-settings: true !default;
 $rr-global-settings: ();
 $rr-global-breakpoint-classes: ();
 
+$rr-breakpoint-classes-properties: (
+	'hover': false,
+	'properties': (),
+	'breakpoints': (),
+	'nested': (),
+	'is-unset': false,
+	'ignore-breakpoints': false
+);
+
+$rr-breakpoint-classes-properties-names: map-keys($rr-breakpoint-classes-properties);
+
 ////////////
 // FUNCTIONS
 ////////////
@@ -115,3 +126,339 @@ $rr-global-breakpoint-classes: ();
 /////////
 // MIXINS
 /////////
+
+// Add a class to the global breakpoint classes generator
+@mixin add-breakpoint-class($class-name, $class-prefix: '', $properties: (), $breakpoints: (), $nested: (), $hover: false, $ignore-breakpoints: false) {
+	$class-name-full: $class-prefix + $class-name;
+	$entry: ();
+
+	// Set hover
+	@if $hover {
+		$entry: map-append($entry, true, 'hover');
+	}
+
+	// Set properties
+	@if map-not-empty($properties) {
+		$properties: map-remove($properties, 'breakpoints', 'nested');
+		$entry: map-append($entry, $properties, 'properties');
+	}
+
+	// Set breakpoints
+	@if map-not-empty($breakpoints) {
+		$entry: map-append($entry, $breakpoints, 'breakpoints');
+	}
+
+	// Set nested selectors
+	@if map-not-empty($nested) {
+		$entry: map-append($entry, $nested, 'nested');
+	}
+
+	// Set is-unset
+	@if $class-name == $rr-global-unset-class {
+		$entry: map-append($entry, true, 'is-unset');
+	}
+
+	// Set ignore-breakpoints
+	@if $ignore-breakpoints {
+		$entry: map-append($entry, true, 'ignore-breakpoints');
+	}
+
+	$rr-global-breakpoint-classes: map-append(
+		$rr-global-breakpoint-classes,
+		$entry,
+		$class-name-full
+	) !global;
+}
+
+// Prepare custom class
+@function prepare-breakpoint-custom-class($entry-raw) {
+	$entry: ();
+	$properties: ();
+
+	@each $property-name, $property-value in $entry-raw {
+		@if in-list($rr-breakpoint-classes-properties-names, $property-name) {
+			@if $property-name == 'breakpoints' {
+				$breakpoints: ();
+
+				@each $breakpoint-name, $breakpoint-overwrites in $property-value {
+					$breakpoint-entry: prepare-breakpoint-custom-class($breakpoint-overwrites);
+					$breakpoints: map-append($breakpoints, $breakpoint-entry, $breakpoint-name);
+				}
+
+				$entry: map-append($entry, $breakpoints, 'breakpoints');
+			} @else {
+				$entry: map-append($entry, $property-value, $property-name);
+			}
+		} @else {
+			$properties: map-append($properties, $property-value, $property-name);
+		}
+	}
+
+	$entry: map-append($entry, $properties, 'properties');
+
+	@return $entry;
+
+}
+
+// Get class overwrites
+@function get-breakpoint-class-overwrites($class-entry, $breakpoint-name, $remove-duplicates: false) {
+	// Set default
+	$return: (
+		'hover': map-maybe-get($class-entry, 'hover', false),
+		'properties': map-maybe-get($class-entry, 'properties', ()),
+		'nested': map-maybe-get($class-entry, 'nested', ()),
+		'is-overwrite': false,
+		'is-unset': map-maybe-get($class-entry, 'is-unset', false),
+		'ignore-breakpoints': map-maybe-get($class-entry, 'ignore-breakpoints', false)
+	);
+
+	// Get overwrites
+	$breakpoints: map-get($class-entry, 'breakpoints');
+
+	@if is-not-null($breakpoints) {
+		$breakpoint-entry: map-get($breakpoints, $breakpoint-name);
+
+		@if is-not-null($breakpoint-entry) {
+			$overwrite-hover: map-get($breakpoint-entry, 'hover');
+			$overwrite-properties: map-get($breakpoint-entry, 'properties');
+			$overwrite-nested: map-get($breakpoint-entry, 'nested');
+			$overwrite-is-unset: map-get($breakpoint-entry, 'is-unset');
+			$overwrite-ignore-breakpoints: map-get($breakpoint-entry, 'ignore-breakpoints');
+
+			$return: map-merge($return, ('is-overwrite': true));
+
+			// @if is-not-null($overwrite-hover) {
+			// 	$return: map-merge($return, ('hover': $overwrite-hover));
+			// }
+
+			@if is-not-null($overwrite-properties) {
+				$return: map-merge($return, ('properties': $overwrite-properties));
+			}
+
+			@if is-not-null($overwrite-nested) {
+				$return: map-merge($return, ('nested': $overwrite-nested));
+			}
+
+			// @if is-not-null($overwrite-is-unset) {
+			// 	$return: map-merge($return, ('is-unset': $overwrite-is-unset));
+			// }
+
+			// @if is-not-null($overwrite-ignore-breakpoints) {
+			// 	$return: map-merge($return, ('ignore-breakpoints': $overwrite-ignore-breakpoints));
+			// }
+		}
+
+		// Remove duplicates
+		@if $remove-duplicates {
+			// Properties
+			$properties-filtered: ();
+
+			@each $property-name, $overwrite-value in map-get($return, 'properties') {
+				$original-value: map-get(map-get($class-entry, 'properties'), $property-name);
+
+				@if $original-value != $overwrite-value {
+					$properties-filtered: map-append($properties-filtered, $overwrite-value, $property-name);
+				}
+			}
+
+			$return: map-merge($return, ('properties': $properties-filtered));
+
+			// Nested
+			$nested-filtered: ();
+
+			@each $property-name, $nested-value in map-get($return, 'nested') {
+				$original-value: map-get(map-get($class-entry, 'nested'), $property-name);
+
+				@if $original-value != $nested-value {
+					$nested-filtered: map-append($nested-filtered, $nested-value, $property-name);
+				}
+			}
+
+			$return: map-merge($return, ('nested': $nested-filtered));
+		}
+	}
+
+	@return $return;
+}
+
+// Add custom classes
+@mixin add-breakpoint-classes-custom($classes, $class-prefix: '', $hover: false, $ignore-breakpoints: false) {
+	@each $class-name, $entry-raw in $classes {
+		// Prepare entry
+		$entry: prepare-breakpoint-custom-class($entry-raw);
+
+		// Add class
+		@include add-breakpoint-class(
+			$class-name: $class-name,
+			$class-prefix: $class-prefix,
+			$hover: $hover,
+			$properties: map-maybe-get($entry, 'properties', ()),
+			$breakpoints: map-maybe-get($entry, 'breakpoints', ()),
+			$nested: map-maybe-get($entry, 'nested', ()),
+			$ignore-breakpoints: map-maybe-get($entry, 'ignore-breakpoints', $ignore-breakpoints)
+		);
+	}
+}
+
+// Add multiple simple classes with one property to the breakpoint classes generator
+@mixin add-breakpoint-classes-simple($property-name, $class-prefix: '', $values: (), $hover: false) {
+	@each $value in $values {
+		$class-name: $value;
+		$property-value: $value;
+
+		@if is-list($value) {
+			$class-name: nth($value, 1);
+			$property-value: nth($value, 2);
+		}
+
+		@include add-breakpoint-class(
+			$class-name: $class-name,
+			$class-prefix: $class-prefix,
+			$hover: $hover,
+			$properties: (
+				$property-name: $property-value
+			)
+		);
+	}
+}
+
+// Generate a single breakpoint class
+@mixin generate-breakpoint-class($class-entry, $class-name, $breakpoint-name, $use-default: true, $use-prefix: true, $bp-suffix: '') {
+	$properties: map-get($class-entry, 'properties');
+	$nested: map-get($class-entry, 'nested');
+	$generate-hover: map-get($class-entry, 'hover');
+
+	// Get selector
+	$selector: '';
+
+	@if $use-prefix {
+		$selector: grid-class-prefix(
+			$breakpoint-name: $breakpoint-name,
+			$class: '.#{$class-name}',
+			$bp-suffix: $bp-suffix,
+			$use-default: $use-default
+		)
+	} @else {
+		$selector: escape-selector('.#{$class-name}');
+	}
+
+	// Normal classes
+	#{$selector} {
+		@include generate-properties($properties);
+
+		@each $nested-selector, $nested-properties in $nested {
+			#{inspect(escape-selector($nested-selector))} {
+				@include generate-properties($nested-properties);
+			}
+		}
+	}
+
+	// Hover classes
+	@if $generate-hover {
+		#{$selector}#{$rr-global-hover-suffix-class} {
+			@include hover {
+				@include generate-properties($properties);
+			}
+
+			@each $nested-selector, $nested-properties in $nested {
+				#{inspect(escape-selector($nested-selector))} {
+					@include generate-properties($nested-properties);
+				}
+			}
+		}
+	}
+}
+
+// Generate breakpoint classes
+@mixin generate-breakpoint-classes() {
+	$breakpoint-names: map-keys($rr-grid-breakpoints);
+	$first-breakpoint: nth($breakpoint-names, 1);
+	$last-breakpoint: nth($breakpoint-names, length($breakpoint-names));
+
+	@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+		$is-first-breakpoint: $breakpoint-name == $rr-grid-breakpoints-default;
+		$is-last-breakpoint: $breakpoint-name == $last-breakpoint;
+
+		// Breakpoint: Normal
+		@include mq($breakpoint-name) {
+			// Breakpoint overwrites
+			@each $class-name, $class-entry-raw in $rr-global-breakpoint-classes {
+				// Get overwrites
+				$class-entry: get-breakpoint-class-overwrites(
+					$class-entry: $class-entry-raw,
+					$breakpoint-name: $breakpoint-name,
+					$remove-duplicates: not $is-first-breakpoint
+				);
+
+				//$ignore-breakpoints: map-get($class-entry, 'ignore-breakpoints');
+				$is-overwrite: map-get($class-entry, 'is-overwrite');
+				$is-unset: map-get($class-entry, 'is-unset');
+
+				// Generate output
+				@if $is-overwrite and not $is-unset and not $is-first-breakpoint {
+					@include generate-breakpoint-class(
+						$class-entry: $class-entry,
+						$class-name: $class-name,
+						$breakpoint-name: $breakpoint-name,
+						$use-prefix: false
+					);
+				}
+			}
+
+			// Normal breakpoint classes
+			@each $class-name, $class-entry-raw in $rr-global-breakpoint-classes {
+				// Get overwrites
+				$class-entry: get-breakpoint-class-overwrites(
+					$class-entry: $class-entry-raw,
+					$breakpoint-name: $breakpoint-name
+				);
+
+				$ignore-breakpoints: map-get($class-entry, 'ignore-breakpoints');
+				$is-unset: map-get($class-entry, 'is-unset');
+
+				// Generate output
+				@if (not $ignore-breakpoints or $is-first-breakpoint) and (not $is-unset or not $is-first-breakpoint) {
+					@include generate-breakpoint-class(
+						$class-entry: $class-entry,
+						$class-name: $class-name,
+						$breakpoint-name: $breakpoint-name,
+						$use-prefix: true
+					);
+				}
+			}
+		}
+
+		// Breakpoint: Only
+		@if $rr-grid-breakpoint-generate-only and not $is-last-breakpoint {
+			@include mq-only($breakpoint-name) {
+				@each $class-name, $class-entry-raw in $rr-global-breakpoint-classes {
+					// Get overwrites
+					$class-entry: get-breakpoint-class-overwrites(
+						$class-entry: $class-entry-raw,
+						$breakpoint-name: $breakpoint-name
+					);
+
+					$ignore-breakpoints: map-get($class-entry, 'ignore-breakpoints');
+
+					// Generate output
+					@if not $ignore-breakpoints {
+						@include generate-breakpoint-class(
+							$class-entry: $class-entry,
+							$class-name: $class-name,
+							$breakpoint-name: $breakpoint-name,
+							$use-default: false,
+							$use-prefix: true,
+							$bp-suffix: $rr-grid-breakpoint-only-class-suffix
+						);
+					}
+				}
+			}
+		}
+	}
+}
+
+///////
+// TODO
+///////
+
+// get-breakpoint-class-overwrites recursive duplicate checker

@@ -100,7 +100,9 @@ $rr-aspect-ratio-child-unset-class-properties: (
 		$rr-aspect-ratio-class-properties,
 		(
 			padding-top: aspect-ratio-value($aspect-ratio, true),
-			'> *': $rr-aspect-ratio-child-class-properties
+			'nested': (
+				'> *': $rr-aspect-ratio-child-class-properties
+			)
 		)
 	);
 
@@ -132,7 +134,10 @@ $rr-aspect-ratio-child-unset-class-properties: (
 		$unset-property: map-append(
 			$rr-aspect-ratio-unset-class-properties,
 			$rr-aspect-ratio-child-unset-class-properties,
-			'> *'
+			(
+				'> *': $rr-aspect-ratio-child-unset-class-properties
+			)
+			'nested'
 		);
 
 		$property-classes: map-append(
@@ -196,14 +201,15 @@ $rr-aspect-ratio-child-unset-class-properties: (
 	@include generate-properties($rr-aspect-ratio-child-unset-class-properties);
 }
 
-/*************************/
-/* OUTPUT: ASPECT RATIOS */
-/*************************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-aspect-ratios and map-not-empty($rr-aspect-ratios) {
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: aspect-ratio-property-classes(),
-		$class-prefix: $rr-aspect-ratio-class-prefix
+		$class-prefix: $rr-aspect-ratio-class-prefix,
+		$ignore-breakpoints: false
 	);
 }
 

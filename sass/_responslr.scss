@@ -1,3 +1,5 @@
+@debug 'start';
+
 // Load core
 @import 'core/core';
 @import 'core/normalize';
@@ -32,3 +34,11 @@
 /******************************/
 
 @import 'core/variables';
+
+/*******************/
+/* OUTPUT: CLASSES */
+/*******************/
+
+@include generate-breakpoint-classes();
+
+@debug 'end';

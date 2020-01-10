@@ -114,16 +114,8 @@
 // Convert map to properties
 @mixin generate-properties($properties) {
 	@each $property-name, $property-value in $properties {
-		@if is-not-null($property-value) and $property-name != 'breakpoints' and $property-name != 'generate' and $property-name != 'hover'  {
-			@if is-map($property-value) {
-				#{$property-name} {
-					@include generate-properties($property-value);
-				}
-			} @else {
-				#{$property-name}: #{$property-value};
-			}
+		@if is-not-null($property-value) and is-string($property-name) {
+			#{$property-name}: #{$property-value};
 		}
 	}
-
-	@content;
 }

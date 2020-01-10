@@ -3,7 +3,7 @@
 ///////////////////
 
 // Classes
-$rr-custom-class-prefix: 'custom-' !default;
+$rr-custom-class-prefix: '' !default;
 
 // Customs
 $rr-customs: () !default;
@@ -54,13 +54,14 @@ $rr-generate-customs: $rr-generate-classes !default;
 	}
 }
 
-/*******************/
-/* OUTPUT: CUSTOMS */
-/*******************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-customs and map-not-empty($rr-customs) {
-	@include mq-generate-property-classes-custom(
+	@include add-breakpoint-classes-custom(
 		$classes: $rr-customs,
-		$class-prefix: $rr-custom-class-prefix
+		$class-prefix: $rr-custom-class-prefix,
+		$ignore-breakpoints: true
 	);
 }

@@ -145,10 +145,10 @@ $rr-generate-font-families: $rr-generate-classes !default;
 		}
 	}
 
-	// Output font families
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: font-family-property-classes(),
-		$class-prefix: $rr-font-family-class-prefix
+		$class-prefix: $rr-font-family-class-prefix,
+		$ignore-breakpoints: false
 	);
 }
 

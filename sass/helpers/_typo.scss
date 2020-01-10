@@ -15,33 +15,44 @@ $rr-font-transform-properties: (
 
 $rr-generate-font-transform: $rr-generate-classes !default;
 
+///////////////////
+// CLASS PROPERTIES
+///////////////////
+
+$rr-font-reset-class-properties: (
+	font-smooth: always,
+	font-smoothing: antialiased,
+	-webkit-font-smoothing: antialiased,
+	-moz-font-smoothing: antialiased,
+	-moz-osx-font-smoothing: grayscale
+) !default;
+
 /////////
 // MIXINS
 /////////
 
 @mixin font-fix() {
-	font-smooth: always;
-	font-smoothing: antialiased;
-	-webkit-font-smoothing: antialiased;
-	-moz-font-smoothing: antialiased;
-	-moz-osx-font-smoothing: grayscale;
+	@include generate-properties($rr-font-reset-class-properties);
 }
 
-/************************/
-/* OUTPUT: TYPO HELPERS */
-/************************/
+/////////
+// OUTPUT
+/////////
 
 // Font fix
-.#{$rr-font-fix-class} {
-	@include font-fix();
-}
+@include add-breakpoint-classes-custom(
+	$classes: (
+		$rr-font-fix-class: $rr-font-reset-class-properties
+	),
+	$ignore-breakpoints: true
+);
 
 // Text transform
 @if $rr-generate-font-transform {
-	@include mq-generate-property-classes-simple(
-		$property: 'text-transform',
-		$values: $rr-font-transform-properties,
-		$class-prefix: $rr-font-transform-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'text-transform',
+		$class-prefix: $rr-font-transform-class-prefix,
+		$values: $rr-font-transform-properties
 	);
 }
 

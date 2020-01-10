@@ -31,22 +31,22 @@ $rr-alignment-v-properties: (
 // Print output for this module
 $rr-generate-alignments: $rr-generate-classes !default;
 
-/**********************/
-/* OUTPUT: ALIGNMENTS */
-/**********************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-alignments and map-not-empty($rr-alignment-h-properties) {
-	@include mq-generate-property-classes-simple(
-		$property: 'text-align',
-		$values: $rr-alignment-h-properties,
-		$class-prefix: $rr-alignment-h-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'text-align',
+		$class-prefix: $rr-alignment-h-class-prefix,
+		$values: $rr-alignment-h-properties
 	);
 }
 
 @if $rr-generate-alignments and map-not-empty($rr-alignment-v-properties) {
-	@include mq-generate-property-classes-simple(
-		$property: 'vertical-align',
-		$values: $rr-alignment-v-properties,
-		$class-prefix: $rr-alignment-v-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'vertical-align',
+		$class-prefix: $rr-alignment-v-class-prefix,
+		$values: $rr-alignment-v-properties
 	);
 }

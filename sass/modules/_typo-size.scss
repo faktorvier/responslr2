@@ -122,26 +122,23 @@ $rr-font-size-unset-class-properties: (
 	);
 }
 
-/**********************/
-/* OUTPUT: FONT SIZES */
-/**********************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-font-sizes and map-not-empty($rr-font-sizes) {
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: font-size-property-classes(),
-		$class-prefix: $rr-font-size-class-prefix
+		$class-prefix: $rr-font-size-class-prefix,
+		$ignore-breakpoints: false
 	);
 }
 
-/**************************/
-/* OUTPUT: FONT TRANSFORM */
-/**************************/
-
 @if $rr-generate-font-transform {
-	@include mq-generate-property-classes-simple(
-		$property: 'text-transform',
-		$values: $rr-font-transform-properties,
-		$class-prefix: $rr-font-transform-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'text-transform',
+		$class-prefix: $rr-font-transform-class-prefix,
+		$values: $rr-font-transform-properties
 	);
 }
 

@@ -202,12 +202,12 @@ $rr-transition-hardware-acceleration-class-properties: (
 	@include generate-properties(transition-css-properties-by-name($name));
 }
 
-/***********************/
-/* OUTPUT: TRANSITIONS */
-/***********************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-transitions and map-not-empty($rr-transitions) {
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: transition-property-classes(),
 		$class-prefix: $rr-transition-class-prefix,
 		$ignore-breakpoints: not $rr-generate-transitions-breakpoints

@@ -242,14 +242,15 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 	}
 }
 
-/********************/
-/* OUTPUT: SPACINGS */
-/********************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-spacings and map-not-empty($rr-spacings) {
-	@include mq-generate-property-classes(
+	@include add-breakpoint-classes-custom(
 		$classes: spacing-property-classes(),
-		$class-prefix: $rr-spacing-class-prefix
+		$class-prefix: $rr-spacing-class-prefix,
+		$ignore-breakpoints: false
 	);
 }
 

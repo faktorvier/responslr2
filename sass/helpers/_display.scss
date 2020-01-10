@@ -24,14 +24,14 @@ $rr-display-properties: (
 // Print output for this module
 $rr-generate-display: $rr-generate-classes !default;
 
-/********************/
-/* OUTPUT: DISPLAYS */
-/********************/
+/////////
+// OUTPUT
+/////////
 
 @if $rr-generate-display {
-	@include mq-generate-property-classes-simple(
-		$property: 'display',
-		$values: $rr-display-properties,
-		$class-prefix: $rr-display-class-prefix
+	@include add-breakpoint-classes-simple(
+		$property-name: 'display',
+		$class-prefix: $rr-display-class-prefix,
+		$values: $rr-display-properties
 	);
 }
