@@ -730,7 +730,6 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 						'.#{$rr-grid-inset-class-prefix}#{$column-index}',
 						false
 					)} {
-						//margin-left: (-$breakpoint-column-width * $column-index) - 0.02%; // @todo: old, is this -0.02 still necessary?
 						margin-left: -$breakpoint-column-width * $column-index;
 					}
 
@@ -758,7 +757,6 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 								'.#{$rr-grid-inset-class-prefix}#{$sub-column-index}',
 								false
 							)} {
-								//margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%) - 0.02%; // @todo: old, is this -0.02 still necessary?
 								margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%);
 							}
 
