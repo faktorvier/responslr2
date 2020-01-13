@@ -262,19 +262,6 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	@return escape-selector($selector);
 }
 
-// Get properties by breakpoint
-@function grid-properties-by-breakpoint($properties, $breakpoint-name) {
-	@if map-has-key($properties, 'breakpoints') and $breakpoint-name != $rr-grid-breakpoints-default {
-		$breakpoint-properties: map-get($properties, 'breakpoints');
-
-		@if map-not-empty($properties) and map-has-key($breakpoint-properties, $breakpoint-name) {
-			$properties: map-get($breakpoint-properties, $breakpoint-name);
-		}
-	}
-
-	@return $properties;
-}
-
 /////////
 // MIXINS
 /////////

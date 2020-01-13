@@ -15,14 +15,16 @@ $rr-overflow-properties: (
 
 // Print output for this module
 $rr-generate-overflow: $rr-generate-classes !default;
+$rr-generate-overflow-x: $rr-generate-overflow !default;
+$rr-generate-overflow-y: $rr-generate-overflow !default;
 
 /////////
 // OUTPUT
 /////////
 
 @mixin generate-overflow-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	// Overflow
 	@if $rr-generate-overflow {
-		// Overflow
 		@include generate-output-by-property(
 			$property: 'overflow',
 			$values: $rr-overflow-properties,
@@ -30,8 +32,10 @@ $rr-generate-overflow: $rr-generate-classes !default;
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
+	}
 
-		// Overflow x
+	// Overflow x
+	@if $rr-generate-overflow-x {
 		@include generate-output-by-property(
 			$property: 'overflow-x',
 			$values: $rr-overflow-properties,
@@ -39,8 +43,10 @@ $rr-generate-overflow: $rr-generate-classes !default;
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
+	}
 
-		// Overflow y
+	// Overflow y
+	@if $rr-generate-overflow-y {
 		@include generate-output-by-property(
 			$property: 'overflow-y',
 			$values: $rr-overflow-properties,

@@ -72,14 +72,16 @@ $rr-position-positions-properties: (
 
 // Print output for this module
 $rr-generate-position: $rr-generate-classes !default;
+$rr-generate-position-fillers: $rr-generate-position !default;
+$rr-generate-position-positions: $rr-generate-position !default;
 
 /////////
 // OUTPUT
 /////////
 
 @mixin generate-position-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	// Position
 	@if $rr-generate-position {
-		// Position
 		@include generate-output-by-property(
 			$property: 'position',
 			$values: $rr-position-properties,
@@ -87,8 +89,10 @@ $rr-generate-position: $rr-generate-classes !default;
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
+	}
 
-		// Position fillers
+	// Position fillers
+	@if $rr-generate-position-fillers {
 		@include generate-output-by-classes(
 			$classes: $rr-position-fill-properties,
 			$prefix: $rr-position-fill-class-prefix,
@@ -101,8 +105,10 @@ $rr-generate-position: $rr-generate-classes !default;
 				left: unset
 			)
 		);
+	}
 
-		// Position position
+	// Position position
+	@if $rr-generate-position-positions {
 		@include generate-output-by-classes(
 			$classes: $rr-position-positions-properties,
 			$prefix: $rr-position-positions-class-prefix,

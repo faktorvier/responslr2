@@ -66,10 +66,6 @@ $rr-transition-hardware-acceleration-class-properties: (
 	@return get-entry-value($rr-transitions, $name, 'property', $rr-transitions-default);
 }
 
-/////////////////////
-// INTERNAL FUNCTIONS
-/////////////////////
-
 // Get timing function by name
 @function transition-timing-function-by-name($names) {
 	$timing-function: ();
@@ -135,77 +131,7 @@ $rr-transition-hardware-acceleration-class-properties: (
 	@return $timing-function;
 }
 
-// Get css properties by name
-@function transition-css-properties-by-name($name) {
-	// Get transition property
-	$transition-property: transition-value($name);
-	$transition-duration: transition-property($name, 'duration');
-	$transition-delay: transition-property($name, 'delay');
-	$transition-timing-function: transition-timing-function-by-name(transition-property($name, 'timing-function'));
-	$transition-hardware-acceleration: transition-property($name, 'hardware-acceleration');
-
-	$return: (
-		transition-property: list-comma($transition-property),
-		transition-duration: list-comma($transition-duration),
-		transition-delay: list-comma($transition-delay),
-		transition-timing-function: list-comma($transition-timing-function)
-	);
-
-	@if $transition-hardware-acceleration {
-		$return: map-merge($return, $rr-transition-hardware-acceleration-class-properties);
-	}
-
-	@return $return;
-}
-
-// Convert entry to css properties map
-@function transition-to-css-properties($transition) {
-	// Get properties
-	$return: transition-css-properties-by-name($transition);
-
-	// Append breakpoint overwrites if exists
-	$return: append-entry-breakpoint-overwrites(
-		$transition,
-		$return,
-		'transition-to-css-properties'
-	);
-
-	@return $return;
-}
-
-// Prepare map for property classes
-@function transition-property-classes() {
-	$property-classes: ();
-
-	@each $class-name, $transition in $rr-transitions {
-		$property-classes: map-append(
-			$property-classes,
-			transition-to-css-properties($transition),
-			$class-name
-		);
-	}
-
-	@return $property-classes;
-}
-
-/////////
-// MIXINS
-/////////
-
-// Output transition hardware acceleration
-@mixin transition-hardware-acceleration() {
-	@include generate-properties($rr-transition-hardware-acceleration-class-properties);
-}
-
-// Output transition by name
-@mixin transition($name: null) {
-	@include generate-properties(transition-css-properties-by-name($name));
-}
-
-/////////
-// OUTPUT
-/////////
-
+// Get css properties by entry
 @function transition-entry-to-properties($entry) {
 	$transition-property: get-value-by-entry($entry, 'property');
 	$transition-duration: map-maybe-get($entry, 'duration', 0.25s);
@@ -226,6 +152,24 @@ $rr-transition-hardware-acceleration-class-properties: (
 
 	@return $properties;
 }
+
+/////////
+// MIXINS
+/////////
+
+// Output transition hardware acceleration
+@mixin transition-hardware-acceleration() {
+	@include generate-properties($rr-transition-hardware-acceleration-class-properties);
+}
+
+// Output transition by name
+@mixin transition($name: null) {
+	//@include generate-properties(transition-css-properties-by-name($name));
+}
+
+/////////
+// OUTPUT
+/////////
 
 @mixin generate-transition-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-transitions and $breakpoint-prefix == '' {

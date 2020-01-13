@@ -28,14 +28,16 @@ $rr-background-position-properties: (
 
 // Print output for this module
 $rr-generate-background: $rr-generate-classes !default;
+$rr-generate-background-sizes: $rr-generate-background !default;
+$rr-generate-background-positions: $rr-generate-background !default;
 
 /////////
 // OUTPUT
 /////////
 
 @mixin generate-background-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-background {
-		// Background size
+	// Background size
+	@if $rr-generate-background-sizes {
 		@include generate-output-by-property(
 			$property: 'background-size',
 			$values: $rr-background-size-properties,
@@ -43,8 +45,10 @@ $rr-generate-background: $rr-generate-classes !default;
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
+	}
 
-		// Background position
+	// Background position
+	@if $rr-generate-background-positions {
 		@include generate-output-by-property(
 			$property: 'background-position',
 			$values: $rr-background-position-properties,

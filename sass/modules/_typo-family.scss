@@ -55,64 +55,7 @@ $rr-generate-font-families: $rr-generate-classes !default;
 	@return get-entry-value($rr-font-families, $name, 'family', $rr-font-families-default);
 }
 
-// Get font family css properties by name
-@function font-family-css-properties-by-name($font) {
-	$return: (
-		font-family: list-comma(font-family-value($font)),
-		font-weight: font-family-property($font, 'weight'),
-		font-style: font-family-property($font, 'style'),
-		letter-spacing: font-family-property($font, 'letter-spacing')
-	);
-
-	@return $return;
-}
-
-// Convert font family entry to css properties map
-@function font-family-to-css-properties($font) {
-	// Get properties
-	$return: font-family-css-properties-by-name($font);
-
-	// Append breakpoint overwrites if exists
-	$return: append-entry-breakpoint-overwrites(
-		$font,
-		$return,
-		'font-family-to-css-properties'
-	);
-
-	@return $return;
-}
-
-// Prepare font family map for property classes
-@function font-family-property-classes() {
-	$property-classes: ();
-
-	// Append defined classes
-	@each $class-name, $font in $rr-font-families {
-		$property-classes: map-append(
-			$property-classes,
-			font-family-to-css-properties($font),
-			$class-name
-		);
-	}
-
-	@return $property-classes;
-}
-
-/////////
-// MIXINS
-/////////
-
-// Output font family by name
-@mixin font-family($name: null) {
-	@include generate-properties(
-		font-family-css-properties-by-name($name)
-	);
-}
-
-/*************************/
-/* OUTPUT: FONT FAMILIES */
-/*************************/
-
+// Get css properties by entry
 @function typo-family-entry-to-properties($entry) {
 	$properties: (
 		font-family: list-comma(inspect(get-value-by-entry($entry, 'family'))),
@@ -123,6 +66,21 @@ $rr-generate-font-families: $rr-generate-classes !default;
 
 	@return $properties;
 }
+
+/////////
+// MIXINS
+/////////
+
+// Output font family by name
+@mixin font-family($name: null) {
+	// @include generate-properties(
+	// 	font-family-css-properties-by-name($name)
+	// );
+}
+
+/////////
+// OUTPUT
+/////////
 
 @mixin generate-typo-family-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-font-families {

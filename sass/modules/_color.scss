@@ -71,63 +71,6 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 	@return $property-name;
 }
 
-/////////////////////
-// INTERNAL FUNCTIONS
-/////////////////////
-
-// Convert entry to css properties map
-@function color-to-css-properties($color, $type) {
-	// Get type property
-	$property-name: color-property-by-type($type);
-
-	// Set properties
-	$return: (
-		'hover': $rr-generate-colors-hover,
-		$property-name: color-value($color)
-	);
-
-	// Append breakpoint overwrites if exists
-	$return: append-entry-breakpoint-overwrites(
-		$color,
-		$return,
-		'color-to-css-properties',
-		$type
-	);
-
-	@return $return;
-}
-
-// Prepare map for property classes
-@function color-property-classes($type) {
-	$property-classes: ();
-
-	// Append defined classes
-	@each $class-name, $color in $rr-colors {
-		$types: color-property($class-name, 'types');
-
-		@if in-list($types, $type) {
-			$property-classes: map-append(
-				$property-classes,
-				color-to-css-properties($color, $type),
-				$class-name
-			);
-		}
-	}
-
-	// Append unset class
-	@if $rr-generate-colors-unset {
-		@if in-list($rr-colors-generate-types, $type) {
-			$property-classes: map-append(
-				$property-classes,
-				color-to-css-properties(unset, $type),
-				$rr-global-unset-class
-			);
-		}
-	}
-
-	@return $property-classes;
-}
-
 /////////
 // MIXINS
 /////////

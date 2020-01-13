@@ -89,65 +89,25 @@ $rr-aspect-ratio-child-unset-class-properties: (
 	@return $height / $width * 100%;
 }
 
-/////////////////////
-// INTERNAL FUNCTIONS
-/////////////////////
+// Get css properties by entry
+@function aspect-ratio-entry-to-properties($entry, $breakpoint-name: '') {
+	$properties: ();
+	$value: get-value-by-entry($entry, 'ratio', $breakpoint-name);
 
-// Convert entry to css properties map
-@function aspect-ratio-to-css-properties($aspect-ratio) {
-	// Set properties
-	$return: map-merge(
-		$rr-aspect-ratio-class-properties,
-		(
-			padding-top: aspect-ratio-value($aspect-ratio, true),
-			'nested': (
-				'> *': $rr-aspect-ratio-child-class-properties
-			)
+	$properties: (
+		position: relative,
+		padding-top: aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
+
+		'> *': (
+			position: absolute,
+			top: 0,
+			left: 0,
+			bottom: 0,
+			right: 0
 		)
 	);
 
-	// Append breakpoint overwrites if exists
-	$return: append-entry-breakpoint-overwrites(
-		$aspect-ratio,
-		$return,
-		'aspect-ratio-to-css-properties'
-	);
-
-	@return $return;
-}
-
-// Prepare map for property classes
-@function aspect-ratio-property-classes() {
-	$property-classes: ();
-
-	// Append defined classes
-	@each $class-name, $aspect-ratio in $rr-aspect-ratios {
-		$property-classes: map-append(
-			$property-classes,
-			aspect-ratio-to-css-properties($aspect-ratio),
-			$class-name
-		);
-	}
-
-	// Append unset class
-	@if not is-empty($property-classes) and $rr-generate-aspect-ratios-unset {
-		$unset-property: map-append(
-			$rr-aspect-ratio-unset-class-properties,
-			$rr-aspect-ratio-child-unset-class-properties,
-			(
-				'> *': $rr-aspect-ratio-child-unset-class-properties
-			)
-			'nested'
-		);
-
-		$property-classes: map-append(
-			$property-classes,
-			$unset-property,
-			$rr-global-unset-class
-		);
-	}
-
-	@return $property-classes;
+	@return $properties;
 }
 
 /////////
@@ -204,26 +164,6 @@ $rr-aspect-ratio-child-unset-class-properties: (
 /////////
 // OUTPUT
 /////////
-
-@function aspect-ratio-entry-to-properties($entry, $breakpoint-name: '') {
-	$properties: ();
-	$value: get-value-by-entry($entry, 'ratio', $breakpoint-name);
-
-	$properties: (
-		position: relative,
-		padding-top: aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
-
-		'> *': (
-			position: absolute,
-			top: 0,
-			left: 0,
-			bottom: 0,
-			right: 0
-		)
-	);
-
-	@return $properties;
-}
 
 @mixin generate-aspect-ratio-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-aspect-ratios {

@@ -27,15 +27,17 @@ $rr-alignment-v-properties: (
 ) !default;
 
 // Print output for this module
-$rr-generate-alignments: $rr-generate-classes !default;
+$rr-generate-alignment: $rr-generate-classes !default;
+$rr-generate-alignment-horizontal: $rr-generate-alignment !default;
+$rr-generate-alignment-vertical: $rr-generate-alignment !default;
 
 /////////
 // OUTPUT
 /////////
 
 @mixin generate-alignment-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-alignments {
-		// Alignment horizontal
+	// Alignment horizontal
+	@if $rr-generate-alignment-horizontal {
 		@include generate-output-by-property(
 			$property: 'text-align',
 			$values: $rr-alignment-h-properties,
@@ -43,8 +45,10 @@ $rr-generate-alignments: $rr-generate-classes !default;
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
+	}
 
-		// Alignment vertical
+	// Alignment vertical
+	@if $rr-generate-alignment-vertical {
 		@include generate-output-by-property(
 			$property: 'vertical-align',
 			$values: $rr-alignment-v-properties,

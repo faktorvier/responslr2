@@ -60,72 +60,7 @@ $rr-font-size-unset-class-properties: (
 	@return get-entry-value($rr-font-sizes, $name, 'size', $rr-font-sizes-default);
 }
 
-// Get font size css properties by name
-@function font-size-css-properties-by-name($font-size) {
-	$return: (
-		font-size: list-comma(font-size-value($font-size)),
-		line-height: font-size-property($font-size, 'line-height'),
-		letter-spacing: font-size-property($font-size, 'letter-spacing')
-	);
-
-	@return $return;
-}
-
-// Convert font size entry to css properties map
-@function font-size-to-css-properties($font-size) {
-	// Get properties
-	$return: font-size-css-properties-by-name($font-size);
-
-	// Append breakpoint overwrites if exists
-	$return: append-entry-breakpoint-overwrites(
-		$font-size,
-		$return,
-		'font-size-to-css-properties'
-	);
-
-	@return $return;
-}
-
-// Prepare font size map for property classes
-@function font-size-property-classes() {
-	$property-classes: ();
-
-	// Append defined classes
-	@each $class-name, $font-size in $rr-font-sizes {
-		$property-classes: map-append(
-			$property-classes,
-			font-size-to-css-properties($font-size),
-			$class-name
-		);
-	}
-
-	// Append unset class
-	@if $rr-generate-font-sizes-unset {
-		$property-classes: map-append(
-			$property-classes,
-			$rr-font-size-unset-class-properties,
-			$rr-global-unset-class
-		);
-	}
-
-	@return $property-classes;
-}
-
-/////////
-// MIXINS
-/////////
-
-// Output font size by name
-@mixin font-size($name: null) {
-	@include generate-properties(
-		font-size-css-properties-by-name($name)
-	);
-}
-
-/////////
-// OUTPUT
-/////////
-
+// Get css properties by entry
 @function typo-size-entry-to-properties($entry, $breakpoint-name: '') {
 	$properties: (
 		font-size: get-value-by-entry($entry, 'size', $breakpoint-name),
@@ -135,6 +70,21 @@ $rr-font-size-unset-class-properties: (
 
 	@return $properties;
 }
+
+/////////
+// MIXINS
+/////////
+
+// Output font size by name
+@mixin font-size($name: null) {
+	// @include generate-properties(
+	// 	font-size-css-properties-by-name($name)
+	// );
+}
+
+/////////
+// OUTPUT
+/////////
 
 @mixin generate-typo-size-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-font-sizes {
