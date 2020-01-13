@@ -6,7 +6,7 @@
 $rr-misc-user-select-disable-class: 'no-user-select' !default;
 
 // Full width/height
-$rr-misc-full-prefix-class: 'full-' !default;
+$rr-misc-full-class-prefix: 'full-' !default;
 
 $rr-misc-full-properties: (
 	'width': (
@@ -14,10 +14,6 @@ $rr-misc-full-properties: (
 	),
 	'height': (
 		height: 100%
-	),
-	$rr-global-unset-class: (
-		height: unset,
-		width: unset
 	)
 ) !default;
 
@@ -28,22 +24,24 @@ $rr-generate-misc-helpers: $rr-generate-classes !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-misc-helpers {
-	// User select
-	@include add-breakpoint-classes-custom(
-		$classes: (
-			$rr-misc-user-select-disable-class: (
-				user-select: none
+@mixin generate-misc-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-misc-helpers {
+		// Disable user selection
+		@if $breakpoint-prefix == '' {
+			.#{$rr-misc-user-select-disable-class} {
+				user-select: none;
+			}
+		}
+
+		// Fillers
+		@include generate-output-by-classes(
+			$classes: $rr-misc-full-properties,
+			$prefix: $rr-misc-full-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: (
+				width: unset,
+				height: unset
 			)
-		),
-		$ignore-breakpoints: true
-	);
-
-	// Full
-	@include add-breakpoint-classes-custom(
-		$classes: $rr-misc-full-properties,
-		$class-prefix: $rr-misc-full-prefix-class,
-		$ignore-breakpoints: false
-	);
+		);
+	}
 }
-

@@ -10,8 +10,7 @@ $rr-alignment-h-properties: (
 	right,
 	center,
 	justify,
-	//'justify-all',
-	($rr-global-unset-class unset)
+	//'justify-all'
 ) !default;
 
 // Vertical alignments
@@ -24,8 +23,7 @@ $rr-alignment-v-properties: (
 	bottom,
 	sub,
 	//'text-top',
-	//'text-bottom',
-	($rr-global-unset-class unset)
+	//'text-bottom'
 ) !default;
 
 // Print output for this module
@@ -35,18 +33,24 @@ $rr-generate-alignments: $rr-generate-classes !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-alignments and map-not-empty($rr-alignment-h-properties) {
-	@include add-breakpoint-classes-simple(
-		$property-name: 'text-align',
-		$class-prefix: $rr-alignment-h-class-prefix,
-		$values: $rr-alignment-h-properties
-	);
-}
+@mixin generate-alignment-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-alignments {
+		// Alignment horizontal
+		@include generate-output-by-property(
+			$property: 'text-align',
+			$values: $rr-alignment-h-properties,
+			$prefix: $rr-alignment-h-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 
-@if $rr-generate-alignments and map-not-empty($rr-alignment-v-properties) {
-	@include add-breakpoint-classes-simple(
-		$property-name: 'vertical-align',
-		$class-prefix: $rr-alignment-v-class-prefix,
-		$values: $rr-alignment-v-properties
-	);
+		// Alignment vertical
+		@include generate-output-by-property(
+			$property: 'vertical-align',
+			$values: $rr-alignment-v-properties,
+			$prefix: $rr-alignment-v-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
+	}
 }

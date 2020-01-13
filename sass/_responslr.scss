@@ -37,4 +37,30 @@
 /* OUTPUT: CLASSES */
 /*******************/
 
-@include generate-breakpoint-classes();
+@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+	@include mq($breakpoint-name) {
+		// Get breakpoint prefix
+		$breakpoint-prefix: get-breakpoint-prefix($breakpoint-name);
+
+		// Helpers
+		@include generate-alignment-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-background-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-display-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-flex-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-misc-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-overflow-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-position-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-typo-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-visibility-helpers-output($breakpoint-prefix, $breakpoint-name);
+
+		// Modules
+		@include generate-aspect-ratio-module-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-color-module-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-custom-module-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-spacing-module-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-typo-family-module-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-typo-size-module-output($breakpoint-prefix, $breakpoint-name);
+		@include generate-transition-module-output($breakpoint-prefix, $breakpoint-name);
+	}
+}
+

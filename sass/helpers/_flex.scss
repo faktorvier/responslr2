@@ -9,8 +9,7 @@ $rr-flex-direction-properties: (
 	row,
 	row-reverse,
 	column,
-	column-reverse,
-	($rr-global-unset-class unset)
+	column-reverse
 ) !default;
 
 // Flex wrap
@@ -19,32 +18,29 @@ $rr-flex-wrap-class-prefix: 'flex-' !default;
 $rr-flex-wrap-properties: (
 	nowrap,
 	wrap,
-	wrap-reverse,
-	($rr-global-unset-class unset)
+	wrap-reverse
 ) !default;
 
-// Flex justify
-$rr-flex-justify-class-prefix: 'justify-' !default;
+// Flex justify content
+$rr-flex-justify-content-class-prefix: 'justify-' !default;
 
-$rr-flex-justify-properties: (
+$rr-flex-justify-content-properties: (
 	('start' flex-start),
 	('end' flex-end),
 	center,
 	space-between,
-	space-around,
-	($rr-global-unset-class unset)
+	space-around
 ) !default;
 
 // Flex align
-$rr-flex-align-class-prefix: 'align-' !default;
+$rr-flex-align-items-class-prefix: 'align-' !default;
 
-$rr-flex-align-properties: (
+$rr-flex-align-items-properties: (
 	('start' flex-start),
 	('end' flex-end),
 	center,
 	baseline,
-	stretch,
-	($rr-global-unset-class unset)
+	stretch
 ) !default;
 
 // Flex align content
@@ -56,8 +52,7 @@ $rr-flex-align-content-properties: (
 	center,
 	space-between,
 	space-around,
-	stretch,
-	($rr-global-unset-class unset)
+	stretch
 ) !default;
 
 // Flex align self
@@ -70,8 +65,7 @@ $rr-flex-align-self-properties: (
 	('end' flex-end),
 	center,
 	baseline,
-	stretch,
-	($rr-global-unset-class unset)
+	stretch
 ) !default;
 
 // Flex justify self
@@ -84,8 +78,7 @@ $rr-flex-justify-self-properties: (
 	end,
 	center,
 	baseline,
-	stretch,
-	($rr-global-unset-class unset)
+	stretch
 ) !default;
 
 // Flex grow
@@ -111,8 +104,7 @@ $rr-flex-order-max: 12 !default;
 
 $rr-flex-order-properties: (
 	('first' -1),
-	('last' $rr-flex-order-max + 1),
-	($rr-global-unset-class unset)
+	('last' $rr-flex-order-max + 1)
 ) !default;
 
 // Print output for this module
@@ -122,68 +114,103 @@ $rr-generate-flex: $rr-generate-classes !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-flex {
-	@include add-breakpoint-classes-simple(
-		$property-name: 'flex-direction',
-		$class-prefix: $rr-flex-direction-class-prefix,
-		$values: $rr-flex-direction-properties
-	);
+@mixin generate-flex-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-flex {
+		// Flex direction
+		@include generate-output-by-property(
+			$property: 'flex-direction',
+			$values: $rr-flex-direction-properties,
+			$prefix: $rr-flex-direction-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 
-	@include add-breakpoint-classes-simple(
-		$property-name: 'flex-wrap',
-		$class-prefix: $rr-flex-wrap-class-prefix,
-		$values: $rr-flex-wrap-properties
-	);
+		// Flex wrap
+		@include generate-output-by-property(
+			$property: 'flex-wrap',
+			$values: $rr-flex-wrap-properties,
+			$prefix: $rr-flex-wrap-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true,
+			$additional-unset-prefix: 'wrap-'
+		);
 
-	@include add-breakpoint-classes-simple(
-		$property-name: 'justify-content',
-		$class-prefix: $rr-flex-justify-class-prefix,
-		$values: $rr-flex-justify-properties
-	);
+		// Justify content
+		@include generate-output-by-property(
+			$property: 'justify-content',
+			$values: $rr-flex-justify-content-properties,
+			$prefix: $rr-flex-justify-content-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 
-	@include add-breakpoint-classes-simple(
-		$property-name: 'align-items',
-		$class-prefix: $rr-flex-align-class-prefix,
-		$values: $rr-flex-align-properties
-	);
+		// Align items
+		@include generate-output-by-property(
+			$property: 'align-items',
+			$values: $rr-flex-align-items-properties,
+			$prefix: $rr-flex-align-items-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 
-	@include add-breakpoint-classes-simple(
-		$property-name: 'align-content',
-		$class-prefix: $rr-flex-align-content-class-prefix,
-		$values: $rr-flex-align-content-properties
-	);
+		// Align content
+		@include generate-output-by-property(
+			$property: 'align-content',
+			$values: $rr-flex-align-content-properties,
+			$prefix: $rr-flex-align-content-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 
-	@include add-breakpoint-classes-simple(
-		$property-name: 'align-self',
-		$class-prefix: $rr-flex-align-self-class-prefix,
-		$values: $rr-flex-align-self-properties
-	);
+		// Align self
+		@include generate-output-by-property(
+			$property: 'align-self',
+			$values: $rr-flex-align-self-properties,
+			$prefix: $rr-flex-align-self-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 
-	@include add-breakpoint-classes-simple(
-		$property-name: 'justify-self',
-		$class-prefix: $rr-flex-justify-self-class-prefix,
-		$values: $rr-flex-justify-self-properties
-	);
+		// Justify self
+		@include generate-output-by-property(
+			$property: 'justify-self',
+			$values: $rr-flex-justify-self-properties,
+			$prefix: $rr-flex-justify-self-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 
-	@include add-breakpoint-classes-simple(
-		$property-name: 'flex-grow',
-		$class-prefix: $rr-flex-grow-class-prefix,
-		$values: $rr-flex-grow-properties
-	);
+		// Flex grow
+		@include generate-output-by-property(
+			$property: 'flex-grow',
+			$values: $rr-flex-grow-properties,
+			$prefix: $rr-flex-grow-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: false
+		);
 
-	@include add-breakpoint-classes-simple(
-		$property-name: 'flex-shrink',
-		$class-prefix: $rr-flex-shrink-class-prefix,
-		$values: $rr-flex-shrink-properties
-	);
+		// Flex shrink
+		@include generate-output-by-property(
+			$property: 'flex-shrink',
+			$values: $rr-flex-shrink-properties,
+			$prefix: $rr-flex-shrink-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: false
+		);
 
-	@for $order from 0 to $rr-flex-order-max + 1 {
-		$rr-flex-order-properties: append($rr-flex-order-properties, $order);
+		// Order
+		$rr-flex-order-properties-new: $rr-flex-order-properties;
+
+		@for $order from 0 to $rr-flex-order-max + 1 {
+			$rr-flex-order-properties-new: append($rr-flex-order-properties-new, $order);
+		}
+
+		@include generate-output-by-property(
+			$property: 'order',
+			$values: $rr-flex-order-properties-new,
+			$prefix: $rr-flex-order-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 	}
-
-	@include add-breakpoint-classes-simple(
-		$property-name: 'order',
-		$class-prefix: $rr-flex-order-class-prefix,
-		$values: $rr-flex-order-properties
-	);
 }

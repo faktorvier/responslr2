@@ -113,42 +113,59 @@ $rr-generate-font-families: $rr-generate-classes !default;
 /* OUTPUT: FONT FAMILIES */
 /*************************/
 
-@if $rr-generate-font-families and map-not-empty($rr-font-families) {
-	// Output font faces
-	@each $class-name, $font in $rr-font-families {
-		@if is-map($font) and map-has-key($font, 'face') {
-			$font-face: font-family-property($font, 'face');
-			$font-family: nth($font-face, 2);
-			$font-file: nth($font-face, 1);
-			$font-file-types: font-family-property($font, 'file-types');
-			$font-weight: font-family-property($font, 'weight');
-			$font-style: font-family-property($font, 'style');
+@function typo-family-entry-to-properties($entry) {
+	$properties: (
+		font-family: list-comma(inspect(get-value-by-entry($entry, 'family'))),
+		font-weight: map-maybe-get($entry, 'weight', normal),
+		font-style: map-maybe-get($entry, 'style', normal),
+		letter-spacing: map-maybe-get($entry, 'letter-spacing', unset),
+	);
 
-			$font-src: ();
+	@return $properties;
+}
 
-			@each $file-type in $font-file-types {
-				$font-src: append($font-src, url(quote($font-file + '.' + $file-type)) format(quote($file-type)), $separator: 'comma');
-			}
+@mixin generate-typo-family-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-font-families {
+		// Output font faces
+		@if $breakpoint-prefix == '' {
+			@each $class-name, $font in $rr-font-families {
+				@if is-map($font) and map-has-key($font, 'face') {
+					$font-face: font-family-property($font, 'face');
+					$font-family: nth($font-face, 2);
+					$font-file: nth($font-face, 1);
+					$font-file-types: font-family-property($font, 'file-types');
+					$font-weight: font-family-property($font, 'weight');
+					$font-style: font-family-property($font, 'style');
 
-			@font-face {
-				font-family: $font-family;
-				src: $font-src;
+					$font-src: ();
 
-				@if is-not-null($font-weight) {
-					font-weight: $font-weight;
-				}
+					@each $file-type in $font-file-types {
+						$font-src: append($font-src, url(quote($font-file + '.' + $file-type)) format(quote($file-type)), $separator: 'comma');
+					}
 
-				@if is-not-null($font-style) {
-					font-style: $font-style;
+					@font-face {
+						font-family: $font-family;
+						src: $font-src;
+
+						@if is-not-null($font-weight) {
+							font-weight: $font-weight;
+						}
+
+						@if is-not-null($font-style) {
+							font-style: $font-style;
+						}
+					}
 				}
 			}
 		}
+
+		@each $font-family-name, $font-family-entry in $rr-font-families {
+			@include generate-output-by-class(
+				$class: $font-family-name,
+				$prefix: $rr-font-family-class-prefix,
+				$breakpoint-prefix: $breakpoint-prefix,
+				$properties: typo-family-entry-to-properties($font-family-entry)
+			);
+		}
 	}
-
-	@include add-breakpoint-classes-custom(
-		$classes: font-family-property-classes(),
-		$class-prefix: $rr-font-family-class-prefix,
-		$ignore-breakpoints: false
-	);
 }
-

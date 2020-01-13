@@ -17,8 +17,7 @@ $rr-display-properties: (
 	//grid,
 	//inline-grid,
 	//list-item,
-	contents,
-	($rr-global-unset-class unset)
+	contents
 ) !default;
 
 // Print output for this module
@@ -28,10 +27,14 @@ $rr-generate-display: $rr-generate-classes !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-display {
-	@include add-breakpoint-classes-simple(
-		$property-name: 'display',
-		$class-prefix: $rr-display-class-prefix,
-		$values: $rr-display-properties
-	);
+@mixin generate-display-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-display {
+		@include generate-output-by-property(
+			$property: 'display',
+			$values: $rr-display-properties,
+			$prefix: $rr-display-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
+	}
 }

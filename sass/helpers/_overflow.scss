@@ -10,8 +10,7 @@ $rr-overflow-properties: (
 	visible,
 	hidden,
 	scroll,
-	auto,
-	($rr-global-unset-class unset)
+	auto
 ) !default;
 
 // Print output for this module
@@ -21,28 +20,33 @@ $rr-generate-overflow: $rr-generate-classes !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-overflow {
-	@if map-not-empty($rr-overflow-properties) {
-		@include add-breakpoint-classes-simple(
-			$property-name: 'overflow',
-			$class-prefix: $rr-overflow-class-prefix,
-			$values: $rr-overflow-properties
+@mixin generate-overflow-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-overflow {
+		// Overflow
+		@include generate-output-by-property(
+			$property: 'overflow',
+			$values: $rr-overflow-properties,
+			$prefix: $rr-overflow-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
 		);
-	}
 
-	@if map-not-empty($rr-overflow-properties) {
-		@include add-breakpoint-classes-simple(
-			$property-name: 'overflow-x',
-			$class-prefix: $rr-overflow-x-class-prefix,
-			$values: $rr-overflow-properties
+		// Overflow x
+		@include generate-output-by-property(
+			$property: 'overflow-x',
+			$values: $rr-overflow-properties,
+			$prefix: $rr-overflow-x-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
 		);
-	}
 
-	@if map-not-empty($rr-overflow-properties) {
-		@include add-breakpoint-classes-simple(
-			$property-name: 'overflow-y',
-			$class-prefix: $rr-overflow-y-class-prefix,
-			$values: $rr-overflow-properties
+		// Overflow y
+		@include generate-output-by-property(
+			$property: 'overflow-y',
+			$values: $rr-overflow-properties,
+			$prefix: $rr-overflow-y-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
 		);
 	}
 }

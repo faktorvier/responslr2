@@ -205,11 +205,58 @@ $rr-aspect-ratio-child-unset-class-properties: (
 // OUTPUT
 /////////
 
-@if $rr-generate-aspect-ratios and map-not-empty($rr-aspect-ratios) {
-	@include add-breakpoint-classes-custom(
-		$classes: aspect-ratio-property-classes(),
-		$class-prefix: $rr-aspect-ratio-class-prefix,
-		$ignore-breakpoints: false
+@function aspect-ratio-entry-to-properties($entry, $breakpoint-name: '') {
+	$properties: ();
+	$value: get-value-by-entry($entry, 'ratio', $breakpoint-name);
+
+	$properties: (
+		position: relative,
+		padding-top: aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
+
+		'> *': (
+			position: absolute,
+			top: 0,
+			left: 0,
+			bottom: 0,
+			right: 0
+		)
 	);
+
+	@return $properties;
 }
 
+@mixin generate-aspect-ratio-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-aspect-ratios {
+		// Normal classes
+		@each $aspect-ratio-name, $aspect-ratio-entry in $rr-aspect-ratios {
+			@include generate-output-by-class(
+				$class: $aspect-ratio-name,
+				$prefix: $rr-aspect-ratio-class-prefix,
+				$breakpoint-prefix: $breakpoint-prefix,
+				$properties: aspect-ratio-entry-to-properties($aspect-ratio-entry, $breakpoint-name),
+				$breakpoint-overwrites: entry-has-breakpoint-overwrite($aspect-ratio-entry, $breakpoint-name)
+			);
+		}
+
+		// Unset class
+		@if $rr-generate-aspect-ratios-unset and $breakpoint-prefix != '' {
+			@include generate-output-by-class(
+				$class: $rr-global-unset-class,
+				$prefix: $rr-aspect-ratio-class-prefix,
+				$breakpoint-prefix: $breakpoint-prefix,
+				$properties: (
+					position: unset,
+					padding-top: unset,
+
+					'> *': (
+						position: unset,
+						top: unset,
+						left: unset,
+						bottom: unset,
+						right: unset
+					)
+				)
+			);
+		}
+	}
+}

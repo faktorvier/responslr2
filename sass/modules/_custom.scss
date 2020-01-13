@@ -58,10 +58,29 @@ $rr-generate-customs: $rr-generate-classes !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-customs and map-not-empty($rr-customs) {
-	@include add-breakpoint-classes-custom(
-		$classes: $rr-customs,
-		$class-prefix: $rr-custom-class-prefix,
-		$ignore-breakpoints: true
-	);
+@function custom-entry-to-properties($entry, $breakpoint-name: '') {
+	$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
+	$properties: ();
+
+	@if is-null($breakpoint-overwrites) {
+		$properties: map-remove($entry, 'breakpoints');
+	} @else {
+		$properties: custom-entry-to-properties($breakpoint-overwrites, $breakpoint-name);
+	}
+
+	@return $properties;
+}
+
+@mixin generate-custom-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-customs {
+		@each $custom-name, $custom-entry in $rr-customs {
+			@include generate-output-by-class(
+				$class: $custom-name,
+				$prefix: $rr-custom-class-prefix,
+				$breakpoint-prefix: $breakpoint-prefix,
+				$properties: custom-entry-to-properties($custom-entry, $breakpoint-name),
+				$breakpoint-overwrites: entry-has-breakpoint-overwrite($custom-entry, $breakpoint-name)
+			);
+		}
+	}
 }

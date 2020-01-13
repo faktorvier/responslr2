@@ -126,19 +126,41 @@ $rr-font-size-unset-class-properties: (
 // OUTPUT
 /////////
 
-@if $rr-generate-font-sizes and map-not-empty($rr-font-sizes) {
-	@include add-breakpoint-classes-custom(
-		$classes: font-size-property-classes(),
-		$class-prefix: $rr-font-size-class-prefix,
-		$ignore-breakpoints: false
+@function typo-size-entry-to-properties($entry, $breakpoint-name: '') {
+	$properties: (
+		font-size: get-value-by-entry($entry, 'size', $breakpoint-name),
+		line-height: map-maybe-get($entry, 'line-height', unset), // @todo: breakpoint overwrite
+		letter-spacing: map-maybe-get($entry, 'letter-spacing', unset) // @todo: breakpoint overwrite
 	);
+
+	@return $properties;
 }
 
-@if $rr-generate-font-transform {
-	@include add-breakpoint-classes-simple(
-		$property-name: 'text-transform',
-		$class-prefix: $rr-font-transform-class-prefix,
-		$values: $rr-font-transform-properties
-	);
+@mixin generate-typo-size-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-font-sizes {
+		$rr-font-sizes-new: $rr-font-sizes;
+
+		// Append unset
+		@if $rr-generate-font-sizes-unset and $breakpoint-prefix != '' {
+			@if $rr-generate-font-sizes-unset {
+				$rr-font-sizes-new: map-append(
+					$rr-font-sizes-new,
+					unset,
+					$rr-global-unset-class
+				);
+			}
+		}
+
+		@each $font-size-name, $font-size-entry in $rr-font-sizes-new {
+			@include generate-output-by-class(
+				$class: $font-size-name,
+				$prefix: $rr-font-size-class-prefix,
+				$breakpoint-prefix: $breakpoint-prefix,
+				$properties: typo-size-entry-to-properties($font-size-entry, $breakpoint-name),
+				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-size-entry, $breakpoint-name)
+			);
+		}
+	}
 }
+
 

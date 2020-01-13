@@ -123,53 +123,6 @@ $rr-breakpoint-classes-properties-names: map-keys($rr-breakpoint-classes-propert
 	@return $properties;
 }
 
-/////////
-// MIXINS
-/////////
-
-// Add a class to the global breakpoint classes generator
-@mixin add-breakpoint-class($class-name, $class-prefix: '', $properties: (), $breakpoints: (), $nested: (), $hover: false, $ignore-breakpoints: false) {
-	$class-name-full: $class-prefix + $class-name;
-	$entry: ();
-
-	// Set hover
-	@if $hover {
-		$entry: map-append($entry, true, 'hover');
-	}
-
-	// Set properties
-	@if map-not-empty($properties) {
-		$properties: map-remove($properties, 'breakpoints', 'nested');
-		$entry: map-append($entry, $properties, 'properties');
-	}
-
-	// Set breakpoints
-	@if map-not-empty($breakpoints) {
-		$entry: map-append($entry, $breakpoints, 'breakpoints');
-	}
-
-	// Set nested selectors
-	@if map-not-empty($nested) {
-		$entry: map-append($entry, $nested, 'nested');
-	}
-
-	// Set is-unset
-	@if $class-name == $rr-global-unset-class {
-		$entry: map-append($entry, true, 'is-unset');
-	}
-
-	// Set ignore-breakpoints
-	@if $ignore-breakpoints {
-		$entry: map-append($entry, true, 'ignore-breakpoints');
-	}
-
-	$rr-global-breakpoint-classes: map-append(
-		$rr-global-breakpoint-classes,
-		$entry,
-		$class-name-full
-	) !global;
-}
-
 // Prepare custom class
 @function prepare-breakpoint-custom-class($entry-raw) {
 	$entry: ();
@@ -279,6 +232,53 @@ $rr-breakpoint-classes-properties-names: map-keys($rr-breakpoint-classes-propert
 	}
 
 	@return $return;
+}
+
+/////////
+// MIXINS
+/////////
+
+// Add a class to the global breakpoint classes generator
+@mixin add-breakpoint-class($class-name, $class-prefix: '', $properties: (), $breakpoints: (), $nested: (), $hover: false, $ignore-breakpoints: false) {
+	$class-name-full: $class-prefix + $class-name;
+	$entry: ();
+
+	// Set hover
+	@if $hover {
+		$entry: map-append($entry, true, 'hover');
+	}
+
+	// Set properties
+	@if map-not-empty($properties) {
+		$properties: map-remove($properties, 'breakpoints', 'nested');
+		$entry: map-append($entry, $properties, 'properties');
+	}
+
+	// Set breakpoints
+	@if map-not-empty($breakpoints) {
+		$entry: map-append($entry, $breakpoints, 'breakpoints');
+	}
+
+	// Set nested selectors
+	@if map-not-empty($nested) {
+		$entry: map-append($entry, $nested, 'nested');
+	}
+
+	// Set is-unset
+	@if $class-name == $rr-global-unset-class {
+		$entry: map-append($entry, true, 'is-unset');
+	}
+
+	// Set ignore-breakpoints
+	@if $ignore-breakpoints {
+		$entry: map-append($entry, true, 'ignore-breakpoints');
+	}
+
+	$rr-global-breakpoint-classes: map-append(
+		$rr-global-breakpoint-classes,
+		$entry,
+		$class-name-full
+	) !global;
 }
 
 // Add custom classes
@@ -454,6 +454,102 @@ $rr-breakpoint-classes-properties-names: map-keys($rr-breakpoint-classes-propert
 				}
 			}
 		}
+	}
+}
+
+/////////////
+// MIXINS NEW
+/////////////
+
+@function get-value-by-entry($entry, $property, $breakpoint-name: '') {
+	$value: null;
+
+	$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
+
+	@if $breakpoint-name != '' and is-not-null($breakpoint-overwrites) {
+		$value: get-value-by-entry($breakpoint-overwrites, $property, $breakpoint-name);
+	} @else {
+		@if is-map($entry) {
+			$value: map-get($entry, $property);
+		} @else {
+			$value: $entry;
+		}
+	}
+
+	@return $value;
+}
+
+// Get breakpoint prefix
+@function get-breakpoint-prefix($breakpoint-name) {
+	@return if($breakpoint-name == 's', '', '#{$breakpoint-name}\\:');
+}
+
+// Get
+@function get-breakpoint-overwrite-by-entry($entry, $breakpoint-name) {
+	$breakpoints: map-maybe-get($entry, 'breakpoints', ());
+	$overwrites: map-get($breakpoints, $breakpoint-name);
+	@return $overwrites;
+}
+
+@function entry-has-breakpoint-overwrite($entry, $breakpoint-name) {
+	@return get-breakpoint-overwrite-by-entry($entry, $breakpoint-name) != null;
+}
+
+// Generate output with a single property
+@mixin generate-output-by-property($property, $values, $prefix: '', $breakpoint-prefix: '', $generate-unset: false, $additional-unset-prefix: '') {
+	// Generate normal classes
+	@each $value-raw in $values {
+		$value: if(is-list($value-raw), nth($value-raw, 2), $value-raw);
+		$class-name: nth($value-raw, 1);
+
+		.#{$breakpoint-prefix}#{$prefix}#{$class-name} {
+			#{$property}: $value;
+		}
+	}
+
+	// Generate additional unset class
+	@if $generate-unset and $breakpoint-prefix != '' {
+		.#{$breakpoint-prefix}#{$prefix}#{$additional-unset-prefix}#{$rr-global-unset-class} {
+			#{$property}: unset;
+		}
+	}
+}
+
+// Generate output by a single class with multiple properties
+@mixin generate-output-by-class($class, $properties, $prefix: '', $breakpoint-prefix: '', $breakpoint-overwrites: false) {
+	$selector: ();
+
+	@if $breakpoint-overwrites {
+		$selector: append($selector, '.#{$prefix}#{$class}', 'comma');
+	}
+
+	$selector: append($selector, '.#{$breakpoint-prefix}#{$prefix}#{$class}', 'comma');
+
+	#{$selector} {
+		@include generate-properties($properties);
+	}
+}
+
+// Generate output by multiple classes with multiple properties
+@mixin generate-output-by-classes($classes, $prefix: '', $breakpoint-prefix: '', $generate-unset: false, $additional-unset-prefix: '') {
+	// Generate normal classes
+	@each $class-name, $class-properties in $classes {
+		@include generate-output-by-class(
+			$class: $class-name,
+			$properties: $class-properties,
+			$prefix: $prefix,
+			$breakpoint-prefix: $breakpoint-prefix
+		);
+	}
+
+	// Generate additional unset class
+	@if $generate-unset and $breakpoint-prefix != '' {
+		@include generate-output-by-class(
+			$class: $rr-global-unset-class,
+			$properties: $generate-unset,
+			$prefix: $prefix + $additional-unset-prefix,
+			$breakpoint-prefix: $breakpoint-prefix
+		);
 	}
 }
 

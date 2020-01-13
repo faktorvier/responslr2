@@ -115,7 +115,13 @@
 @mixin generate-properties($properties) {
 	@each $property-name, $property-value in $properties {
 		@if is-not-null($property-value) and is-string($property-name) {
-			#{$property-name}: #{$property-value};
+			@if is-map($property-value) {
+				#{$property-name} {
+					@include generate-properties($property-value);
+				}
+			} @else {
+				#{$property-name}: #{$property-value};
+			}
 		}
 	}
 }

@@ -2,23 +2,20 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+// Positions
 $rr-position-class-prefix: '' !default;
-$rr-position-fill-class-prefix: 'fill-' !default;
-$rr-position-positions-class-prefix: 'position-' !default;
 
 $rr-position-properties: (
-	'static',
-	'relative',
-	'absolute',
-	'fixed',
-	'sticky',
-	($rr-global-unset-class unset)
+	static,
+	relative,
+	absolute,
+	fixed,
+	sticky
 ) !default;
 
-// Print output for this module
-$rr-generate-position: $rr-generate-classes !default;
-
 // Fills
+$rr-position-fill-class-prefix: 'fill-' !default;
+
 $rr-position-fill-properties: (
 	'parent': (
 		position: absolute,
@@ -40,17 +37,12 @@ $rr-position-fill-properties: (
 		right: 0,
 		bottom: unset,
 		left: 0
-	),
-	$rr-global-unset-class: (
-		position: unset,
-		top: unset,
-		right: unset,
-		bottom: unset,
-		left: unset
-	),
+	)
 ) !default;
 
 // Positions
+$rr-position-positions-class-prefix: 'position-' !default;
+
 $rr-position-positions-properties: (
 	'top': (
 		top: 0,
@@ -78,27 +70,43 @@ $rr-position-positions-properties: (
 	)
 ) !default;
 
+// Print output for this module
+$rr-generate-position: $rr-generate-classes !default;
+
 /////////
 // OUTPUT
 /////////
 
-@if $rr-generate-position {
-	@include add-breakpoint-classes-simple(
-		$property-name: 'position',
-		$class-prefix: $rr-position-class-prefix,
-		$values: $rr-position-properties
-	);
+@mixin generate-position-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-position {
+		// Position
+		@include generate-output-by-property(
+			$property: 'position',
+			$values: $rr-position-properties,
+			$prefix: $rr-position-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 
-	@include add-breakpoint-classes-custom(
-		$classes: $rr-position-fill-properties,
-		$class-prefix: $rr-position-fill-class-prefix,
-		$ignore-breakpoints: false
-	);
+		// Position fillers
+		@include generate-output-by-classes(
+			$classes: $rr-position-fill-properties,
+			$prefix: $rr-position-fill-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: (
+				position: unset,
+				top: unset,
+				right: unset,
+				bottom: unset,
+				left: unset
+			)
+		);
 
-	@include add-breakpoint-classes-custom(
-		$classes: $rr-position-positions-properties,
-		$class-prefix: $rr-position-positions-class-prefix,
-		$ignore-breakpoints: false
-	);
+		// Position position
+		@include generate-output-by-classes(
+			$classes: $rr-position-positions-properties,
+			$prefix: $rr-position-positions-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix
+		);
+	}
 }
-

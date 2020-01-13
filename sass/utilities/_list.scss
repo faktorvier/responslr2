@@ -26,3 +26,8 @@
 @function list-comma($list) {
 	@return join($list, (), $separator: 'comma');
 }
+
+// Change list separator to space
+@function list-space($list) {
+	@return join($list, (), $separator: 'space');
+}

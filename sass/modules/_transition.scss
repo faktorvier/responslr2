@@ -206,10 +206,36 @@ $rr-transition-hardware-acceleration-class-properties: (
 // OUTPUT
 /////////
 
-@if $rr-generate-transitions and map-not-empty($rr-transitions) {
-	@include add-breakpoint-classes-custom(
-		$classes: transition-property-classes(),
-		$class-prefix: $rr-transition-class-prefix,
-		$ignore-breakpoints: not $rr-generate-transitions-breakpoints
+@function transition-entry-to-properties($entry) {
+	$transition-property: get-value-by-entry($entry, 'property');
+	$transition-duration: map-maybe-get($entry, 'duration', 0.25s);
+	$transition-delay: map-maybe-get($entry, 'delay', null);
+	$transition-timing-function: transition-timing-function-by-name(map-maybe-get($entry, 'timing-function', null));
+	$transition-hardware-acceleration: map-maybe-get($entry, 'hardware-acceleration', true);
+
+	$properties: (
+		transition-property: list-comma($transition-property),
+		transition-duration: list-comma($transition-duration),
+		transition-delay: list-comma($transition-delay),
+		transition-timing-function: list-comma($transition-timing-function)
 	);
+
+	@if $transition-hardware-acceleration {
+		$properties: map-merge($properties, $rr-transition-hardware-acceleration-class-properties);
+	}
+
+	@return $properties;
+}
+
+@mixin generate-transition-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-transitions and $breakpoint-prefix == '' {
+		@each $transition-name, $transition-entry in $rr-transitions {
+			@include generate-output-by-class(
+				$class: $transition-name,
+				$prefix: $rr-transition-class-prefix,
+				$breakpoint-prefix: $breakpoint-prefix,
+				$properties: transition-entry-to-properties($transition-entry)
+			);
+		}
+	}
 }

@@ -8,44 +8,22 @@ $rr-background-size-class-prefix: 'bg-' !default;
 $rr-background-size-properties: (
 	cover,
 	contain,
-	auto,
-	($rr-global-unset-class unset)
+	auto
 ) !default;
 
 // Background position
 $rr-background-position-class-prefix: 'bg-position-' !default;
 
 $rr-background-position-properties: (
-	't': (
-		background-position: top
-	),
-	'r': (
-		background-position: right
-	),
-	'b': (
-		background-position: bottom
-	),
-	'l': (
-		background-position: left
-	),
-	'c': (
-		background-position: center
-	),
-	'lt': (
-		background-position: left top
-	),
-	'rt': (
-		background-position: right top
-	),
-	'lb': (
-		background-position: left bottom
-	),
-	'rb': (
-		background-position: right bottom
-	),
-	$rr-global-unset-class: (
-		background-position: unset
-	)
+	('t' top),
+	('r' right),
+	('b' bottom),
+	('l' left),
+	('c' center),
+	('lt' (left top)),
+	('rt' (right top)),
+	('lb' (left bottom)),
+	('rb' (right bottom))
 ) !default;
 
 // Print output for this module
@@ -55,23 +33,25 @@ $rr-generate-background: $rr-generate-classes !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-background {
-	// Background size
-	@if map-not-empty($rr-background-size-properties) {
-		@include add-breakpoint-classes-simple(
-			$property-name: 'background-size',
-			$class-prefix: $rr-background-size-class-prefix,
-			$values: $rr-background-size-properties
-		);
-	}
-
-	// Background position
-	@if map-not-empty($rr-background-size-properties) {
-		@include add-breakpoint-classes-custom(
-			$classes: $rr-background-position-properties,
-			$class-prefix: $rr-background-position-class-prefix,
-			$ignore-breakpoints: false
+@mixin generate-background-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-background {
+		// Background size
+		@include generate-output-by-property(
+			$property: 'background-size',
+			$values: $rr-background-size-properties,
+			$prefix: $rr-background-size-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
 		);
 
+		// Background position
+		@include generate-output-by-property(
+			$property: 'background-position',
+			$values: $rr-background-position-properties,
+			$prefix: $rr-background-position-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 	}
 }
+

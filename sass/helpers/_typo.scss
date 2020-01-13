@@ -9,8 +9,7 @@ $rr-font-transform-properties: (
 	none,
 	capitalize,
 	uppercase,
-	lowercase,
-	($rr-global-unset-class unset)
+	lowercase
 ) !default;
 
 $rr-generate-font-transform: $rr-generate-classes !default;
@@ -39,21 +38,22 @@ $rr-font-reset-class-properties: (
 // OUTPUT
 /////////
 
-// Font fix
-@include add-breakpoint-classes-custom(
-	$classes: (
-		$rr-font-fix-class: $rr-font-reset-class-properties
-	),
-	$ignore-breakpoints: true
-);
+@mixin generate-typo-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	// Font fix
+	@if $breakpoint-prefix == '' {
+		.#{$rr-font-fix-class} {
+			@include generate-properties($rr-font-reset-class-properties);
+		}
+	}
 
-// Text transform
-@if $rr-generate-font-transform {
-	@include add-breakpoint-classes-simple(
-		$property-name: 'text-transform',
-		$class-prefix: $rr-font-transform-class-prefix,
-		$values: $rr-font-transform-properties
-	);
+	// Text transform
+	@if $rr-generate-font-transform {
+		@include generate-output-by-property(
+			$property: 'text-transform',
+			$values: $rr-font-transform-properties,
+			$prefix: $rr-font-transform-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
+	}
 }
-
-

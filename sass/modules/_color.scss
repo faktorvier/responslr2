@@ -22,8 +22,11 @@ $rr-colors-default: map-default($rr-colors) !default;
 
 // Print output for this module
 $rr-generate-colors: $rr-generate-classes !default;
-$rr-generate-colors-hover: $rr-generate-classes !default;
+$rr-generate-colors-text: $rr-generate-colors !default;
+$rr-generate-colors-background: $rr-generate-colors !default;
+$rr-generate-colors-border: $rr-generate-colors !default;
 $rr-generate-colors-unset: $rr-generate-colors !default;
+$rr-generate-colors-hover: $rr-generate-classes !default;
 
 ////////////
 // FUNCTIONS
@@ -142,23 +145,54 @@ $rr-generate-colors-unset: $rr-generate-colors !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-colors and map-not-empty($rr-colors) {
-	@include add-breakpoint-classes-custom(
-		$classes: color-property-classes('text'),
-		$class-prefix: $rr-color-text-class-prefix,
-		$ignore-breakpoints: false
-	);
+@mixin generate-color-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-colors {
+		$rr-colors-new: $rr-colors;
 
-	@include add-breakpoint-classes-custom(
-		$classes: color-property-classes('bg'),
-		$class-prefix: $rr-color-background-class-prefix,
-		$ignore-breakpoints: false
-	);
+		// Append unset
+		@if $rr-generate-colors-unset {
+			$rr-colors-new: map-append(
+				$rr-colors-new,
+				unset,
+				$rr-global-unset-class
+			);
+		}
 
-	@include add-breakpoint-classes-custom(
-		$classes: color-property-classes('border'),
-		$class-prefix: $rr-color-border-class-prefix,
-		$ignore-breakpoints: false
-	);
+		@each $color-name, $color-entry in $rr-colors-new {
+			$color-value: get-value-by-entry($color-entry, 'color');
+			$generate-text-color: map-maybe-get($color-entry, 'text', $rr-generate-colors-text);
+			$generate-background-color: map-maybe-get($color-entry, 'background', $rr-generate-colors-background);
+			$generate-border-color: map-maybe-get($color-entry, 'border', $rr-generate-colors-border);
+
+			// Text color
+			@if $generate-text-color {
+				@include generate-output-by-class(
+					$class: $color-name,
+					$prefix: $rr-color-text-class-prefix,
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (color: $color-value)
+				);
+			}
+
+			// Background color
+			@if $generate-background-color {
+				@include generate-output-by-class(
+					$class: $color-name,
+					$prefix: $rr-color-background-class-prefix,
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (background-color: $color-value)
+				);
+			}
+
+			// Border color
+			@if $generate-border-color {
+				@include generate-output-by-class(
+					$class: $color-name,
+					$prefix: $rr-color-border-class-prefix,
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (border-color: $color-value)
+				);
+			}
+		}
+	}
 }
-

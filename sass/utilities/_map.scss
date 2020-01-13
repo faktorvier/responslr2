@@ -36,7 +36,7 @@
 @function map-maybe-get($map, $key, $default: null) {
 	$return: $default;
 
-	@if map-has-key($map, $key) {
+	@if is-map($map) and map-has-key($map, $key) {
 		$return: map-get($map, $key);
 	}
 

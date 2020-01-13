@@ -21,6 +21,8 @@ $rr-spacings-default: map-default($rr-spacings) !default;
 
 // Print output for this module
 $rr-generate-spacings: $rr-generate-classes !default;
+$rr-generate-spacings-margin: $rr-generate-spacings !default;
+$rr-generate-spacings-padding: $rr-generate-spacings !default;
 $rr-generate-spacings-unset: $rr-generate-spacings !default;
 $rr-generate-spacings-auto: $rr-generate-spacings !default;
 $rr-generate-spacings-gutter: $rr-generate-spacings !default;
@@ -246,11 +248,172 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 // OUTPUT
 /////////
 
-@if $rr-generate-spacings and map-not-empty($rr-spacings) {
-	@include add-breakpoint-classes-custom(
-		$classes: spacing-property-classes(),
-		$class-prefix: $rr-spacing-class-prefix,
-		$ignore-breakpoints: false
-	);
-}
+@mixin generate-spacing-module-output($breakpoint-prefix, $breakpoint-name: '') {
+	@if $rr-generate-spacings {
+		$rr-spacings-new: $rr-spacings;
 
+		// Append gutter spacing
+		$gutters: ();
+
+		@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+			@if $breakpoint-name != $rr-grid-breakpoints-default {
+				$gutters: map-append($gutters, grid-gutter($breakpoint-name), $breakpoint-name);
+			}
+		}
+
+		@if $rr-generate-spacings-gutter {
+			$rr-spacings-new: map-append(
+				$rr-spacings-new,
+				(
+					'spacing': grid-gutter($breakpoint-name),
+					'breakpoints': $gutters
+				),
+				$rr-global-gutter-class
+			);
+		}
+
+		// Append auto spacing
+		@if $rr-generate-spacings-auto {
+			$rr-spacings-new: map-append(
+				$rr-spacings-new,
+				(
+					'spacing': auto,
+					'padding': false
+				),
+				$rr-global-auto-class
+			);
+		}
+
+		// Append spacing unset
+		@if $rr-generate-spacings-unset {
+			$rr-spacings-new: map-append(
+				$rr-spacings-new,
+				unset,
+				$rr-global-unset-class
+			);
+		}
+
+		@each $spacing-name, $spacing-entry in $rr-spacings-new {
+			$spacing-value: get-value-by-entry($spacing-entry, 'spacing', $breakpoint-name);
+			$breakpoint-overwrites: entry-has-breakpoint-overwrite($spacing-entry, $breakpoint-name);
+			$generate-margin: map-maybe-get($spacing-entry, 'margin', $rr-generate-spacings-margin);
+			$generate-padding: map-maybe-get($spacing-entry, 'padding', $rr-generate-spacings-padding);
+
+			@if $generate-margin {
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'mt-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (margin-top: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'mr-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (margin-right: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'mb-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (margin-bottom: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'ml-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (margin-left: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'my-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (margin-top: $spacing-value, margin-bottom: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'mx-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (margin-left: $spacing-value, margin-right: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'ma-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (margin: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+			}
+
+			@if $generate-padding {
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'pt-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (padding-top: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'pr-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (padding-right: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'pb-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (padding-bottom: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'pl-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (padding-left: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'py-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (padding-top: $spacing-value, padding-bottom: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'px-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (padding-left: $spacing-value, padding-right: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+
+				@include generate-output-by-class(
+					$class: $spacing-name,
+					$prefix: 'pa-',
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: (padding: $spacing-value),
+					$breakpoint-overwrites: $breakpoint-overwrites
+				);
+			}
+		}
+	}
+}
