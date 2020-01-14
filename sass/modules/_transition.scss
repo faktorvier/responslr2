@@ -115,12 +115,29 @@ $rr-transition-hardware-acceleration-class-properties: (
 	$transition-timing-function: map-maybe-get($entry, 'timing-function', $rr-transitions-default-timing-function);
 	$transition-hardware-acceleration: map-maybe-get($entry, 'hardware-acceleration', true);
 
-	$properties: (
-		transition-property: list-comma($transition-property),
-		transition-duration: list-comma($transition-duration),
-		transition-delay: list-comma($transition-delay),
-		transition-timing-function: list-comma(transition-timing-function-by-name($transition-timing-function))
-	);
+	$properties: ();
+
+	@if length($transition-property) == 1 {
+		@if is-null($transition-delay) {
+			$transition-delay: 0s;
+		}
+
+		@if is-null($transition-timing-function) {
+			$transition-timing-function: ease;
+		}
+
+		$properties: (
+			transition: #{$transition-property} #{$transition-duration} #{$transition-timing-function} #{$transition-delay}
+		);
+	} @else {
+		$properties: (
+			transition-property: list-comma($transition-property),
+			transition-duration: list-comma($transition-duration),
+			transition-delay: list-comma($transition-delay),
+			transition-timing-function: list-comma(transition-timing-function-by-name($transition-timing-function))
+		);
+	}
+
 
 	@if $transition-hardware-acceleration {
 		$properties: map-merge($properties, $rr-transition-hardware-acceleration-class-properties);
