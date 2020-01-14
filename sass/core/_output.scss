@@ -24,10 +24,11 @@ $rr-global-settings: map-merge(
 }
 
 // Breakpoint settings
-@each $breakpoint-key, $breakpoint-list in $rr-grid-breakpoints {
-	@include mq($breakpoint-key) {
+@each $breakpoint-name, $breakpoint-entry in $rr-grid-breakpoints {
+	@include mq($breakpoint-name) {
 		:root {
-			--rr-current-breakpoint: "#{inspect($breakpoint-key)}";
+			--rr-current-breakpoint: "#{inspect($breakpoint-name)}";
+			--rr-current-columns: "#{inspect(grid-breakpoint-property($breakpoint-name, 'columns'))}";
 		}
 	}
 }
