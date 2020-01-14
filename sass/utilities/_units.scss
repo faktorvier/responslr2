@@ -82,7 +82,7 @@
 
 // Convert a value to rem
 @function to-rem($value) {
-	$base-breakpoint: map-get($rr-grid-breakpoints, nth(map-keys($rr-grid-breakpoints), 1));
+	$base-breakpoint: map-get($rr-grid-breakpoints, nth($rr-grid-breakpoints-names, 1));
 	$base-size: map-get($base-breakpoint, base-size);
 
 	@if type-of($base-size) != number {
@@ -95,10 +95,10 @@
 // Convert a value to rem by breakpoint
 @function to-rem-breakpoint($value, $breakpoint: '') {
 	@if $breakpoint == '' {
-		$breakpoint: nth(map-keys($rr-grid-breakpoints), length(map-keys($rr-grid-breakpoints)));
+		$breakpoint: nth($rr-grid-breakpoints-names, length($rr-grid-breakpoints-names));
 	}
 
-	$smallest-breakpoint: map-get($rr-grid-breakpoints, nth(map-keys($rr-grid-breakpoints), 1));
+	$smallest-breakpoint: map-get($rr-grid-breakpoints, nth($rr-grid-breakpoints-names, 1));
 	$smallest-base-size: map-get($smallest-breakpoint, base-size);
 
 	$output-breakpoint: map-get($rr-grid-breakpoints, $breakpoint);
