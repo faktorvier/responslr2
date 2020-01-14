@@ -112,15 +112,17 @@
 }
 
 // Convert map to properties
-@mixin generate-properties($properties) {
+@mixin generate-properties($properties, $ignore-nested: false) {
 	@each $property-name, $property-value in $properties {
-		@if is-not-null($property-value) and is-string($property-name) {
+		@if is-not-null($property-value) and is-string($property-name) and $property-name != 'breakpoints' {
 			@if is-map($property-value) {
-				#{$property-name} {
-					@include generate-properties($property-value);
+				@if not $ignore-nested {
+					#{$property-name} {
+						@include generate-properties($property-value);
+					}
 				}
 			} @else {
-				#{$property-name}: #{$property-value};
+				#{$property-name}: $property-value;
 			}
 		}
 	}

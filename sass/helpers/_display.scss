@@ -2,8 +2,10 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+// Classes
 $rr-display-class-prefix: 'd-' !default;
 
+// Default display properties
 $rr-display-properties: (
 	none,
 	inline,
@@ -14,13 +16,11 @@ $rr-display-properties: (
 	table-cell,
 	flex,
 	inline-flex,
-	//grid,
-	//inline-grid,
-	//list-item,
+	list-item,
 	contents
 ) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-display: $rr-generate-classes !default;
 
 /////////

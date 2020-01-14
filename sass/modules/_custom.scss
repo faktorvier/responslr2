@@ -5,15 +5,13 @@
 // Classes
 $rr-custom-class-prefix: '' !default;
 
-// Customs
+// Default entries
 $rr-customs: () !default;
 
-// Defaults
-$rr-custom-map-defaults: () !default;
-
+// Default entry
 $rr-customs-default: map-default($rr-customs) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-customs: $rr-generate-classes !default;
 
 ////////////
@@ -28,17 +26,6 @@ $rr-generate-customs: $rr-generate-classes !default;
 // Gets an entry by name
 @function custom-entry($name: null) {
 	@return get-entry-by-name($rr-customs, $name, $rr-customs-default);
-}
-
-// Get an entry property value by name
-@function custom-property($name, $property) {
-	@return get-entry-property(
-		$rr-customs,
-		$name,
-		$property,
-		$rr-custom-map-defaults,
-		$rr-customs-default
-	);
 }
 
 // Get css properties by entry
@@ -60,10 +47,11 @@ $rr-generate-customs: $rr-generate-classes !default;
 /////////
 
 // Output custom by name
-@mixin custom($name: null) {
+@mixin custom($name: null, $breakpoint-name: '') {
 	$custom: custom-entry($name);
 
 	@if is-not-null($custom) {
+		$custom: map-remove($custom, 'breakpoints');
 		@include generate-properties($custom);
 	}
 }

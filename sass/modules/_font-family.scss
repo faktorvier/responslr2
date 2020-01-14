@@ -1,0 +1,106 @@
+///////////////////
+// DEFAULT SETTINGS
+///////////////////
+
+// Classes
+$rr-font-family-class-prefix: 'txt-' !default;
+
+// Default values
+$rr-font-family-default-file-types: ('woff2');
+$rr-font-family-default-weight: normal !default;
+$rr-font-family-default-style: normal !default;
+$rr-font-family-default-letter-spacing: unset !default;
+
+// Default entries
+$rr-font-families: () !default;
+
+// Default entry
+$rr-font-families-default: map-default($rr-font-families) !default;
+
+// Output handling
+$rr-generate-font-families: $rr-generate-classes !default;
+
+////////////
+// FUNCTIONS
+////////////
+
+// Check if a font family exists
+@function font-family-exists($name) {
+	@return entry-exists($rr-font-families, $name);
+}
+
+// Gets a font family by name
+@function font-family-entry($name: null) {
+	@return get-entry-by-name($rr-font-families, $name, $rr-font-families-default);
+}
+
+// Get css properties by entry
+@function font-family-entry-to-properties($entry, $breakpoint-name: '') {
+	$properties: (
+		font-family: list-comma(get-value-by-entry($entry, 'family', $breakpoint-name)),
+		font-weight: get-property-by-entry($entry, 'weight', $rr-font-family-default-weight, $breakpoint-name),
+		font-style: get-property-by-entry($entry, 'style', $rr-font-family-default-style, $breakpoint-name),
+		letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-family-default-letter-spacing, $breakpoint-name)
+	);
+
+	@return $properties;
+}
+
+/////////
+// MIXINS
+/////////
+
+// Output font family by name
+@mixin font-family($name: null, $breakpoint-name: '') {
+	$entry: font-family-entry($name);
+
+	@if is-not-null($entry) {
+		$properties: font-family-entry-to-properties($entry, $breakpoint-name);
+		@include generate-properties($properties);
+	}
+}
+
+/////////
+// OUTPUT
+/////////
+
+@mixin generate-font-family-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-font-families {
+		// Font faces
+		@if $breakpoint-prefix == '' {
+			@each $class-name, $font in $rr-font-families {
+				@if is-map($font) and map-has-key($font, 'face') {
+					$font-face: get-property-by-entry($font, 'face', null);
+					$font-family: nth($font-face, 2);
+					$font-file: nth($font-face, 1);
+					$font-src: ();
+
+					@each $file-type in $rr-font-family-default-file-types {
+						$font-src: append($font-src, url(quote($font-file + '.' + $file-type)) format(quote($file-type)), $separator: 'comma');
+					}
+
+					$properties: (
+						font-family: $font-family,
+						src: $font-src,
+						font-weight: get-property-by-entry($font, 'weight', $rr-font-family-default-weight),
+						font-style: get-property-by-entry($font, 'style', $rr-font-family-default-style)
+					);
+
+					@font-face {
+						@include generate-properties($properties);
+					}
+				}
+			}
+		}
+
+		// Font families
+		@each $font-family-name, $font-family-entry in $rr-font-families {
+			@include generate-output-by-class(
+				$class: $font-family-name,
+				$prefix: $rr-font-family-class-prefix,
+				$breakpoint-prefix: $breakpoint-prefix,
+				$properties: font-family-entry-to-properties($font-family-entry)
+			);
+		}
+	}
+}

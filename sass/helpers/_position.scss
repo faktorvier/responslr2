@@ -2,9 +2,12 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-// Positions
+// Classes
 $rr-position-class-prefix: '' !default;
+$rr-position-filler-class-prefix: 'fill-' !default;
+$rr-position-positions-class-prefix: 'position-' !default;
 
+// Default position properties
 $rr-position-properties: (
 	static,
 	relative,
@@ -13,10 +16,8 @@ $rr-position-properties: (
 	sticky
 ) !default;
 
-// Fills
-$rr-position-fill-class-prefix: 'fill-' !default;
-
-$rr-position-fill-properties: (
+// Default position fill classes
+$rr-position-filler-properties: (
 	'parent': (
 		position: absolute,
 		top: 0,
@@ -40,9 +41,7 @@ $rr-position-fill-properties: (
 	)
 ) !default;
 
-// Positions
-$rr-position-positions-class-prefix: 'position-' !default;
-
+// Default positions classes
 $rr-position-positions-properties: (
 	'top': (
 		top: 0,
@@ -70,7 +69,7 @@ $rr-position-positions-properties: (
 	)
 ) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-position: $rr-generate-classes !default;
 $rr-generate-position-fillers: $rr-generate-position !default;
 $rr-generate-position-positions: $rr-generate-position !default;
@@ -94,8 +93,8 @@ $rr-generate-position-positions: $rr-generate-position !default;
 	// Position fillers
 	@if $rr-generate-position-fillers {
 		@include generate-output-by-classes(
-			$classes: $rr-position-fill-properties,
-			$prefix: $rr-position-fill-class-prefix,
+			$classes: $rr-position-filler-properties,
+			$prefix: $rr-position-filler-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: (
 				position: unset,

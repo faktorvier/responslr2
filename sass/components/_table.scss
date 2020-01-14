@@ -5,7 +5,7 @@
 // Classes
 $rr-table-class: 'table' !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-tables: $rr-generate-classes !default;
 
 /////////
@@ -19,12 +19,14 @@ $rr-generate-tables: $rr-generate-classes !default;
 	overflow-x: auto;
 }
 
-/*****************/
-/* OUTPUT: TABLE */
-/*****************/
+/////////
+// OUTPUT
+/////////
 
-@if $rr-generate-tables {
-	.#{$rr-table-class} {
-		@include table();
+@mixin generate-table-component-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-tables and $breakpoint-prefix == '' {
+		.#{$rr-table-class} {
+			@include table();
+		}
 	}
 }

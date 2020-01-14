@@ -4,28 +4,20 @@
 
 // Classes
 $rr-spacing-class-prefix: '' !default;
-$rr-spacings-generate-types: ('mt', 'mr', 'mb', 'ml', 'my', 'mx', 'ma', 'pt', 'pr', 'pb', 'pl', 'py', 'px', 'pa') !default;
 
-$rr-spacing-add-gutter: true !default;
-
-// Spacings
+// Default entries
 $rr-spacings: () !default;
 
-// Defaults
-$rr-spacing-map-defaults: (
-	'spacing': null,
-	'types': $rr-spacings-generate-types
-) !default;
-
+// Default entry
 $rr-spacings-default: map-default($rr-spacings) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-spacings: $rr-generate-classes !default;
 $rr-generate-spacings-margin: $rr-generate-spacings !default;
 $rr-generate-spacings-padding: $rr-generate-spacings !default;
-$rr-generate-spacings-unset: $rr-generate-spacings !default;
-$rr-generate-spacings-auto: $rr-generate-spacings !default;
 $rr-generate-spacings-gutter: $rr-generate-spacings !default;
+$rr-generate-spacings-auto: $rr-generate-spacings !default;
+$rr-generate-spacings-unset: $rr-generate-spacings !default;
 
 ////////////
 // FUNCTIONS
@@ -41,31 +33,9 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 	@return get-entry-by-name($rr-spacings, $name, $rr-spacings-default);
 }
 
-// Get an entry property value by name
-@function spacing-property($name, $property) {
-	@return get-entry-property(
-		$rr-spacings,
-		$name,
-		$property,
-		$rr-spacing-map-defaults,
-		$rr-spacings-default
-	);
-}
-
-// Get spacing value by name
-@function spacing-value($name: null) {
-	@return get-entry-value($rr-spacings, $name, 'spacing', $rr-spacings-default);
-}
-
 // Get spacing properties by type
-@function spacing-properties-by-type($spacing, $type) {
+@function spacing-properties-by-type($spacing-value, $type) {
 	$spacing-properties: ();
-	$spacing-value: $spacing;
-
-	// Get value from map if not directly defined by list
-	@if is-map($spacing) {
-		$spacing-value: map-get($spacing, 'spacing');
-	}
 
 	@if is-not-null($spacing-value) {
 		@if $type == 'mt' {
@@ -139,11 +109,13 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 /////////
 
 // Output spacing by name
-@mixin spacing($name: null, $type: 'ma') {
-	$spacing-value: spacing-value($name);
+@mixin spacing($name: null, $type: 'ma', $breakpoint-name: '') {
+	$entry: spacing-entry($name);
 
-	@if is-not-null($spacing-value) {
-		@include generate-properties(spacing-properties-by-type($spacing-value, $type));
+	@if is-not-null($entry) {
+		$value: get-value-by-entry($entry, 'spacing');
+		$properties: spacing-properties-by-type($value, $type);
+		@include generate-properties($properties);
 	}
 }
 
@@ -181,7 +153,7 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 				$rr-spacings-new,
 				(
 					'spacing': auto,
-					'padding': false
+					'generate-padding': false
 				),
 				$rr-global-auto-class
 			);
@@ -199,8 +171,8 @@ $rr-generate-spacings-gutter: $rr-generate-spacings !default;
 		@each $spacing-name, $spacing-entry in $rr-spacings-new {
 			$spacing-value: get-value-by-entry($spacing-entry, 'spacing', $breakpoint-name);
 			$breakpoint-overwrites: entry-has-breakpoint-overwrite($spacing-entry, $breakpoint-name);
-			$generate-margin: map-maybe-get($spacing-entry, 'margin', $rr-generate-spacings-margin);
-			$generate-padding: map-maybe-get($spacing-entry, 'padding', $rr-generate-spacings-padding);
+			$generate-margin: map-maybe-get($spacing-entry, 'generate-margin', $rr-generate-spacings-margin);
+			$generate-padding: map-maybe-get($spacing-entry, 'generate-padding', $rr-generate-spacings-padding);
 
 			@if $generate-margin {
 				@include generate-output-by-class(

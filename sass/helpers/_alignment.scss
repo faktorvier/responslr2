@@ -2,31 +2,29 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-// Horizontal alignments
+// Classes
 $rr-alignment-h-class-prefix: 'h-' !default;
+$rr-alignment-v-class-prefix: 'v-' !default;
 
+// Default text-align properties
 $rr-alignment-h-properties: (
 	left,
 	right,
 	center,
 	justify,
-	//'justify-all'
+	justify-all
 ) !default;
 
-// Vertical alignments
-$rr-alignment-v-class-prefix: 'v-' !default;
-
+// Default vertical-align properties
 $rr-alignment-v-properties: (
 	baseline,
 	top,
 	middle,
 	bottom,
-	sub,
-	//'text-top',
-	//'text-bottom'
+	sub
 ) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-alignment: $rr-generate-classes !default;
 $rr-generate-alignment-horizontal: $rr-generate-alignment !default;
 $rr-generate-alignment-vertical: $rr-generate-alignment !default;

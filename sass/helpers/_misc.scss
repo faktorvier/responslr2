@@ -2,13 +2,12 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-// User select
+// Classes
 $rr-misc-user-select-disable-class: 'no-user-select' !default;
+$rr-misc-box-filler-class-prefix: 'full-' !default;
 
-// Full width/height
-$rr-misc-full-class-prefix: 'full-' !default;
-
-$rr-misc-full-properties: (
+// Default box filler classes
+$rr-misc-box-filler-properties: (
 	'width': (
 		width: 100%
 	),
@@ -17,8 +16,10 @@ $rr-misc-full-properties: (
 	)
 ) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-misc-helpers: $rr-generate-classes !default;
+$rr-generate-misc-user-selection-helpers: $rr-generate-misc-helpers !default;
+$rr-generate-misc-box-fillers-helpers: $rr-generate-misc-helpers !default;
 
 /////////
 // OUTPUT
@@ -27,21 +28,23 @@ $rr-generate-misc-helpers: $rr-generate-classes !default;
 @mixin generate-misc-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-misc-helpers {
 		// Disable user selection
-		@if $breakpoint-prefix == '' {
+		@if $rr-generate-misc-user-selection-helpers and $breakpoint-prefix == '' {
 			.#{$rr-misc-user-select-disable-class} {
 				user-select: none;
 			}
 		}
 
-		// Fillers
-		@include generate-output-by-classes(
-			$classes: $rr-misc-full-properties,
-			$prefix: $rr-misc-full-class-prefix,
-			$breakpoint-prefix: $breakpoint-prefix,
-			$generate-unset: (
-				width: unset,
-				height: unset
-			)
-		);
+		// Box fillers
+		@if $rr-generate-misc-box-fillers-helpers {
+			@include generate-output-by-classes(
+				$classes: $rr-misc-box-filler-properties,
+				$prefix: $rr-misc-box-filler-class-prefix,
+				$breakpoint-prefix: $breakpoint-prefix,
+				$generate-unset: (
+					width: unset,
+					height: unset
+				)
+			);
+		}
 	}
 }

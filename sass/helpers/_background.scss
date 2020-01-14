@@ -2,31 +2,31 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-// Background size
+// Classes
 $rr-background-size-class-prefix: 'bg-' !default;
+$rr-background-position-class-prefix: 'bg-position-' !default;
 
+// Default background-size properties
 $rr-background-size-properties: (
 	cover,
 	contain,
 	auto
 ) !default;
 
-// Background position
-$rr-background-position-class-prefix: 'bg-position-' !default;
-
+// Default background-positions properties
 $rr-background-position-properties: (
-	('t' top),
-	('r' right),
-	('b' bottom),
-	('l' left),
-	('c' center),
-	('lt' (left top)),
-	('rt' (right top)),
-	('lb' (left bottom)),
-	('rb' (right bottom))
+	('t', top),
+	('r', right),
+	('b', bottom),
+	('l', left),
+	('c', center),
+	('lt', (left top)),
+	('rt', (right top)),
+	('lb', (left bottom)),
+	('rb', (right bottom))
 ) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-background: $rr-generate-classes !default;
 $rr-generate-background-sizes: $rr-generate-background !default;
 $rr-generate-background-positions: $rr-generate-background !default;

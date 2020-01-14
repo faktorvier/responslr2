@@ -2,10 +2,12 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+// Classes
 $rr-overflow-class-prefix: 'overflow-' !default;
 $rr-overflow-x-class-prefix: 'overflow-x-' !default;
 $rr-overflow-y-class-prefix: 'overflow-y-' !default;
 
+// Default overflow properties
 $rr-overflow-properties: (
 	visible,
 	hidden,
@@ -13,7 +15,7 @@ $rr-overflow-properties: (
 	auto
 ) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-overflow: $rr-generate-classes !default;
 $rr-generate-overflow-x: $rr-generate-overflow !default;
 $rr-generate-overflow-y: $rr-generate-overflow !default;

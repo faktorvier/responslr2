@@ -2,9 +2,19 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-// Flex direction
+// Classes
 $rr-flex-direction-class-prefix: 'flex-' !default;
+$rr-flex-wrap-class-prefix: 'flex-' !default;
+$rr-flex-justify-content-class-prefix: 'justify-' !default;
+$rr-flex-align-items-class-prefix: 'align-' !default;
+$rr-flex-align-content-class-prefix: 'align-content-' !default;
+$rr-flex-align-self-class-prefix: 'align-self-' !default;
+$rr-flex-justify-self-class-prefix: 'justify-self-' !default;
+$rr-flex-grow-class-prefix: 'grow-' !default;
+$rr-flex-shrink-class-prefix: 'shrink-' !default;
+$rr-flex-order-class-prefix: 'order-' !default;
 
+// Default flex-direction properties
 $rr-flex-direction-properties: (
 	row,
 	row-reverse,
@@ -12,65 +22,53 @@ $rr-flex-direction-properties: (
 	column-reverse
 ) !default;
 
-// Flex wrap
-$rr-flex-wrap-class-prefix: 'flex-' !default;
-
+// Default flex-wrap properties
 $rr-flex-wrap-properties: (
 	nowrap,
 	wrap,
 	wrap-reverse
 ) !default;
 
-// Flex justify content
-$rr-flex-justify-content-class-prefix: 'justify-' !default;
-
+// Default justify-content properties
 $rr-flex-justify-content-properties: (
-	('start' flex-start),
-	('end' flex-end),
+	('start', flex-start),
+	('end', flex-end),
 	center,
 	space-between,
 	space-around
 ) !default;
 
-// Flex align
-$rr-flex-align-items-class-prefix: 'align-' !default;
-
+// Default align items properties
 $rr-flex-align-items-properties: (
-	('start' flex-start),
-	('end' flex-end),
+	('start', flex-start),
+	('end', flex-end),
 	center,
 	baseline,
 	stretch
 ) !default;
 
-// Flex align content
-$rr-flex-align-content-class-prefix: 'align-content-' !default;
-
+// Default aligh-content properties
 $rr-flex-align-content-properties: (
-	('start' flex-start),
-	('end' flex-end),
+	('start', flex-start),
+	('end', flex-end),
 	center,
 	space-between,
 	space-around,
 	stretch
 ) !default;
 
-// Flex align self
-$rr-flex-align-self-class-prefix: 'align-self-' !default;
-
+// Default align-self properties
 $rr-flex-align-self-properties: (
 	auto,
 	normal,
-	('start' flex-start),
-	('end' flex-end),
+	('start', flex-start),
+	('end', flex-end),
 	center,
 	baseline,
 	stretch
 ) !default;
 
-// Flex justify self
-$rr-flex-justify-self-class-prefix: 'justify-self-' !default;
-
+// Default justify-self properties
 $rr-flex-justify-self-properties: (
 	auto,
 	normal,
@@ -81,33 +79,28 @@ $rr-flex-justify-self-properties: (
 	stretch
 ) !default;
 
-// Flex grow
-$rr-flex-grow-class-prefix: 'grow-' !default;
-
+// Default flex-grow properties
 $rr-flex-grow-properties: (
 	0,
 	1
 ) !default;
 
-// Flex shrink
-$rr-flex-shrink-class-prefix: 'shrink-' !default;
-
+// Default flex-shrink properties
 $rr-flex-shrink-properties: (
 	0,
 	1
 ) !default;
 
-// Flex order
-$rr-flex-order-class-prefix: 'order-' !default;
-
+// Default max order to generate
 $rr-flex-order-max: 12 !default;
 
+// Default order properties
 $rr-flex-order-properties: (
-	('first' -1),
-	('last' $rr-flex-order-max + 1)
+	('first', -1),
+	('last', $rr-flex-order-max + 1)
 ) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-flex: $rr-generate-classes !default;
 
 /////////

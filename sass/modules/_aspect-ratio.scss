@@ -5,17 +5,13 @@
 // Classes
 $rr-aspect-ratio-class-prefix: 'aspect-' !default;
 
-// Aspect ratios
+// Default entries
 $rr-aspect-ratios: () !default;
 
-// Defaults
-$rr-aspect-ratio-map-defaults: (
-	'ratio': null
-) !default;
-
+// Default entry
 $rr-aspect-ratios-default: map-default($rr-aspect-ratios) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-aspect-ratios: $rr-generate-classes !default;
 $rr-generate-aspect-ratios-unset: $rr-generate-aspect-ratios !default;
 
@@ -37,15 +33,15 @@ $rr-aspect-ratio-child-class-properties: (
 
 $rr-aspect-ratio-unset-class-properties: (
 	position: unset,
-	padding-top: unset
-) !default;
+	padding-top: unset,
 
-$rr-aspect-ratio-child-unset-class-properties: (
-	position: unset,
-	top: unset,
-	left: unset,
-	bottom: unset,
-	right: unset
+	'> *': (
+		position: unset,
+		top: unset,
+		left: unset,
+		bottom: unset,
+		right: unset
+	)
 ) !default;
 
 ////////////
@@ -62,50 +58,28 @@ $rr-aspect-ratio-child-unset-class-properties: (
 	@return get-entry-by-name($rr-aspect-ratios, $name, $rr-aspect-ratios-default);
 }
 
-// Get an entry value by name
-@function aspect-ratio-property($name, $property) {
-	@return get-entry-property(
-		$rr-aspect-ratios,
-		$name,
-		$property,
-		$rr-aspect-ratio-map-defaults,
-		$rr-aspect-ratios-default
-	);
-}
-
-// Get value by name
-@function aspect-ratio-value($name: null, $calculated: false) {
-	$value: get-entry-value($rr-aspect-ratios, $name, 'ratio', $rr-aspect-ratios-default);
-
-	@if $calculated {
-		$value: aspect-ratio-calculate(nth($value, 1), nth($value, 2));
-	}
-
-	@return $value;
-}
-
 // Calculate aspect ratio
 @function aspect-ratio-calculate($width, $height) {
 	@return $height / $width * 100%;
 }
 
 // Get css properties by entry
-@function aspect-ratio-entry-to-properties($entry, $breakpoint-name: '') {
-	$properties: ();
+@function aspect-ratio-entry-to-properties($entry, $breakpoint-name: '', $append-child: true) {
 	$value: get-value-by-entry($entry, 'ratio', $breakpoint-name);
 
-	$properties: (
-		position: relative,
-		padding-top: aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
-
-		'> *': (
-			position: absolute,
-			top: 0,
-			left: 0,
-			bottom: 0,
-			right: 0
-		)
+	$properties: map-append(
+		$rr-aspect-ratio-class-properties,
+		aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
+		padding-top
 	);
+
+	@if $append-child {
+		$properties: map-append(
+			$properties,
+			$rr-aspect-ratio-child-class-properties,
+			'> *'
+		);
+	}
 
 	@return $properties;
 }
@@ -115,28 +89,12 @@ $rr-aspect-ratio-child-unset-class-properties: (
 /////////
 
 // Output aspect ratio by name
-@mixin aspect-ratio($name: null, $append-child: true) {
-	$aspect-ratio: aspect-ratio-entry($name);
+@mixin aspect-ratio($name: null, $breakpoint-name: '', $append-child: true) {
+	$entry: aspect-ratio-entry($name);
 
-	@if is-not-null($aspect-ratio) {
-		$ratio-value: $aspect-ratio;
-
-		@if is-map($aspect-ratio) {
-			$ratio-value: map-get($aspect-ratio, 'ratio');
-		}
-
-		@include aspect-ratio-custom(nth($ratio-value, 1), nth($ratio-value, 2), $append-child);
-	}
-}
-
-@mixin aspect-ratio-custom($width, $height, $append-child: true) {
-	padding-top: aspect-ratio-calculate($width, $height);
-	@include generate-properties($rr-aspect-ratio-class-properties);
-
-	@if $append-child {
-		> * {
-			@include aspect-ratio-child();
-		}
+	@if is-not-null($entry) {
+		$properties: aspect-ratio-entry-to-properties($entry, $breakpoint-name, $append-child);
+		@include generate-properties($propertie);
 	}
 }
 
@@ -145,20 +103,21 @@ $rr-aspect-ratio-child-unset-class-properties: (
 	@include generate-properties($rr-aspect-ratio-child-class-properties);
 }
 
-// Output custom aspect ratio
-@mixin aspect-ratio-unset($append-child: true) {
-	@include generate-properties($rr-aspect-ratio-unset-class-properties);
+// Output custom aspect ratio by width and height
+@mixin aspect-ratio-custom($width, $height, $append-child: true) {
+	@include generate-properties($rr-aspect-ratio-class-properties);
+	padding-top: aspect-ratio-calculate($width, $height);
 
 	@if $append-child {
 		> * {
-			@include aspect-ratio-child-unset();
+			@include aspect-ratio-child();
 		}
 	}
 }
 
-// Output aspect ratio child unset
-@mixin aspect-ratio-child-unset() {
-	@include generate-properties($rr-aspect-ratio-child-unset-class-properties);
+// Output aspect ratio unset
+@mixin aspect-ratio-unset($append-child: true) {
+	@include generate-properties($rr-aspect-ratio-unset-class-properties, not $append-child);
 }
 
 /////////
@@ -184,18 +143,7 @@ $rr-aspect-ratio-child-unset-class-properties: (
 				$class: $rr-global-unset-class,
 				$prefix: $rr-aspect-ratio-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
-				$properties: (
-					position: unset,
-					padding-top: unset,
-
-					'> *': (
-						position: unset,
-						top: unset,
-						left: unset,
-						bottom: unset,
-						right: unset
-					)
-				)
+				$properties: $rr-aspect-ratio-unset-class-properties
 			);
 		}
 	}

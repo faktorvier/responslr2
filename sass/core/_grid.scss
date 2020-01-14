@@ -112,7 +112,7 @@ $rr-grid-helper-info-class: 'responslr-grid-helper-info' !default;
 $rr-grid-helper-grid-class: 'responslr-grid-helper' !default;
 $rr-grid-helper-grid-shower-class: 'responslr-grid-helper__show' !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-grid-breakpoints: $rr-generate-classes !default;
 $rr-generate-grid-breakpoints-fraction: $rr-generate-grid-breakpoints !default;
 $rr-generate-grid-breakpoints-normal: $rr-generate-grid-breakpoints !default;
@@ -260,6 +260,11 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 	// }
 
 	@return escape-selector($selector);
+}
+
+// Get breakpoint prefix
+@function grid-breakpoint-prefix($breakpoint-name) {
+	@return if($breakpoint-name == 's', '', '#{$breakpoint-name}\\:');
 }
 
 /////////
@@ -445,308 +450,308 @@ $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 // 			@content($breakpoint-name);
 // 		}
 // 	}
-// }
+//
 
-/****************/
-/* OUTPUT: GRID */
-/****************/
+/////////
+// OUTPUT
+/////////
 
-@if $rr-generate-grid-breakpoints and map-not-empty($rr-grid-breakpoints) {
-	// Container
-	.#{$rr-grid-container-class} {
-		max-width: none;
-	}
+@mixin generate-grid-core-output() {
+	@if $rr-generate-grid-breakpoints and map-not-empty($rr-grid-breakpoints) {
+		// Container
+		.#{$rr-grid-container-class} {
+			max-width: none;
+		}
 
-	// Row
-	.#{$rr-grid-row-class} {
-		display: flex;
-		flex-wrap: wrap;
-	}
+		// Row
+		.#{$rr-grid-row-class} {
+			display: flex;
+			flex-wrap: wrap;
+		}
 
-	// Column
-	.#{$rr-grid-column-class} {
-		flex: 0 0 auto;
-		width: 100%;
-	}
+		// Column
+		.#{$rr-grid-column-class} {
+			flex: 0 0 auto;
+			width: 100%;
+		}
 
-	// Breakpoints
-	@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-		// Get breakpoint properties
-		$breakpoint-columns: grid-breakpoint-property($breakpoint-name, 'columns');
-		$breakpoint-column-width: 100% / $breakpoint-columns;
-		$breakpoint-base-size: grid-breakpoint-property($breakpoint-name, 'base-size');
-		$breakpoint-container-width: grid-breakpoint-property($breakpoint-name, 'container-width');
-		$breakpoint-container-spacing: grid-breakpoint-property($breakpoint-name, 'container-spacing');
-		$breakpoint-container-alignment: grid-breakpoint-property($breakpoint-name, 'container-alignment');
+		// Breakpoints
+		@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+			// Get breakpoint properties
+			$breakpoint-columns: grid-breakpoint-property($breakpoint-name, 'columns');
+			$breakpoint-column-width: 100% / $breakpoint-columns;
+			$breakpoint-base-size: grid-breakpoint-property($breakpoint-name, 'base-size');
+			$breakpoint-container-width: grid-breakpoint-property($breakpoint-name, 'container-width');
+			$breakpoint-container-spacing: grid-breakpoint-property($breakpoint-name, 'container-spacing');
+			$breakpoint-container-alignment: grid-breakpoint-property($breakpoint-name, 'container-alignment');
 
-		// Apply media query
-		@include mq($breakpoint-name) {
-			// Base size
-			@if is-number($breakpoint-base-size) {
-				body {
-					font-size: $breakpoint-base-size;
-				}
-			}
-
-			// Container
-			@if is-number($breakpoint-container-width) {
-				.#{$rr-grid-container-class} {
-					max-width: $breakpoint-container-width;
-
-					@if $breakpoint-container-alignment == right {
-						margin-right: $breakpoint-container-horizontal-margin;
-						margin-left: auto;
-					} @else if $breakpoint-container-alignment == left {
-						margin-right: auto;
-						margin-left: $breakpoint-container-horizontal-margin;
-					} @else if $breakpoint-container-alignment == center {
-						margin-left: auto;
-						margin-right: auto;
+			// Apply media query
+			@include mq($breakpoint-name) {
+				// Base size
+				@if is-number($breakpoint-base-size) {
+					body {
+						font-size: $breakpoint-base-size;
 					}
 				}
-			}
 
-			// Row
-			.#{$rr-grid-row-class} .#{$rr-grid-row-class} {
-				margin-left: -(grid-gutter-half($breakpoint-name));
-				margin-right: -(grid-gutter-half($breakpoint-name));
-			}
+				// Container
+				@if is-number($breakpoint-container-width) {
+					.#{$rr-grid-container-class} {
+						max-width: $breakpoint-container-width;
 
-			// Column (normal)
-			.#{$rr-grid-column-class} {
-				padding-left: grid-gutter-half($breakpoint-name);
-				padding-right: grid-gutter-half($breakpoint-name);
-			}
-
-			@if $rr-generate-grid-breakpoints-normal {
-				@for $column-index from $breakpoint-columns through 1 {
-					// Offset
-					#{grid-class-prefix(
-						$breakpoint-name,
-						'.#{$rr-grid-offset-class-prefix}#{$column-index}',
-						false
-					)} {
-						margin-left: $breakpoint-column-width * $column-index;
-					}
-
-					// Inset
-					#{grid-class-prefix(
-						$breakpoint-name,
-						'.#{$rr-grid-inset-class-prefix}#{$column-index}',
-						false
-					)} {
-						margin-left: -$breakpoint-column-width * $column-index;
-					}
-
-					// Breakpoint
-					#{grid-class-prefix(
-						$breakpoint-name,
-						'.#{$column-index}',
-						false
-					)} {
-						width: $breakpoint-column-width * $column-index;
-
-						@for $sub-column-index from $column-index through 1 {
-							// Offset nested
-							#{grid-class-prefix(
-								$breakpoint-name,
-								'.#{$rr-grid-offset-class-prefix}#{$sub-column-index}',
-								false
-							)} {
-								margin-left: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
-							}
-
-							// Inset nested
-							#{grid-class-prefix(
-								$breakpoint-name,
-								'.#{$rr-grid-inset-class-prefix}#{$sub-column-index}',
-								false
-							)} {
-								margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%);
-							}
-
-							// Breakpoint nested
-							#{grid-class-prefix(
-								$breakpoint-name,
-								'.#{$sub-column-index}',
-								false
-							)} {
-								width: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
-							}
+						@if $breakpoint-container-alignment == right {
+							margin-right: $breakpoint-container-horizontal-margin;
+							margin-left: auto;
+						} @else if $breakpoint-container-alignment == left {
+							margin-right: auto;
+							margin-left: $breakpoint-container-horizontal-margin;
+						} @else if $breakpoint-container-alignment == center {
+							margin-left: auto;
+							margin-right: auto;
 						}
 					}
 				}
-			}
 
-			// Column (fraction)
-			@if $rr-generate-grid-breakpoints-fraction {
-				@for $denominator from 1 through $rr-grid-breakpoint-fraction-steps {
-					@for $numerator from 1 through $denominator {
-						$percent: 100% / $denominator * $numerator;
+				// Row
+				.#{$rr-grid-row-class} .#{$rr-grid-row-class} {
+					margin-left: -(grid-gutter-half($breakpoint-name));
+					margin-right: -(grid-gutter-half($breakpoint-name));
+				}
 
+				// Column (normal)
+				.#{$rr-grid-column-class} {
+					padding-left: grid-gutter-half($breakpoint-name);
+					padding-right: grid-gutter-half($breakpoint-name);
+				}
+
+				@if $rr-generate-grid-breakpoints-normal {
+					@for $column-index from $breakpoint-columns through 1 {
 						// Offset
 						#{grid-class-prefix(
 							$breakpoint-name,
-							'.#{$rr-grid-offset-class-prefix}#{$numerator}\\/#{$denominator}',
+							'.#{$rr-grid-offset-class-prefix}#{$column-index}',
 							false
 						)} {
-							margin-left: $percent;
+							margin-left: $breakpoint-column-width * $column-index;
 						}
 
 						// Inset
 						#{grid-class-prefix(
 							$breakpoint-name,
-							'.#{$rr-grid-inset-class-prefix}#{$numerator}\\/#{$denominator}',
+							'.#{$rr-grid-inset-class-prefix}#{$column-index}',
 							false
 						)} {
-							margin-left: -($percent);
+							margin-left: -$breakpoint-column-width * $column-index;
 						}
 
 						// Breakpoint
 						#{grid-class-prefix(
 							$breakpoint-name,
-							'.#{$numerator}\\/#{$denominator}',
+							'.#{$column-index}',
 							false
 						)} {
-							width: $percent;
+							width: $breakpoint-column-width * $column-index;
+
+							@for $sub-column-index from $column-index through 1 {
+								// Offset nested
+								#{grid-class-prefix(
+									$breakpoint-name,
+									'.#{$rr-grid-offset-class-prefix}#{$sub-column-index}',
+									false
+								)} {
+									margin-left: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
+								}
+
+								// Inset nested
+								#{grid-class-prefix(
+									$breakpoint-name,
+									'.#{$rr-grid-inset-class-prefix}#{$sub-column-index}',
+									false
+								)} {
+									margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%);
+								}
+
+								// Breakpoint nested
+								#{grid-class-prefix(
+									$breakpoint-name,
+									'.#{$sub-column-index}',
+									false
+								)} {
+									width: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
+								}
+							}
 						}
 					}
 				}
-			}
 
-			// Column (all) reset
-			#{grid-class-prefix(
-				$breakpoint-name,
-				'.#{$rr-grid-unset-class}',
-				false
-			)} {
-				&, .#{$rr-grid-column-class} & {
-					margin-left: 0;
+				// Column (fraction)
+				@if $rr-generate-grid-breakpoints-fraction {
+					@for $denominator from 1 through $rr-grid-breakpoint-fraction-steps {
+						@for $numerator from 1 through $denominator {
+							$percent: 100% / $denominator * $numerator;
+
+							// Offset
+							#{grid-class-prefix(
+								$breakpoint-name,
+								'.#{$rr-grid-offset-class-prefix}#{$numerator}\\/#{$denominator}',
+								false
+							)} {
+								margin-left: $percent;
+							}
+
+							// Inset
+							#{grid-class-prefix(
+								$breakpoint-name,
+								'.#{$rr-grid-inset-class-prefix}#{$numerator}\\/#{$denominator}',
+								false
+							)} {
+								margin-left: -($percent);
+							}
+
+							// Breakpoint
+							#{grid-class-prefix(
+								$breakpoint-name,
+								'.#{$numerator}\\/#{$denominator}',
+								false
+							)} {
+								width: $percent;
+							}
+						}
+					}
 				}
-			}
 
-			// Column (all) auto fill width
-			.#{$rr-grid-column-class} {
-				&#{grid-class-prefix(
+				// Column (all) reset
+				#{grid-class-prefix(
 					$breakpoint-name,
-					'.#{$rr-grid-column-auto-class}',
-					true
+					'.#{$rr-grid-unset-class}',
+					false
 				)} {
-					flex: 1 1 0px;
+					&, .#{$rr-grid-column-class} & {
+						margin-left: 0;
+					}
 				}
 
-				&#{grid-class-prefix(
-					$breakpoint-name,
-					'.#{$rr-grid-column-shrink-class}',
-					true
-				)} {
-					flex: 0 0 auto;
-					width: auto;
-				}
+				// Column (all) auto fill width
+				.#{$rr-grid-column-class} {
+					&#{grid-class-prefix(
+						$breakpoint-name,
+						'.#{$rr-grid-column-auto-class}',
+						true
+					)} {
+						flex: 1 1 0px;
+					}
 
-				&#{grid-class-prefix(
-					$breakpoint-name,
-					'.#{$rr-grid-column-normal-class}',
-					true
-				)} {
-					flex: 0 0 auto;
+					&#{grid-class-prefix(
+						$breakpoint-name,
+						'.#{$rr-grid-column-shrink-class}',
+						true
+					)} {
+						flex: 0 0 auto;
+						width: auto;
+					}
+
+					&#{grid-class-prefix(
+						$breakpoint-name,
+						'.#{$rr-grid-column-normal-class}',
+						true
+					)} {
+						flex: 0 0 auto;
+					}
 				}
 			}
 		}
-	}
 
-	// Column force line break
-	.#{$rr-grid-line-break-class} {
-		flex: 1 1 100%;
-		height: 0;
-		width: auto;
-		overflow: hidden;
+		// Column force line break
+		.#{$rr-grid-line-break-class} {
+			flex: 1 1 100%;
+			height: 0;
+			width: auto;
+			overflow: hidden;
+		}
 	}
 }
 
-/**********************/
-/* OUTPUT: GRIDHELPER */
-/**********************/
-
-@if $rr-generate-grid-helper {
-	.#{$rr-grid-helper-info-class} {
-		display: inline-flex;
-		align-items: center;
-		position: fixed;
-		z-index: $rr-grid-helper-info-z-index;
-		top: $rr-grid-helper-info-position-top;
-		right: $rr-grid-helper-info-position-right;
-		bottom: $rr-grid-helper-info-position-bottom;
-		left: $rr-grid-helper-info-position-left;
-		padding: 7px;
-		background-color: rgba($rr-grid-helper-info-primary-color, 0.8);
-		border: 1px solid darken($rr-grid-helper-info-primary-color, 20%);
-		color: $rr-grid-helper-info-secondary-color;
-		font-size: 18px;
-		font-family: 'Courier New', monospace;
-		font-weight: bold;
-		line-height: 14px;
-		cursor: pointer;
-
-		&::before {
-			font-size: 1em;
-			text-transform: uppercase;
-			content: var(--rr-current-breakpoint) ' ' attr(data-rr-window-width);
-		}
-
-		input[type=checkbox] {
-			margin: 0 !important;
-			margin-left: 8px !important;
-			height: 15px !important;
-			width: 15px  !important;
-			background-color: $rr-grid-helper-info-secondary-color !important;
+@mixin generate-grid-helper-core-output() {
+	@if $rr-generate-grid-helper {
+		.#{$rr-grid-helper-info-class} {
+			display: inline-flex;
+			align-items: center;
+			position: fixed;
+			z-index: $rr-grid-helper-info-z-index;
+			top: $rr-grid-helper-info-position-top;
+			right: $rr-grid-helper-info-position-right;
+			bottom: $rr-grid-helper-info-position-bottom;
+			left: $rr-grid-helper-info-position-left;
+			padding: 7px;
+			background-color: rgba($rr-grid-helper-info-primary-color, 0.8);
 			border: 1px solid darken($rr-grid-helper-info-primary-color, 20%);
-			appearance: none !important;
-			outline: none !important;
-			box-shadow: none !important;
-			cursor: pointer !important;
-
-			&:hover {
-				background-color: lighten($rr-grid-helper-info-primary-color, 20%) !important;
-			}
-
-			&:checked {
-				background-color: darken($rr-grid-helper-info-primary-color, 20%) !important;
-			}
-		}
-	}
-
-	.#{$rr-grid-helper-grid-class} {
-		display: none;
-		position: fixed;
-		z-index: $rr-grid-helper-z-index;
-		top: 0;
-		bottom: 0;
-		width: 100%;
-		overflow: hidden;
-		pointer-events: none;
-
-		.#{$rr-grid-row-class} {
-			height: 100%;
-			background-color: $rr-grid-helper-gutter-background-color;
-		}
-
-		.#{$rr-grid-column-class} {
-			height: 100%;
+			color: $rr-grid-helper-info-secondary-color;
+			font-size: 18px;
+			font-family: 'Courier New', monospace;
+			font-weight: bold;
+			line-height: 14px;
+			cursor: pointer;
 
 			&::before {
-				content: '';
-				display: block;
-				height: 100%;
-				background-color: $rr-grid-helper-column-background-color;
-				border-left: 1px solid $rr-grid-helper-column-border-color;
-				border-right: 1px solid $rr-grid-helper-column-border-color;
+				font-size: 1em;
+				text-transform: uppercase;
+				content: var(--rr-current-breakpoint) ' ' attr(data-rr-window-width);
+			}
+
+			input[type=checkbox] {
+				margin: 0 !important;
+				margin-left: 8px !important;
+				height: 15px !important;
+				width: 15px  !important;
+				background-color: $rr-grid-helper-info-secondary-color !important;
+				border: 1px solid darken($rr-grid-helper-info-primary-color, 20%);
+				appearance: none !important;
+				outline: none !important;
+				box-shadow: none !important;
+				cursor: pointer !important;
+
+				&:hover {
+					background-color: lighten($rr-grid-helper-info-primary-color, 20%) !important;
+				}
+
+				&:checked {
+					background-color: darken($rr-grid-helper-info-primary-color, 20%) !important;
+				}
 			}
 		}
-	}
 
-	.#{$rr-grid-helper-grid-shower-class} {
-		display: block;
+		.#{$rr-grid-helper-grid-class} {
+			display: none;
+			position: fixed;
+			z-index: $rr-grid-helper-z-index;
+			top: 0;
+			bottom: 0;
+			width: 100%;
+			overflow: hidden;
+			pointer-events: none;
+
+			.#{$rr-grid-row-class} {
+				height: 100%;
+				background-color: $rr-grid-helper-gutter-background-color;
+			}
+
+			.#{$rr-grid-column-class} {
+				height: 100%;
+
+				&::before {
+					content: '';
+					display: block;
+					height: 100%;
+					background-color: $rr-grid-helper-column-background-color;
+					border-left: 1px solid $rr-grid-helper-column-border-color;
+					border-right: 1px solid $rr-grid-helper-column-border-color;
+				}
+			}
+		}
+
+		.#{$rr-grid-helper-grid-shower-class} {
+			display: block;
+		}
 	}
 }
 

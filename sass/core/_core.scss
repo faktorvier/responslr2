@@ -75,43 +75,47 @@ $rr-global-settings: ();
 	@return $return;
 }
 
-// Get entry value by name
-@function get-entry-value($map, $name, $property, $default: null) {
-	$entry: null;
-	$value: $name;
+// Get the main value from an entry
+@function get-value-by-entry($entry, $property, $breakpoint-name: '') {
+	$value: null;
 
-	@if is-map($name) {
-		$entry: $name;
-	} @else if entry-exists($map, $name) {
-		$entry: get-entry-by-name($map, $name, $default);
+	@if $breakpoint-name != '' and $breakpoint-name != $rr-grid-breakpoints-default {
+		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
+
+		@if is-not-null($breakpoint-overwrites) {
+			$entry: $breakpoint-overwrites;
+		}
 	}
 
-	@if is-map($entry) and map-has-key($entry, $property) {
-		$value: map-get($entry, $property);
+	@if is-map($entry) {
+		@if map-has-key($entry, $property) {
+			$value: map-get($entry, $property);
+		} @else {
+			@error "Main value #{$property} missing in #{inspect($entry)} for breakpoint #{$breakpoint-name}";
+		}
+	} @else {
+		$value: $entry;
 	}
 
 	@return $value;
 }
 
-// Get breakpoint prefix
-@function get-breakpoint-prefix($breakpoint-name) {
-	@return if($breakpoint-name == 's', '', '#{$breakpoint-name}\\:');
-}
-
-// Get the main value for an entry
-@function get-value-by-entry($entry, $property, $breakpoint-name: '') {
+// Get a property from an entry
+@function get-property-by-entry($entry, $property, $default: null, $breakpoint-name: '') {
 	$value: null;
 
-	$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
+	@if $breakpoint-name != '' and $breakpoint-name != $rr-grid-breakpoints-default {
+		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 
-	@if $breakpoint-name != '' and is-not-null($breakpoint-overwrites) {
-		$value: get-value-by-entry($breakpoint-overwrites, $property, $breakpoint-name);
-	} @else {
-		@if is-map($entry) {
-			$value: map-get($entry, $property);
-		} @else {
-			$value: $entry;
+		@if is-not-null($breakpoint-overwrites) {
+			$entry: $breakpoint-overwrites;
 		}
+	}
+
+	@if is-map($entry) and map-has-key($entry, $property) {
+		$value: map-get($entry, $property);
+	} @else {
+		$value: $default;
 	}
 
 	@return $value;

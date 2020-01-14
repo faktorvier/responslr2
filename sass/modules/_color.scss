@@ -2,25 +2,18 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-$rr-colors-generate-types: ('text', 'bg', 'border') !default; // text, bg, border
-
 // Classes
 $rr-color-text-class-prefix: 'color-' !default;
 $rr-color-background-class-prefix: 'bg-color-' !default;
 $rr-color-border-class-prefix: 'border-color-' !default;
 
-// Colors
+// Default entries
 $rr-colors: () !default;
 
-// Defaults
-$rr-color-map-defaults: (
-	'color': null,
-	'types': $rr-colors-generate-types,
-) !default;
-
+// Default entry
 $rr-colors-default: map-default($rr-colors) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-colors: $rr-generate-classes !default;
 $rr-generate-colors-text: $rr-generate-colors !default;
 $rr-generate-colors-background: $rr-generate-colors !default;
@@ -42,27 +35,11 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 	@return get-entry-by-name($rr-colors, $name, $rr-colors-default);
 }
 
-// Get an entry property value by name
-@function color-property($name, $property) {
-	@return get-entry-property(
-		$rr-colors,
-		$name,
-		$property,
-		$rr-color-map-defaults,
-		$rr-colors-default
-	);
-}
-
-// Get value by name
-@function color-value($name: null) {
-	@return get-entry-value($rr-colors, $name, 'color', $rr-colors-default);
-}
-
-// Get color property name by type
+// Get property name by type
 @function color-property-by-type($type) {
 	$property-name: color;
 
-	@if $type == 'bg' {
+	@if $type == 'background' {
 		$property-name: background-color;
 	} @else if $type == 'border' {
 		$property-name: border-color;
@@ -77,10 +54,14 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 
 // Output color by name and type
 @mixin color($name: null, $type: 'text') {
-	$color-value: color-value($name);
+	$entry: color-entry($name);
 
-	@if is-not-null($color-value) {
-		#{color-property-by-type($type)}: $color-value;
+	@if is-not-null($entry) {
+		$property: color-property-by-type($type);
+
+		@include generate-properties((
+			$property: get-value-by-entry($entry, 'color')
+		));
 	}
 }
 
@@ -103,9 +84,9 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 
 		@each $color-name, $color-entry in $rr-colors-new {
 			$color-value: get-value-by-entry($color-entry, 'color');
-			$generate-text-color: map-maybe-get($color-entry, 'text', $rr-generate-colors-text);
-			$generate-background-color: map-maybe-get($color-entry, 'background', $rr-generate-colors-background);
-			$generate-border-color: map-maybe-get($color-entry, 'border', $rr-generate-colors-border);
+			$generate-text-color: map-maybe-get($color-entry, 'generate-text', $rr-generate-colors-text);
+			$generate-background-color: map-maybe-get($color-entry, 'generate-background', $rr-generate-colors-background);
+			$generate-border-color: map-maybe-get($color-entry, 'generate-border', $rr-generate-colors-border);
 
 			// Text color
 			@if $generate-text-color {

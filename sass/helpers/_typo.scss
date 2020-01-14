@@ -2,9 +2,11 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+// Classes
 $rr-font-fix-class: 'font-fix' !default;
 $rr-font-transform-class-prefix: 'txt-transform-' !default;
 
+// Default text-transform properties
 $rr-font-transform-properties: (
 	none,
 	capitalize,
@@ -12,6 +14,7 @@ $rr-font-transform-properties: (
 	lowercase
 ) !default;
 
+// Outout handling
 $rr-generate-font-transform: $rr-generate-classes !default;
 
 ///////////////////

@@ -5,26 +5,18 @@
 // Classes
 $rr-dummy-class-prefix: 'dummy-' !default;
 
-// Dummies
+// Default dummy entries
 $rr-dummies: () !default;
 
-// Defaults
-$rr-dummy-map-defaults: (
-	'xyz': null
-) !default;
-
+// Default entry
 $rr-dummies-default: map-default($rr-dummies) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-dummies: $rr-generate-classes !default;
-
-// @todo
 
 /////////////////////
 // INTERNAL VARIABLES
 /////////////////////
-
-// @todo
 
 ////////////
 // FUNCTIONS
@@ -40,24 +32,6 @@ $rr-generate-dummies: $rr-generate-classes !default;
 	@return get-entry-by-name($rr-dummies, $name, $rr-dummies-default);
 }
 
-// Get an entry property value by name
-@function dummy-property($name, $property) {
-	@return get-entry-property(
-		$rr-dummies,
-		$name,
-		$property,
-		$rr-dummy-map-defaults,
-		$rr-dummies-default
-	);
-}
-
-// Get an entry value by name
-@function dummy-value($name: null) {
-	@return get-entry-value($rr-dummies, $name, 'dummy', $rr-dummies-default);
-}
-
-// @todo
-
 /////////
 // MIXINS
 /////////
@@ -67,24 +41,12 @@ $rr-generate-dummies: $rr-generate-classes !default;
 
 }
 
-// @todo
-
 /////////
 // OUTPUT
 /////////
 
-@if $rr-generate-dummies and map-not-empty($rr-dummies) {
-	// @todo
+@mixin generate-dummy-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-dummies {
+
+	}
 }
-
-/////////////////////////
-// APPEND GLOBAL SETTINGS
-/////////////////////////
-
-// @todo
-
-///////
-// TODO
-///////
-
-// @todo

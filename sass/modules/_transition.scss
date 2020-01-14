@@ -5,28 +5,20 @@
 // Classes
 $rr-transition-class-prefix: 'transition-' !default;
 
-// Transitions
-$rr-transitions: () !default;
-
-// Defaults
+// Default values
 $rr-transitions-default-duration: 0.25s !default;
 $rr-transitions-default-delay: null !default;
 $rr-transitions-default-timing-function: null !default;
 $rr-transitions-default-hardware-acceleration: true !default;
 
-$rr-transition-map-defaults: (
-	'property': null,
-	'duration': $rr-transitions-default-duration,
-	'delay': $rr-transitions-default-delay,
-	'timing-function': $rr-transitions-default-timing-function,
-	'hardware-acceleration': $rr-transitions-default-hardware-acceleration
-) !default;
+// Default entries
+$rr-transitions: () !default;
 
+// Default entry
 $rr-transitions-default: map-default($rr-transitions) !default;
 
-// Print output for this module
+// Output handling
 $rr-generate-transitions: $rr-generate-classes !default;
-$rr-generate-transitions-breakpoints: false !default;
 
 ///////////////////
 // CLASS PROPERTIES
@@ -48,22 +40,6 @@ $rr-transition-hardware-acceleration-class-properties: (
 // Gets an entry by name
 @function transition-entry($name: null) {
 	@return get-entry-by-name($rr-transitions, $name, $rr-transitions-default);
-}
-
-// Get an entry property value by name
-@function transition-property($name, $property) {
-	@return get-entry-property(
-		$rr-transitions,
-		$name,
-		$property,
-		$rr-transition-map-defaults,
-		$rr-transitions-default
-	);
-}
-
-// Get an entry value by name
-@function transition-value($name: null) {
-	@return get-entry-value($rr-transitions, $name, 'property', $rr-transitions-default);
 }
 
 // Get timing function by name
@@ -134,16 +110,16 @@ $rr-transition-hardware-acceleration-class-properties: (
 // Get css properties by entry
 @function transition-entry-to-properties($entry) {
 	$transition-property: get-value-by-entry($entry, 'property');
-	$transition-duration: map-maybe-get($entry, 'duration', 0.25s);
-	$transition-delay: map-maybe-get($entry, 'delay', null);
-	$transition-timing-function: transition-timing-function-by-name(map-maybe-get($entry, 'timing-function', null));
+	$transition-duration: map-maybe-get($entry, 'duration', $rr-transitions-default-duration);
+	$transition-delay: map-maybe-get($entry, 'delay', $rr-transitions-default-delay);
+	$transition-timing-function: map-maybe-get($entry, 'timing-function', $rr-transitions-default-timing-function);
 	$transition-hardware-acceleration: map-maybe-get($entry, 'hardware-acceleration', true);
 
 	$properties: (
 		transition-property: list-comma($transition-property),
 		transition-duration: list-comma($transition-duration),
 		transition-delay: list-comma($transition-delay),
-		transition-timing-function: list-comma($transition-timing-function)
+		transition-timing-function: list-comma(transition-timing-function-by-name($transition-timing-function))
 	);
 
 	@if $transition-hardware-acceleration {
@@ -157,14 +133,19 @@ $rr-transition-hardware-acceleration-class-properties: (
 // MIXINS
 /////////
 
+// Output transition by name
+@mixin transition($name: null) {
+	$entry: transition-entry($name);
+
+	@if is-not-null($entry) {
+		$properties: transition-entry-to-properties($entry);
+		@include generate-properties($properties);
+	}
+}
+
 // Output transition hardware acceleration
 @mixin transition-hardware-acceleration() {
 	@include generate-properties($rr-transition-hardware-acceleration-class-properties);
-}
-
-// Output transition by name
-@mixin transition($name: null) {
-	//@include generate-properties(transition-css-properties-by-name($name));
 }
 
 /////////
