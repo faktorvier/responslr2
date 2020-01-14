@@ -3,11 +3,11 @@
 ///////////////////
 
 // Classes
-$rr-alignment-h-class-prefix: 'h-' !default;
-$rr-alignment-v-class-prefix: 'v-' !default;
+$rr-alignment-horizontal-class-prefix: 'h-' !default;
+$rr-alignment-vertical-class-prefix: 'v-' !default;
 
 // Default text-align properties
-$rr-alignment-h-properties: (
+$rr-alignment-horizontal-properties: (
 	left,
 	right,
 	center,
@@ -16,7 +16,7 @@ $rr-alignment-h-properties: (
 ) !default;
 
 // Default vertical-align properties
-$rr-alignment-v-properties: (
+$rr-alignment-vertical-properties: (
 	baseline,
 	top,
 	middle,
@@ -38,8 +38,8 @@ $rr-generate-alignment-vertical: $rr-generate-alignment !default;
 	@if $rr-generate-alignment-horizontal {
 		@include generate-output-by-property(
 			$property: 'text-align',
-			$values: $rr-alignment-h-properties,
-			$prefix: $rr-alignment-h-class-prefix,
+			$values: $rr-alignment-horizontal-properties,
+			$prefix: $rr-alignment-horizontal-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
@@ -49,8 +49,8 @@ $rr-generate-alignment-vertical: $rr-generate-alignment !default;
 	@if $rr-generate-alignment-vertical {
 		@include generate-output-by-property(
 			$property: 'vertical-align',
-			$values: $rr-alignment-v-properties,
-			$prefix: $rr-alignment-v-class-prefix,
+			$values: $rr-alignment-vertical-properties,
+			$prefix: $rr-alignment-vertical-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);

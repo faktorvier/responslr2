@@ -15,6 +15,7 @@ $rr-font-transform-properties: (
 ) !default;
 
 // Outout handling
+$rr-generate-font-fix: $rr-generate-classes !default;
 $rr-generate-font-transform: $rr-generate-classes !default;
 
 ///////////////////
@@ -43,7 +44,7 @@ $rr-font-reset-class-properties: (
 
 @mixin generate-typo-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	// Font fix
-	@if $breakpoint-prefix == '' {
+	@if $rr-generate-font-fix and $breakpoint-prefix == '' {
 		.#{$rr-font-fix-class} {
 			@include generate-properties($rr-font-reset-class-properties);
 		}

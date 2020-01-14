@@ -2,6 +2,7 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+// Classes
 $rr-global-hide-class: 'hide' !default;
 $rr-global-show-class: 'show' !default;
 $rr-global-unset-class: 'unset' !default;
@@ -12,10 +13,10 @@ $rr-global-hover-suffix-class: '-hover' !default;
 $rr-global-can-hover-class: 'can-hover' !default;
 $rr-global-can-touch-class: 'can-touch' !default;
 
+// Primary responslr color
 $rr-primary-color: #17d996;
 
-$rr-generate-only-hover: false !default;
-
+// Output handling
 $rr-generate-classes: true !default;
 $rr-generate-settings: true !default;
 

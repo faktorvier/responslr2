@@ -5,7 +5,7 @@
 // Classes
 $rr-position-class-prefix: '' !default;
 $rr-position-filler-class-prefix: 'fill-' !default;
-$rr-position-positions-class-prefix: 'position-' !default;
+$rr-position-position-class-prefix: 'position-' !default;
 
 // Default position properties
 $rr-position-properties: (
@@ -110,7 +110,7 @@ $rr-generate-position-positions: $rr-generate-position !default;
 	@if $rr-generate-position-positions {
 		@include generate-output-by-classes(
 			$classes: $rr-position-positions-properties,
-			$prefix: $rr-position-positions-class-prefix,
+			$prefix: $rr-position-position-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix
 		);
 	}
