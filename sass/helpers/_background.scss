@@ -4,6 +4,7 @@
 
 // Classes
 $rr-background-size-class-prefix: 'bg-' !default;
+$rr-background-clip-class-prefix: 'bg-clip-' !default;
 $rr-background-position-class-prefix: 'bg-position-' !default;
 
 // Default background-size properties
@@ -11,6 +12,13 @@ $rr-background-size-properties: (
 	cover,
 	contain,
 	auto
+) !default;
+
+// Default background-size properties
+$rr-background-clip-properties: (
+	('border', border-box),
+	('padding', padding-box),
+	('content', content-box)
 ) !default;
 
 // Default background-positions properties
@@ -29,6 +37,7 @@ $rr-background-position-properties: (
 // Output handling
 $rr-generate-background: $rr-generate-classes !default;
 $rr-generate-background-sizes: $rr-generate-background !default;
+$rr-generate-background-clips: $rr-generate-background !default;
 $rr-generate-background-positions: $rr-generate-background !default;
 
 /////////
@@ -42,6 +51,17 @@ $rr-generate-background-positions: $rr-generate-background !default;
 			$property: 'background-size',
 			$values: $rr-background-size-properties,
 			$prefix: $rr-background-size-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
+	}
+
+	// Background clip
+	@if $rr-generate-background-clips {
+		@include generate-output-by-property(
+			$property: 'background-clip',
+			$values: $rr-background-clip-properties,
+			$prefix: $rr-background-clip-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);

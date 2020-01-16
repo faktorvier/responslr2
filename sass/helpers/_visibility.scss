@@ -16,14 +16,35 @@ $rr-generate-visibility: $rr-generate-classes !default;
 
 @mixin generate-visibility-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-visibility {
-		// Show
-		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
-			display: unset;
+		// Show block (default)
+		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class},
+		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class}-block {
+			display: block;
 		}
 
-		// Show (row)
-		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class}.#{$rr-grid-row-class} {
+		// Show inline
+		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class}-inline {
+			display: inline;
+		}
+
+		// Show row
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
 			display: flex;
+		}
+
+		// Show table
+		table.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
+			display: table;
+		}
+
+		// Show table row
+		tr.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
+			display: table-row;
+		}
+
+		// Show table cell
+		td.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
+			display: table-cell;
 		}
 
 		// Hide
@@ -32,3 +53,13 @@ $rr-generate-visibility: $rr-generate-classes !default;
 		}
 	}
 }
+
+
+// Block
+//p, h1, h2, h3, h4, h5, h6, ol, ul, pre, address, blockquote, dl, div, fieldset, form, hr, noscript, table
+
+// Inline
+//b, big, i, small, tt, abbr, acronym, cite, code, dfn, em, kbd, strong, samp, var, a, bdo, br, img, map, object,
+//q, script, span, sub, sup, button, input, label, select, textarea
+
+//

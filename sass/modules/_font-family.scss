@@ -99,7 +99,8 @@ $rr-generate-font-families: $rr-generate-classes !default;
 				$class: $font-family-name,
 				$prefix: $rr-font-family-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
-				$properties: font-family-entry-to-properties($font-family-entry)
+				$properties: font-family-entry-to-properties($font-family-entry, $breakpoint-name),
+				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-family-entry, $breakpoint-name)
 			);
 		}
 	}

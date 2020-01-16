@@ -43,30 +43,89 @@ $rr-position-filler-properties: (
 
 // Default positions classes
 $rr-position-positions-properties: (
-	'top': (
+	't': (
 		top: 0,
+		right: unset,
+		bottom: unset,
+		left: unset
 	),
-	'right': (
+	'r': (
+		top: unset,
 		right: 0,
+		bottom: unset,
+		left: unset
 	),
-	'bottom': (
+	'b': (
+		top: unset,
+		right: unset,
 		bottom: 0,
+		left: unset
 	),
-	'left': (
+	'l': (
+		top: unset,
+		right: unset,
+		bottom: unset,
 		left: 0
 	),
-	'top-' + $rr-global-unset-class: (
-		top: unset
+	'c': (
+		top: 50%,
+		right: unset,
+		bottom: unset,
+		left: 50%,
+		transform: translate(-50%, -50%)
 	),
-	'right-' + $rr-global-unset-class: (
-		right: unset
+	'lt': (
+		top: 0,
+		right: unset,
+		bottom: unset,
+		left: 0
 	),
-	'bottom-' + $rr-global-unset-class: (
-		bottom: unset
+	'ct': (
+		top: 0,
+		right: unset,
+		bottom: unset,
+		left: 50%,
+		transform: translateX(-50%)
 	),
-	'left-' + $rr-global-unset-class: (
+	'rt': (
+		top: 0,
+		right: 0,
+		bottom: unset,
 		left: unset
-	)
+	),
+	'lb': (
+		top: unset,
+		right: unset,
+		bottom: 0,
+		left: 0
+	),
+	'cb': (
+		top: unset,
+		right: unset,
+		bottom: 0,
+		left: 50%,
+		transform: translateX(-50%)
+	),
+	'rb': (
+		top: unset,
+		right: 0,
+		bottom: 0,
+		left: unset
+	),
+	'lc': (
+		top: 50%,
+		right: unset,
+		bottom: unset,
+		left: 0,
+		transform: translateY(-50%)
+	),
+	'rc': (
+		top: 50%,
+		right: 0,
+		bottom: unset,
+		left: unset,
+		transform: translateY(-50%)
+	),
 ) !default;
 
 // Output handling
@@ -111,7 +170,14 @@ $rr-generate-position-positions: $rr-generate-position !default;
 		@include generate-output-by-classes(
 			$classes: $rr-position-positions-properties,
 			$prefix: $rr-position-position-class-prefix,
-			$breakpoint-prefix: $breakpoint-prefix
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: (
+				position: unset,
+				top: unset,
+				right: unset,
+				bottom: unset,
+				left: unset
+			)
 		);
 	}
 }

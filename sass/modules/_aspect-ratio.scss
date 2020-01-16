@@ -66,20 +66,26 @@ $rr-aspect-ratio-unset-class-properties: (
 // Get css properties by entry
 @function aspect-ratio-entry-to-properties($entry, $breakpoint-name: '', $append-child: true) {
 	$value: get-value-by-entry($entry, 'ratio', $breakpoint-name);
+	$properties: ();
 
-	$properties: map-append(
-		$rr-aspect-ratio-class-properties,
-		aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
-		padding-top
-	);
-
-	@if $append-child {
+	@if $value == $rr-global-unset-class {
+		$properties: $rr-aspect-ratio-unset-class-properties;
+	} @else {
 		$properties: map-append(
-			$properties,
-			$rr-aspect-ratio-child-class-properties,
-			'> *'
+			$rr-aspect-ratio-class-properties,
+			aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
+			padding-top
 		);
+
+		@if $append-child {
+			$properties: map-append(
+				$properties,
+				$rr-aspect-ratio-child-class-properties,
+				'> *'
+			);
+		}
 	}
+
 
 	@return $properties;
 }

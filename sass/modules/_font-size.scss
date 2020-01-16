@@ -44,11 +44,18 @@ $rr-font-size-unset-class-properties: (
 
 // Get css properties by entry
 @function font-size-entry-to-properties($entry, $breakpoint-name: '') {
-	$properties: (
-		font-size: get-value-by-entry($entry, 'size', $breakpoint-name),
-		line-height: get-property-by-entry($entry, 'line-height', $rr-font-size-default-line-height, $breakpoint-name),
-		letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-size-default-letter-spacing, $breakpoint-name)
-	);
+	$value: get-value-by-entry($entry, 'size', $breakpoint-name);
+	$properties: ();
+
+	@if $value == $rr-global-unset-class {
+		$properties: $rr-font-size-unset-class-properties;
+	} @else {
+		$properties: (
+			font-size: $value,
+			line-height: get-property-by-entry($entry, 'line-height', $rr-font-size-default-line-height, $breakpoint-name),
+			letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-size-default-letter-spacing, $breakpoint-name)
+		);
+	}
 
 	@return $properties;
 }

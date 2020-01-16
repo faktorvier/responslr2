@@ -131,7 +131,7 @@ $rr-generate-spacings-unset: $rr-generate-spacings !default;
 		$gutters: ();
 
 		@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-			@if $breakpoint-name != $rr-grid-breakpoints-default {
+			@if not grid-is-default($breakpoint-name) {
 				$gutters: map-append($gutters, grid-gutter($breakpoint-name), $breakpoint-name);
 			}
 		}

@@ -6,8 +6,10 @@
 $rr-global-hide-class: 'hide' !default;
 $rr-global-show-class: 'show' !default;
 $rr-global-unset-class: 'unset' !default;
+$rr-global-reset-class: 'reset' !default;
 $rr-global-auto-class: 'auto' !default;
 $rr-global-gutter-class: 'gutter' !default;
+$rr-global-full-class: 'full' !default;
 $rr-global-hover-suffix-class: '-hover' !default;
 
 $rr-global-can-hover-class: 'can-hover' !default;
@@ -80,7 +82,7 @@ $rr-global-settings: ();
 @function get-value-by-entry($entry, $property, $breakpoint-name: '') {
 	$value: null;
 
-	@if $breakpoint-name != '' and $breakpoint-name != $rr-grid-breakpoints-default {
+	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
 		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 
 		@if is-not-null($breakpoint-overwrites) {
@@ -105,8 +107,9 @@ $rr-global-settings: ();
 @function get-property-by-entry($entry, $property, $default: null, $breakpoint-name: '') {
 	$value: null;
 
-	@if $breakpoint-name != '' and $breakpoint-name != $rr-grid-breakpoints-default {
+	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
 		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
+
 
 		@if is-not-null($breakpoint-overwrites) {
 			$entry: $breakpoint-overwrites;
