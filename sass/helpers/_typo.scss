@@ -4,7 +4,17 @@
 
 // Classes
 $rr-font-fix-class: 'font-fix' !default;
+$rr-font-align-class-prefix: 'txt-' !default;
 $rr-font-transform-class-prefix: 'txt-transform-' !default;
+
+// Default text-align properties
+$rr-font-align-properties: (
+	left,
+	right,
+	center,
+	justify,
+	justify-all
+) !default;
 
 // Default text-transform properties
 $rr-font-transform-properties: (
@@ -16,6 +26,7 @@ $rr-font-transform-properties: (
 
 // Outout handling
 $rr-generate-font-fix: $rr-generate-classes !default;
+$rr-generate-font-align: $rr-generate-classes !default;
 $rr-generate-font-transform: $rr-generate-classes !default;
 
 ///////////////////
@@ -48,6 +59,17 @@ $rr-font-reset-class-properties: (
 		.#{$rr-font-fix-class} {
 			@include generate-properties($rr-font-reset-class-properties);
 		}
+	}
+
+	// Text align
+	@if $rr-generate-font-align {
+		@include generate-output-by-property(
+			$property: 'text-align',
+			$values: $rr-font-align-properties,
+			$prefix: $rr-font-align-class-prefix,
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-unset: true
+		);
 	}
 
 	// Text transform
