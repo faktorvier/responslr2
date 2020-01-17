@@ -13,7 +13,6 @@ $rr-grid-line-break-class: 'column-break' !default;
 $rr-grid-container-class: 'container' !default;
 
 $rr-grid-offset-class-prefix: 'offset-' !default;
-$rr-grid-inset-class-prefix: 'inset-' !default;
 $rr-grid-reset-class: $rr-global-reset-class !default;
 
 $rr-grid-column-prefix-delimiter: '\\:' !default;
@@ -251,7 +250,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	}
 
 	// Append min width
-	@if not is-number($min-width) {
+	@if not is-number($min-width) and is-not-null($min-width) {
 		$min-width: grid-breakpoint-property($min-width, 'min-width');
 	}
 
@@ -260,7 +259,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	}
 
 	// Append max width
-	@if not is-number($max-width) {
+	@if not is-number($max-width) and is-not-null($max-width) {
 		$max-width: grid-calculate-max-width($max-width);
 	}
 
@@ -347,8 +346,6 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 // OUTPUT
 /////////
 
-// @todo: move to breakpoint output loop
-
 @mixin generate-grid-core-output() {
 	@if $rr-generate-grid-breakpoints and map-not-empty($rr-grid-breakpoints) {
 		// Container
@@ -428,15 +425,6 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 							margin-left: $breakpoint-column-width * $column-index;
 						}
 
-						// Inset
-						#{grid-class-prefix(
-							$breakpoint-name,
-							'.#{$rr-grid-inset-class-prefix}#{$column-index}',
-							false
-						)} {
-							margin-left: -$breakpoint-column-width * $column-index;
-						}
-
 						// Breakpoint
 						#{grid-class-prefix(
 							$breakpoint-name,
@@ -453,15 +441,6 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 									false
 								)} {
 									margin-left: (($breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%;
-								}
-
-								// Inset nested
-								#{grid-class-prefix(
-									$breakpoint-name,
-									'.#{$rr-grid-inset-class-prefix}#{$sub-column-index}',
-									false
-								)} {
-									margin-left: (((-$breakpoint-column-width * $sub-column-index) / ($breakpoint-column-width * $column-index)) * 100%);
 								}
 
 								// Breakpoint nested
@@ -492,17 +471,6 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 								)} {
 									&, .#{$rr-grid-column-class} & {
 										margin-left: $percent;
-									}
-								}
-
-								// Inset
-								#{grid-class-prefix(
-									$breakpoint-name,
-									'.#{$rr-grid-inset-class-prefix}#{$numerator}\\/#{$denominator}',
-									false
-								)} {
-									&, .#{$rr-grid-column-class} & {
-										margin-left: -($percent);
 									}
 								}
 
