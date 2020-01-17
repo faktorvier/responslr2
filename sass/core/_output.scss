@@ -50,16 +50,18 @@ $rr-global-settings: map-merge(
 /* OUTPUT: CLASSES */
 /*******************/
 
-// Core
+// Normalize
 @include generate-normalize-core-output();
-@include generate-grid-core-output();
-@include generate-grid-helper-core-output();
 
 // Breakpoint classes
 @each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
 	@include mq($breakpoint-name) {
 		// Get breakpoint prefix
 		$breakpoint-prefix: grid-breakpoint-prefix($breakpoint-name);
+		$breakpoint-prefix-full: grid-breakpoint-prefix($breakpoint-name, false);
+
+		// Core
+		@include generate-grid-core-output($breakpoint-prefix-full, $breakpoint-name);
 
 		// Helpers
 		@include generate-background-helpers-output($breakpoint-prefix, $breakpoint-name);
@@ -85,3 +87,5 @@ $rr-global-settings: map-merge(
 	}
 }
 
+// Grid helper
+@include generate-grid-helper-core-output();

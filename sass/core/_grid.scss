@@ -56,9 +56,7 @@ $rr-grid-breakpoints-default: map-default($rr-grid-breakpoints) !default;
 
 // Percentage columns steps
 $rr-grid-breakpoint-fraction-steps: 6 !default;
-
-$rr-grid-breakpoint-generate: (normal, only) !default;
-$rr-grid-breakpoint-generate-only: true !default;
+$rr-grid-breakpoint-fraction-prefix-delimiter: '\\/' !default;
 
 // Grid helper
 $rr-grid-helper-z-index: 1000000 !default;
@@ -182,22 +180,15 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	@return grid-gutter($rr-grid-current-breakpoint) * $multiplier;
 }
 
-// Adds a breakpoint prefix to a class
-@function grid-class-prefix($breakpoint-name, $class, $use-default: true, $bp-suffix: '') {
-	$selector: '';
+// Get breakpoint prefix
+@function grid-breakpoint-prefix($breakpoint-name, $ignore-default: true) {
+	$prefix: '';
 
-	@if is-empty($breakpoint-name) or (grid-is-default($breakpoint-name) and $use-default) {
-		$selector: $class;
-	} @else {
-		$selector: str-insert($class, '#{$breakpoint-name}#{$bp-suffix}#{$rr-grid-column-prefix-delimiter}', 2);
+	@if not grid-is-default($breakpoint-name) or not $ignore-default {
+		$prefix: '#{$breakpoint-name}\\:';
 	}
 
-	@return escape-selector($selector);
-}
-
-// Get breakpoint prefix
-@function grid-breakpoint-prefix($breakpoint-name) {
-	@return if($breakpoint-name == 's', '', '#{$breakpoint-name}\\:');
+	@return $prefix;
 }
 
 /////////
@@ -346,191 +337,157 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 // OUTPUT
 /////////
 
-@mixin generate-grid-core-output() {
-	@if $rr-generate-grid-breakpoints and map-not-empty($rr-grid-breakpoints) {
+@mixin generate-grid-core-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $rr-generate-grid-breakpoints {
+		// Grid base
+		@if grid-is-default($breakpoint-name) {
+			// Container
+			.#{$rr-grid-container-class} {
+				max-width: none;
+			}
+
+			// Row
+			.#{$rr-grid-row-class} {
+				display: flex;
+				flex-wrap: wrap;
+			}
+
+			// Column
+			.#{$rr-grid-column-class} {
+				flex: 0 0 auto;
+				width: 100%;
+			}
+
+			// Column force line break
+			.#{$rr-grid-line-break-class} {
+				flex: 1 1 100%;
+				height: 0;
+				width: auto;
+				overflow: hidden;
+			}
+		}
+
+		// Get breakpoint properties
+		$breakpoint-columns: grid-breakpoint-property($breakpoint-name, 'columns');
+		$breakpoint-base-size: grid-breakpoint-property($breakpoint-name, 'base-size');
+		$breakpoint-container-width: grid-breakpoint-property($breakpoint-name, 'container-width');
+		$breakpoint-container-spacing: grid-breakpoint-property($breakpoint-name, 'container-spacing');
+		$breakpoint-container-alignment: grid-breakpoint-property($breakpoint-name, 'container-alignment');
+
+		// Apply media query
+		:root {
+			--rr-grid-column-base: #{$breakpoint-columns};
+		}
+
+		// Base size
+		@if is-number($breakpoint-base-size) {
+			body {
+				font-size: $breakpoint-base-size;
+			}
+		}
+
 		// Container
-		.#{$rr-grid-container-class} {
-			max-width: none;
+		@if is-number($breakpoint-container-width) {
+			.#{$rr-grid-container-class} {
+				max-width: $breakpoint-container-width;
+
+				@if $breakpoint-container-alignment == right {
+					margin-right: $breakpoint-container-horizontal-margin;
+					margin-left: auto;
+				} @else if $breakpoint-container-alignment == left {
+					margin-right: auto;
+					margin-left: $breakpoint-container-horizontal-margin;
+				} @else if $breakpoint-container-alignment == center {
+					margin-left: auto;
+					margin-right: auto;
+				}
+			}
 		}
 
 		// Row
-		.#{$rr-grid-row-class} {
-			display: flex;
-			flex-wrap: wrap;
+		.#{$rr-grid-row-class} .#{$rr-grid-row-class} {
+			margin-left: -(grid-gutter-half($breakpoint-name));
+			margin-right: -(grid-gutter-half($breakpoint-name));
 		}
 
-		// Column
+		// @todo: gutter reset on row optionally (row--nogutter)
+		// @todo: column widths directly on row for every child optionally
+
+		// Column (normal)
 		.#{$rr-grid-column-class} {
-			flex: 0 0 auto;
+			padding-left: grid-gutter-half($breakpoint-name);
+			padding-right: grid-gutter-half($breakpoint-name);
+		}
+
+		@if $rr-generate-grid-breakpoints-normal {
+			@for $column-index from 1 through $breakpoint-columns {
+				// Breakpoint
+				.#{$breakpoint-prefix}#{$column-index} {
+					width: calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
+
+					.#{$rr-grid-row-class} {
+						--rr-grid-column-base: #{$column-index};
+					}
+				}
+
+				// Offset
+				.#{$breakpoint-prefix}#{$rr-grid-offset-class-prefix}#{$column-index} {
+					margin-left: calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
+				}
+			}
+		}
+
+		// Column (fraction)
+		$fractions-added: ();
+
+		@if $rr-generate-grid-breakpoints-fraction {
+			@for $denominator from 1 through $rr-grid-breakpoint-fraction-steps {
+				@for $numerator from 1 through $denominator {
+					@if $numerator != $denominator {
+						$percent: 100% / $denominator * $numerator;
+
+						@if not in-list($fractions-added, $percent) {
+							// Breakpoint
+							.#{$breakpoint-prefix}#{$numerator}#{$rr-grid-breakpoint-fraction-prefix-delimiter}#{$denominator} {
+								width: $percent;
+							}
+
+							// Offset
+							.#{$breakpoint-prefix}#{$rr-grid-offset-class-prefix}#{$numerator}#{$rr-grid-breakpoint-fraction-prefix-delimiter}#{$denominator} {
+								margin-left: $percent;
+							}
+
+							$fractions-added: append($fractions-added, $percent);
+						}
+
+					}
+				}
+			}
+		}
+
+		// Column (all) full width
+		.#{$breakpoint-prefix}#{$rr-global-full-class} {
 			width: 100%;
 		}
 
-		// Column force line break
-		.#{$rr-grid-line-break-class} {
-			flex: 1 1 100%;
-			height: 0;
-			width: auto;
-			overflow: hidden;
+		// Column (all) auto fill width
+		.#{$breakpoint-prefix}#{$rr-grid-column-auto-class} {
+			flex: 1 1 0px;
 		}
 
-		// Breakpoints
-		@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-			// Get breakpoint properties
-			$breakpoint-columns: grid-breakpoint-property($breakpoint-name, 'columns');
-			$breakpoint-base-size: grid-breakpoint-property($breakpoint-name, 'base-size');
-			$breakpoint-container-width: grid-breakpoint-property($breakpoint-name, 'container-width');
-			$breakpoint-container-spacing: grid-breakpoint-property($breakpoint-name, 'container-spacing');
-			$breakpoint-container-alignment: grid-breakpoint-property($breakpoint-name, 'container-alignment');
+		.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class} {
+			flex: 0 0 auto;
+			width: auto;
+		}
 
-			// Apply media query
-			@include mq($breakpoint-name) {
-				:root {
-					--rr-grid-column-base: #{$breakpoint-columns};
-				}
+		// @todo: remove if everything is flex: X X X
+		.#{$breakpoint-prefix}#{$rr-grid-column-normal-class} {
+			flex: 0 0 auto;
+		}
 
-				// Base size
-				@if is-number($breakpoint-base-size) {
-					body {
-						font-size: $breakpoint-base-size;
-					}
-				}
-
-				// Container
-				@if is-number($breakpoint-container-width) {
-					.#{$rr-grid-container-class} {
-						max-width: $breakpoint-container-width;
-
-						@if $breakpoint-container-alignment == right {
-							margin-right: $breakpoint-container-horizontal-margin;
-							margin-left: auto;
-						} @else if $breakpoint-container-alignment == left {
-							margin-right: auto;
-							margin-left: $breakpoint-container-horizontal-margin;
-						} @else if $breakpoint-container-alignment == center {
-							margin-left: auto;
-							margin-right: auto;
-						}
-					}
-				}
-
-				// Row
-				.#{$rr-grid-row-class} .#{$rr-grid-row-class} {
-					margin-left: -(grid-gutter-half($breakpoint-name));
-					margin-right: -(grid-gutter-half($breakpoint-name));
-				}
-
-				// Column (normal)
-				.#{$rr-grid-column-class} {
-					padding-left: grid-gutter-half($breakpoint-name);
-					padding-right: grid-gutter-half($breakpoint-name);
-				}
-
-				@if $rr-generate-grid-breakpoints-normal {
-					@for $column-index from 1 through $breakpoint-columns {
-						// Breakpoint
-						#{grid-class-prefix(
-							$breakpoint-name,
-							'.#{$column-index}',
-							false
-						)} {
-							width: calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
-
-							.#{$rr-grid-row-class} {
-								--rr-grid-column-base: #{$column-index};
-							}
-						}
-
-						// Offset
-						#{grid-class-prefix(
-							$breakpoint-name,
-							'.#{$rr-grid-offset-class-prefix}#{$column-index}',
-							false
-						)} {
-							margin-left: calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
-						}
-					}
-				}
-
-				// Column (fraction)
-				$fractions-added: ();
-
-				@if $rr-generate-grid-breakpoints-fraction {
-					@for $denominator from 1 through $rr-grid-breakpoint-fraction-steps {
-						@for $numerator from 1 through $denominator {
-							@if $numerator != $denominator {
-								$percent: 100% / $denominator * $numerator;
-
-								@if not in-list($fractions-added, $percent) {
-									// Breakpoint
-									#{grid-class-prefix(
-										$breakpoint-name,
-										'.#{$numerator}\\/#{$denominator}',
-										false
-									)} {
-										width: $percent;
-									}
-
-									// Offset
-									#{grid-class-prefix(
-										$breakpoint-name,
-										'.#{$rr-grid-offset-class-prefix}#{$numerator}\\/#{$denominator}',
-										false
-									)} {
-										margin-left: $percent;
-									}
-
-									$fractions-added: append($fractions-added, $percent);
-								}
-
-							}
-						}
-					}
-				}
-
-				// Column (all) full width
-				#{grid-class-prefix(
-					$breakpoint-name,
-					'.#{$rr-global-full-class}',
-					false
-				)} {
-					width: 100%;
-				}
-
-				// Column (all) auto fill width
-				#{grid-class-prefix(
-					$breakpoint-name,
-					'.#{$rr-grid-column-auto-class}',
-					false
-				)} {
-					flex: 1 1 0px;
-				}
-
-				#{grid-class-prefix(
-					$breakpoint-name,
-					'.#{$rr-grid-column-shrink-class}',
-					false
-				)} {
-                    flex: 0 0 auto;
-                    width: auto;
-				}
-
-				#{grid-class-prefix(
-					$breakpoint-name,
-					'.#{$rr-grid-column-normal-class}',
-					false
-				)} {
-					flex: 0 0 auto;
-				}
-
-				// Column (all) reset
-				#{grid-class-prefix(
-					$breakpoint-name,
-					'.#{$rr-grid-reset-class}',
-					false
-				)} {
-					margin-left: 0;
-				}
-			}
+		// Column (all) reset
+		.#{$breakpoint-prefix}#{$rr-grid-reset-class} {
+			margin-left: 0;
 		}
 	}
 }
