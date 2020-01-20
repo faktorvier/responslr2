@@ -10,7 +10,6 @@ $rr-grid-row-nogutter-class: 'row--nogutter' !default;
 $rr-grid-column-class: 'column' !default;
 $rr-grid-column-auto-class: $rr-global-auto-class !default;
 $rr-grid-column-shrink-class: 'shrink' !default;
-$rr-grid-column-normal-class: 'normal' !default;
 $rr-grid-line-break-class: 'column-break' !default;
 $rr-grid-container-class: 'container' !default;
 
@@ -356,8 +355,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 
 			// Column
 			.#{$rr-grid-column-class} {
-				flex: 0 0 auto;
-				width: 100%;
+				flex: 0 0 100%;
 			}
 
 			// Column force line break
@@ -438,7 +436,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 				// Breakpoint
 				.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$column-index},
 				.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$column-index} > .#{$rr-grid-column-class} {
-					width: calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
+					flex: 0 0 calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
 
 					.#{$rr-grid-row-class} {
 						--rr-grid-column-base: #{$column-index};
@@ -466,7 +464,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 							// Breakpoint
 							.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$fraction-class},
 							.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$fraction-class} > .#{$rr-grid-column-class} {
-								width: $percent;
+								flex: 0 0 $percent;
 							}
 
 							// Offset
@@ -485,7 +483,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		// Column (all) full width
 		.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$rr-global-full-class},
 		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-global-full-class} > .#{$rr-grid-column-class} {
-			width: 100%;
+			flex: 0 0 100%;
 
 			.#{$rr-grid-row-class} {
 				--rr-grid-column-base: #{$breakpoint-columns};
@@ -500,13 +498,6 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 
 		.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class},
 		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class} > .#{$rr-grid-column-class} {
-			flex: 0 0 auto;
-			width: auto;
-		}
-
-		// @todo: remove if everything is flex: X X X
-		.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$rr-grid-column-normal-class},
-		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-normal-class} > .#{$rr-grid-column-class} {
 			flex: 0 0 auto;
 		}
 
