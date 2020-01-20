@@ -483,25 +483,29 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		}
 
 		// Column (all) full width
-		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-global-full-class},
+		.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$rr-global-full-class},
 		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-global-full-class} > .#{$rr-grid-column-class} {
 			width: 100%;
+
+			.#{$rr-grid-row-class} {
+				--rr-grid-column-base: #{$breakpoint-columns};
+			}
 		}
 
 		// Column (all) auto fill width
-		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-auto-class},
+		.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$rr-grid-column-auto-class},
 		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-auto-class} > .#{$rr-grid-column-class} {
 			flex: 1 1 0px;
 		}
 
-		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class},
+		.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class},
 		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class} > .#{$rr-grid-column-class} {
 			flex: 0 0 auto;
 			width: auto;
 		}
 
 		// @todo: remove if everything is flex: X X X
-		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-normal-class},
+		.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$rr-grid-column-normal-class},
 		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-normal-class} > .#{$rr-grid-column-class} {
 			flex: 0 0 auto;
 		}
