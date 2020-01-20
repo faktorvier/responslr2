@@ -93,8 +93,6 @@ $rr-global-settings: ();
 	@if is-map($entry) {
 		@if map-has-key($entry, $property) {
 			$value: map-get($entry, $property);
-		} @else {
-			@error "Main value #{$property} missing in #{inspect($entry)} for breakpoint #{$breakpoint-name}";
 		}
 	} @else {
 		$value: $entry;
