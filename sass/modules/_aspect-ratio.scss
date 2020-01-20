@@ -100,7 +100,9 @@ $rr-aspect-ratio-unset-class-properties: (
 
 	@if is-not-null($entry) {
 		$properties: aspect-ratio-entry-to-properties($entry, $breakpoint-name, $append-child);
-		@include generate-properties($propertie);
+		@include generate-properties($properties);
+
+		// @todo: generate all breakpoints
 	}
 }
 

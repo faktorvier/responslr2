@@ -53,6 +53,8 @@ $rr-generate-customs: $rr-generate-classes !default;
 	@if is-not-null($custom) {
 		$custom: map-remove($custom, 'breakpoints');
 		@include generate-properties($custom);
+
+		// @todo: generate all breakpoints
 	}
 }
 

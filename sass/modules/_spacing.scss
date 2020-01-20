@@ -116,6 +116,8 @@ $rr-generate-spacings-unset: $rr-generate-spacings !default;
 		$value: get-value-by-entry($entry, 'spacing');
 		$properties: spacing-properties-by-type($value, $type);
 		@include generate-properties($properties);
+
+		// @todo: generate all breakpoints
 	}
 }
 

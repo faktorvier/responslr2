@@ -3,7 +3,7 @@
 ///////////////////
 
 // Classes
-$rr-font-size-class-prefix: 'txt-size-' !default;
+$rr-font-size-class-prefix: 'font-size-' !default;
 
 // Default values
 $rr-font-size-default-line-height: unset !default;
@@ -71,6 +71,8 @@ $rr-font-size-unset-class-properties: (
 	@if is-not-null($entry) {
 		$properties: font-size-entry-to-properties($entry, $breakpoint-name);
 		@include generate-properties($properties);
+
+		// @todo: generate all breakpoints
 	}
 }
 

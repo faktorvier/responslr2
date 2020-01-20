@@ -62,6 +62,8 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 		@include generate-properties((
 			$property: get-value-by-entry($entry, 'color')
 		));
+
+		// @todo: generate all breakpoints
 	}
 }
 

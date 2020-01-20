@@ -3,7 +3,7 @@
 ///////////////////
 
 // Classes
-$rr-font-family-class-prefix: 'txt-' !default;
+$rr-font-family-class-prefix: 'font-' !default;
 
 // Default values
 $rr-font-family-default-file-types: ('woff2');
@@ -57,6 +57,8 @@ $rr-generate-font-families: $rr-generate-classes !default;
 	@if is-not-null($entry) {
 		$properties: font-family-entry-to-properties($entry, $breakpoint-name);
 		@include generate-properties($properties);
+
+		// @todo: generate all breakpoints
 	}
 }
 
