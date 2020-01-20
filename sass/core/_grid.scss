@@ -5,6 +5,8 @@
 // Classes
 $rr-grid-breakpoint-only-class-suffix: '-only' !default;
 $rr-grid-row-class: 'row' !default;
+$rr-grid-row-gutter-class: 'row--gutter' !default;
+$rr-grid-row-nogutter-class: 'row--nogutter' !default;
 $rr-grid-column-class: 'column' !default;
 $rr-grid-column-auto-class: $rr-global-auto-class !default;
 $rr-grid-column-shrink-class: 'shrink' !default;
@@ -337,7 +339,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 // OUTPUT
 /////////
 
-@mixin generate-grid-core-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin generate-grid-core-output($breakpoint-prefix: '', $breakpoint-prefix-short: '', $breakpoint-name: '') {
 	@if $rr-generate-grid-breakpoints {
 		// Grid base
 		@if grid-is-default($breakpoint-name) {
@@ -404,21 +406,35 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 			}
 		}
 
-		// Row
+		// Row gutter fix
 		.#{$rr-grid-row-class} .#{$rr-grid-row-class} {
 			margin-left: -(grid-gutter-half($breakpoint-name));
 			margin-right: -(grid-gutter-half($breakpoint-name));
 		}
 
-		// @todo: gutter reset on row optionally (row--nogutter)
 		// @todo: column widths directly on row for every child optionally
 
-		// Column (normal)
-		.#{$rr-grid-column-class} {
+		// Column gutter
+		.#{$rr-grid-column-class},
+		.#{$breakpoint-prefix-short}#{$rr-grid-row-gutter-class} > .#{$rr-grid-column-class} {
 			padding-left: grid-gutter-half($breakpoint-name);
 			padding-right: grid-gutter-half($breakpoint-name);
 		}
 
+		// Gutter reset
+		.#{$breakpoint-prefix-short}#{$rr-grid-row-nogutter-class} {
+			> .#{$rr-grid-column-class} {
+				padding-left: 0;
+				padding-right: 0;
+
+				.#{$rr-grid-row-class} {
+					margin-left: 0;
+					margin-right: 0;
+				}
+			}
+		}
+
+		// Column (normal)
 		@if $rr-generate-grid-breakpoints-normal {
 			@for $column-index from 1 through $breakpoint-columns {
 				// Breakpoint

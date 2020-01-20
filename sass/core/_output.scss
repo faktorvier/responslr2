@@ -61,7 +61,7 @@ $rr-global-settings: map-merge(
 		$breakpoint-prefix-full: grid-breakpoint-prefix($breakpoint-name, false);
 
 		// Grid
-		@include generate-grid-core-output($breakpoint-prefix-full, $breakpoint-name);
+		@include generate-grid-core-output($breakpoint-prefix-full, $breakpoint-prefix, $breakpoint-name);
 
 		// Helpers
 		@include generate-background-helpers-output($breakpoint-prefix, $breakpoint-name);
