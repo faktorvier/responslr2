@@ -412,8 +412,6 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 			margin-right: -(grid-gutter-half($breakpoint-name));
 		}
 
-		// @todo: column widths directly on row for every child optionally
-
 		// Column gutter
 		.#{$rr-grid-column-class},
 		.#{$breakpoint-prefix-short}#{$rr-grid-row-gutter-class} > .#{$rr-grid-column-class} {
@@ -438,7 +436,8 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		@if $rr-generate-grid-breakpoints-normal {
 			@for $column-index from 1 through $breakpoint-columns {
 				// Breakpoint
-				.#{$breakpoint-prefix}#{$column-index} {
+				.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$column-index},
+				.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$column-index} > .#{$rr-grid-column-class} {
 					width: calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
 
 					.#{$rr-grid-row-class} {
@@ -461,10 +460,12 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 				@for $numerator from 1 through $denominator {
 					@if $numerator != $denominator {
 						$percent: 100% / $denominator * $numerator;
+						$fraction-class: '#{$numerator}#{$rr-grid-breakpoint-fraction-prefix-delimiter}#{$denominator}';
 
 						@if not in-list($fractions-added, $percent) {
 							// Breakpoint
-							.#{$breakpoint-prefix}#{$numerator}#{$rr-grid-breakpoint-fraction-prefix-delimiter}#{$denominator} {
+							.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$fraction-class},
+							.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$fraction-class} > .#{$rr-grid-column-class} {
 								width: $percent;
 							}
 
@@ -482,22 +483,26 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		}
 
 		// Column (all) full width
-		.#{$breakpoint-prefix}#{$rr-global-full-class} {
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-global-full-class},
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-global-full-class} > .#{$rr-grid-column-class} {
 			width: 100%;
 		}
 
 		// Column (all) auto fill width
-		.#{$breakpoint-prefix}#{$rr-grid-column-auto-class} {
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-auto-class},
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-auto-class} > .#{$rr-grid-column-class} {
 			flex: 1 1 0px;
 		}
 
-		.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class} {
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class},
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-shrink-class} > .#{$rr-grid-column-class} {
 			flex: 0 0 auto;
 			width: auto;
 		}
 
 		// @todo: remove if everything is flex: X X X
-		.#{$breakpoint-prefix}#{$rr-grid-column-normal-class} {
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-normal-class},
+		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-grid-column-normal-class} > .#{$rr-grid-column-class} {
 			flex: 0 0 auto;
 		}
 
