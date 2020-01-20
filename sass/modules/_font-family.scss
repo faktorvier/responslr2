@@ -36,12 +36,17 @@ $rr-generate-font-families: $rr-generate-classes !default;
 
 // Get css properties by entry
 @function font-family-entry-to-properties($entry, $breakpoint-name: '') {
-	$properties: (
-		font-family: list-comma(get-value-by-entry($entry, 'family', $breakpoint-name)),
-		font-weight: get-property-by-entry($entry, 'weight', $rr-font-family-default-weight, $breakpoint-name),
-		font-style: get-property-by-entry($entry, 'style', $rr-font-family-default-style, $breakpoint-name),
-		letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-family-default-letter-spacing, $breakpoint-name)
-	);
+	$family: get-value-by-entry($entry, 'family', $breakpoint-name);
+	$properties: ();
+
+	@if is-not-null($family) {
+		$properties: (
+			font-family: list-comma($family),
+			font-weight: get-property-by-entry($entry, 'weight', $rr-font-family-default-weight, $breakpoint-name),
+			font-style: get-property-by-entry($entry, 'style', $rr-font-family-default-style, $breakpoint-name),
+			letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-family-default-letter-spacing, $breakpoint-name)
+		);
+	}
 
 	@return $properties;
 }
