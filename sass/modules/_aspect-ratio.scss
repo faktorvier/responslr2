@@ -70,7 +70,7 @@ $rr-aspect-ratio-unset-class-properties: (
 
 	@if $value == $rr-global-unset-class {
 		$properties: $rr-aspect-ratio-unset-class-properties;
-	} @else {
+	} @else if is-list($value) {
 		$properties: map-append(
 			$rr-aspect-ratio-class-properties,
 			aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
@@ -86,7 +86,6 @@ $rr-aspect-ratio-unset-class-properties: (
 		}
 	}
 
-
 	@return $properties;
 }
 
@@ -96,14 +95,12 @@ $rr-aspect-ratio-unset-class-properties: (
 
 // Output aspect ratio by name
 @mixin aspect-ratio($name: null, $breakpoint-name: '', $append-child: true) {
-	$entry: aspect-ratio-entry($name);
-
-	@if is-not-null($entry) {
-		$properties: aspect-ratio-entry-to-properties($entry, $breakpoint-name, $append-child);
-		@include generate-properties($properties);
-
-		// @todo: generate all breakpoints
-	}
+	@include entry-output(
+		aspect-ratio-entry($name),
+		'aspect-ratio-entry-to-properties',
+		$breakpoint-name,
+		$append-child
+	);
 }
 
 // Output aspect ratio child

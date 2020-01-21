@@ -25,7 +25,8 @@ $rr-generate-font-sizes-unset: $rr-generate-font-sizes !default;
 
 $rr-font-size-unset-class-properties: (
 	font-size: unset,
-	line-height: unset
+	line-height: unset,
+	letter-spacing: unset
 ) !default;
 
 ////////////
@@ -57,6 +58,8 @@ $rr-font-size-unset-class-properties: (
 		);
 	}
 
+	// @todo: fix extend
+
 	@return $properties;
 }
 
@@ -66,14 +69,11 @@ $rr-font-size-unset-class-properties: (
 
 // Output font size by name
 @mixin font-size($name: null, $breakpoint-name: '') {
-	$entry: font-size-entry($name);
-
-	@if is-not-null($entry) {
-		$properties: font-size-entry-to-properties($entry, $breakpoint-name);
-		@include generate-properties($properties);
-
-		// @todo: generate all breakpoints
-	}
+	@include entry-output(
+		font-size-entry($name),
+		'font-size-entry-to-properties',
+		$breakpoint-name
+	);
 }
 
 /////////

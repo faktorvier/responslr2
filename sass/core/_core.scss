@@ -196,3 +196,25 @@ $rr-global-settings: ();
 		);
 	}
 }
+
+// Get entry mixin output
+@mixin entry-output($entry, $property-function, $breakpoint-name: '', $args...) {
+	@if is-not-null($entry) {
+		@include generate-properties(
+			call(get-function($property-function), $entry, $breakpoint-name, $args...)
+		);
+
+		// Breakpoint overwrites if no breakpoint is defined
+		@if $breakpoint-name == '' {
+			@each $breakpoint-name-sub, $breakpoint-entry in $rr-grid-breakpoints {
+				@if entry-has-breakpoint-overwrite($entry, $breakpoint-name-sub) {
+					@include mq($breakpoint-name-sub) {
+						@include generate-properties(
+							call(get-function($property-function), $entry, $breakpoint-name-sub, $args...)
+						);
+					}
+				}
+			}
+		}
+	}
+}

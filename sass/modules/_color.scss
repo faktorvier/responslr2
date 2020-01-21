@@ -48,33 +48,39 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 	@return $property-name;
 }
 
+// Get css properties by entry
+@function color-entry-to-properties($entry, $breakpoint-name: '', $type: 'text') {
+	$property: color-property-by-type($type);
+
+	$properties: (
+		$property: get-value-by-entry($entry, 'color', $breakpoint-name),
+	);
+
+	@return $properties;
+}
+
 /////////
 // MIXINS
 /////////
 
 // Output color by name and type
-@mixin color($name: null, $type: 'text') {
-	$entry: color-entry($name);
-
-	@if is-not-null($entry) {
-		$property: color-property-by-type($type);
-
-		@include generate-properties((
-			$property: get-value-by-entry($entry, 'color')
-		));
-
-		// @todo: generate all breakpoints
-	}
+@mixin color($name: null, $type: 'text', $breakpoint-name: '') {
+	@include entry-output(
+		color-entry($name),
+		'color-entry-to-properties',
+		$breakpoint-name,
+		$type
+	);
 }
 
 // Output background color by name
-@mixin color-bg($name: null) {
-	@include color($name, 'background');
+@mixin color-bg($name: null, $breakpoint-name: '') {
+	@include color($name, 'background', $breakpoint-name);
 }
 
 // Output border color by name
-@mixin color-border($name: null) {
-	@include color($name, 'border');
+@mixin color-border($name: null, $breakpoint-name: '') {
+	@include color($name, 'border', $breakpoint-name);
 }
 
 /////////

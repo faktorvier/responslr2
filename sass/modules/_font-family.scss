@@ -48,6 +48,8 @@ $rr-generate-font-families: $rr-generate-classes !default;
 		);
 	}
 
+	// @todo: fix extend
+
 	@return $properties;
 }
 
@@ -57,14 +59,11 @@ $rr-generate-font-families: $rr-generate-classes !default;
 
 // Output font family by name
 @mixin font-family($name: null, $breakpoint-name: '') {
-	$entry: font-family-entry($name);
-
-	@if is-not-null($entry) {
-		$properties: font-family-entry-to-properties($entry, $breakpoint-name);
-		@include generate-properties($properties);
-
-		// @todo: generate all breakpoints
-	}
+	@include entry-output(
+		font-family-entry($name),
+		'font-family-entry-to-properties',
+		$breakpoint-name
+	);
 }
 
 /////////
@@ -74,7 +73,7 @@ $rr-generate-font-families: $rr-generate-classes !default;
 @mixin generate-font-family-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-font-families {
 		// Font faces
-		@if $breakpoint-prefix == '' {
+		@if grid-is-default($breakpoint-prefix) {
 			@each $class-name, $font in $rr-font-families {
 				@if is-map($font) and map-has-key($font, 'face') {
 					$font-face: get-property-by-entry($font, 'face', null);

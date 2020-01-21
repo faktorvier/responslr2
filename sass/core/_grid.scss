@@ -53,8 +53,6 @@ $rr-grid-breakpoint-map-defaults: (
 	'container-spacing': 0
 );
 
-$rr-grid-breakpoints-default: map-default($rr-grid-breakpoints) !default;
-
 // Percentage columns steps
 $rr-grid-breakpoint-fraction-steps: 6 !default;
 $rr-grid-breakpoint-fraction-prefix-delimiter: '\\/' !default;
@@ -90,6 +88,9 @@ $rr-generate-grid-settings: $rr-generate-settings !default;
 // INTERNAL VARIABLES
 /////////////////////
 
+// Default breakpoint
+$rr-grid-breakpoints-default: map-default($rr-grid-breakpoints);
+
 // Set current breakpoint to default
 $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
@@ -123,7 +124,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 
 // Check if breakpoint is default breakpoint
 @function grid-is-default($name) {
-	@return $name == $rr-grid-breakpoints-default;
+	@return $name == $rr-grid-breakpoints-default or $name == '';
 }
 
 // Get a breakpoint gutter with optional multiplier by name

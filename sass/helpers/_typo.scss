@@ -55,7 +55,7 @@ $rr-font-reset-class-properties: (
 
 @mixin generate-typo-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	// Font fix
-	@if $rr-generate-font-fix and $breakpoint-prefix == '' {
+	@if $rr-generate-font-fix and grid-is-default($breakpoint-prefix) {
 		.#{$rr-font-fix-class} {
 			@include generate-properties($rr-font-reset-class-properties);
 		}

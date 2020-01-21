@@ -104,21 +104,26 @@ $rr-generate-spacings-unset: $rr-generate-spacings !default;
 	@return $spacing-properties;
 }
 
+// Get css properties by entry
+@function spacing-entry-to-properties($entry, $breakpoint-name: '', $type: 'ma') {
+	$value: get-value-by-entry($entry, 'spacing', $breakpoint-name);
+	$properties: spacing-properties-by-type($value, $type);
+
+	@return $properties;
+}
+
 /////////
 // MIXINS
 /////////
 
 // Output spacing by name
 @mixin spacing($name: null, $type: 'ma', $breakpoint-name: '') {
-	$entry: spacing-entry($name);
-
-	@if is-not-null($entry) {
-		$value: get-value-by-entry($entry, 'spacing');
-		$properties: spacing-properties-by-type($value, $type);
-		@include generate-properties($properties);
-
-		// @todo: generate all breakpoints
-	}
+	@include entry-output(
+		spacing-entry($name),
+		'spacing-entry-to-properties',
+		$breakpoint-name,
+		$type
+	);
 }
 
 /////////

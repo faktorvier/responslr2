@@ -170,7 +170,7 @@ $rr-transition-hardware-acceleration-class-properties: (
 /////////
 
 @mixin generate-transition-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-transitions and $breakpoint-prefix == '' {
+	@if $rr-generate-transitions and grid-is-default($breakpoint-prefix) {
 		@each $transition-name, $transition-entry in $rr-transitions {
 			@include generate-output-by-class(
 				$class: $transition-name,
