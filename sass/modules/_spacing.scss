@@ -118,8 +118,23 @@ $rr-generate-spacings-unset: $rr-generate-spacings !default;
 
 // Output spacing by name
 @mixin spacing($name: null, $type: 'ma', $breakpoint-name: '') {
+	$entry: null;
+
+	@if $name == $rr-global-unset-class {
+		$entry: $name;
+	} @else if $name == $rr-global-auto-class {
+		$entry: (
+			'spacing': auto,
+			'generate-padding': false
+		);
+	}  @else if $name == 'gutter' {
+		$entry: grid-gutter($breakpoint-name);
+	} @else {
+		$entry: spacing-entry($name);
+	}
+
 	@include entry-output(
-		spacing-entry($name),
+		$entry,
 		'spacing-entry-to-properties',
 		$breakpoint-name,
 		$type
