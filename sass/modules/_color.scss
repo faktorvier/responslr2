@@ -19,7 +19,7 @@ $rr-generate-colors-text: $rr-generate-colors !default;
 $rr-generate-colors-background: $rr-generate-colors !default;
 $rr-generate-colors-border: $rr-generate-colors !default;
 $rr-generate-colors-unset: $rr-generate-colors !default;
-$rr-generate-colors-hover: $rr-generate-classes !default;
+$rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 
 ////////////
 // FUNCTIONS
@@ -51,9 +51,16 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 // Get css properties by entry
 @function color-entry-to-properties($entry, $breakpoint-name: '', $type: 'text') {
 	$property: color-property-by-type($type);
+	$color: get-value-by-entry($entry, 'color', $breakpoint-name);
+
+	@if $type == 'background' {
+		$color: get-property-by-entry($entry, 'color-bg', $color, $breakpoint-name);
+	} @else if $type == 'border' {
+		$color: get-property-by-entry($entry, 'color-border', $color, $breakpoint-name);
+	}
 
 	$properties: (
-		$property: get-value-by-entry($entry, 'color', $breakpoint-name),
+		$property: $color
 	);
 
 	@return $properties;
@@ -102,9 +109,14 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 
 		@each $color-name, $color-entry in $rr-colors-new {
 			$color-value: get-value-by-entry($color-entry, 'color', $breakpoint-name);
+			$color-value-bg: get-property-by-entry($color-entry, 'color-bg', $color-value, $breakpoint-name);
+			$color-value-border: get-property-by-entry($color-entry, 'color-border', $color-value, $breakpoint-name);
+
 			$generate-text-color: map-maybe-get($color-entry, 'generate-text', $rr-generate-colors-text);
 			$generate-background-color: map-maybe-get($color-entry, 'generate-background', $rr-generate-colors-background);
 			$generate-border-color: map-maybe-get($color-entry, 'generate-border', $rr-generate-colors-border);
+			$generate-breakpoints: map-maybe-get($color-entry, 'generate-breakpoints', $rr-generate-colors-breakpoints);
+
 			$breakpoint-overwrites: entry-has-breakpoint-overwrite($color-entry, $breakpoint-name);
 
 			// Text color
@@ -114,7 +126,8 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 					$prefix: $rr-color-text-class-prefix,
 					$breakpoint-prefix: $breakpoint-prefix,
 					$properties: (color: $color-value),
-					$breakpoint-overwrites: $breakpoint-overwrites
+					$breakpoint-overwrites: $breakpoint-overwrites,
+					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 				);
 			}
 
@@ -124,8 +137,9 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 					$class: $color-name,
 					$prefix: $rr-color-background-class-prefix,
 					$breakpoint-prefix: $breakpoint-prefix,
-					$properties: (background-color: $color-value),
-					$breakpoint-overwrites: $breakpoint-overwrites
+					$properties: (background-color: $color-value-bg),
+					$breakpoint-overwrites: $breakpoint-overwrites,
+					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 				);
 			}
 
@@ -135,8 +149,9 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 					$class: $color-name,
 					$prefix: $rr-color-border-class-prefix,
 					$breakpoint-prefix: $breakpoint-prefix,
-					$properties: (border-color: $color-value),
-					$breakpoint-overwrites: $breakpoint-overwrites
+					$properties: (border-color: $color-value-border),
+					$breakpoint-overwrites: $breakpoint-overwrites,
+					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 				);
 			}
 		}

@@ -20,6 +20,7 @@ $rr-primary-color: #17d996;
 
 // Output handling
 $rr-generate-classes: true !default;
+$rr-generate-breakpoint-classes: true !default;
 $rr-generate-settings: true !default;
 
 /////////////////////
@@ -160,29 +161,34 @@ $rr-global-settings: ();
 }
 
 // Generate output by a single class with multiple properties
-@mixin generate-output-by-class($class, $properties, $prefix: '', $breakpoint-prefix: '', $breakpoint-overwrites: false) {
+@mixin generate-output-by-class($class, $properties, $prefix: '', $breakpoint-prefix: '', $breakpoint-overwrites: false, $generate-breakpoints: true) {
 	$selector: ();
 
 	@if $breakpoint-overwrites {
 		$selector: append($selector, '.#{$prefix}#{$class}', 'comma');
 	}
 
-	$selector: append($selector, '.#{$breakpoint-prefix}#{$prefix}#{$class}', 'comma');
+	@if $generate-breakpoints {
+		$selector: append($selector, '.#{$breakpoint-prefix}#{$prefix}#{$class}', 'comma');
+	}
 
-	#{$selector} {
-		@include generate-properties($properties);
+	@if not list-empty($selector) {
+		#{$selector} {
+			@include generate-properties($properties);
+		}
 	}
 }
 
 // Generate output by multiple classes with multiple properties
-@mixin generate-output-by-classes($classes, $prefix: '', $breakpoint-prefix: '', $generate-unset: false, $additional-unset-prefix: '') {
+@mixin generate-output-by-classes($classes, $prefix: '', $breakpoint-prefix: '', $generate-unset: false, $additional-unset-prefix: '', $generate-breakpoints: true) {
 	// Generate normal classes
 	@each $class-name, $class-properties in $classes {
 		@include generate-output-by-class(
 			$class: $class-name,
 			$properties: $class-properties,
 			$prefix: $prefix,
-			$breakpoint-prefix: $breakpoint-prefix
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-breakpoints: $generate-breakpoints
 		);
 	}
 
@@ -192,7 +198,8 @@ $rr-global-settings: ();
 			$class: $rr-global-unset-class,
 			$properties: $generate-unset,
 			$prefix: $prefix + $additional-unset-prefix,
-			$breakpoint-prefix: $breakpoint-prefix
+			$breakpoint-prefix: $breakpoint-prefix,
+			$generate-breakpoints: $generate-breakpoints
 		);
 	}
 }

@@ -18,6 +18,7 @@ $rr-font-sizes-default: map-default($rr-font-sizes) !default;
 // Output handling
 $rr-generate-font-sizes: $rr-generate-classes !default;
 $rr-generate-font-sizes-unset: $rr-generate-font-sizes !default;
+$rr-generate-font-sizes-breakpoints: $rr-generate-breakpoint-classes !default;
 
 ///////////////////
 // CLASS PROPERTIES
@@ -96,12 +97,15 @@ $rr-font-size-unset-class-properties: (
 		}
 
 		@each $font-size-name, $font-size-entry in $rr-font-sizes-new {
+			$generate-breakpoints: map-maybe-get($font-size-entry, 'generate-breakpoints', $rr-generate-font-sizes-breakpoints);
+
 			@include generate-output-by-class(
 				$class: $font-size-name,
 				$prefix: $rr-font-size-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
 				$properties: font-size-entry-to-properties($font-size-entry, $breakpoint-name),
-				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-size-entry, $breakpoint-name)
+				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-size-entry, $breakpoint-name),
+				$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 			);
 		}
 	}

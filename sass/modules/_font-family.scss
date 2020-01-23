@@ -19,6 +19,7 @@ $rr-font-families-default: map-default($rr-font-families) !default;
 
 // Output handling
 $rr-generate-font-families: $rr-generate-classes !default;
+$rr-generate-font-families-breakpoints: $rr-generate-breakpoint-classes !default;
 
 ////////////
 // FUNCTIONS
@@ -101,12 +102,15 @@ $rr-generate-font-families: $rr-generate-classes !default;
 
 		// Font families
 		@each $font-family-name, $font-family-entry in $rr-font-families {
+			$generate-breakpoints: map-maybe-get($font-family-entry, 'generate-breakpoints', $rr-generate-font-families-breakpoints);
+
 			@include generate-output-by-class(
 				$class: $font-family-name,
 				$prefix: $rr-font-family-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
 				$properties: font-family-entry-to-properties($font-family-entry, $breakpoint-name),
-				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-family-entry, $breakpoint-name)
+				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-family-entry, $breakpoint-name),
+				$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 			);
 		}
 	}
