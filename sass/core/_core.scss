@@ -80,23 +80,58 @@ $rr-global-settings: ();
 }
 
 // Get the main value from an entry
+// @function get-value-by-entry($entry, $property, $breakpoint-name: '') {
+// 	$value: null;
+
+// 	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
+// 		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
+
+// 		@if is-not-null($breakpoint-overwrites) {
+// 			$entry: $breakpoint-overwrites;
+// 		}
+// 	}
+
+// 	@if is-map($entry) {
+// 		@if map-has-key($entry, $property) {
+// 			$value: map-get($entry, $property);
+// 		}
+// 	} @else {
+// 		$value: $entry;
+// 	}
+
+// 	@return $value;
+// }
+
+// Get the main value from an entry
 @function get-value-by-entry($entry, $property, $breakpoint-name: '') {
 	$value: null;
 
-	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
-		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
-
-		@if is-not-null($breakpoint-overwrites) {
-			$entry: $breakpoint-overwrites;
-		}
-	}
-
-	@if is-map($entry) {
-		@if map-has-key($entry, $property) {
-			$value: map-get($entry, $property);
-		}
+	// Set default
+	@if is-map($entry) and map-has-key($entry, $property) {
+		$value: map-get($entry, $property);
 	} @else {
 		$value: $entry;
+	}
+
+	// Get breakpoint overwrite
+	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
+		$breakpoint-reached: false;
+
+		@each $breakpoint-name-loop, $breakpoint-entry in $rr-grid-breakpoints {
+			@if not $breakpoint-reached {
+				$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name-loop);
+
+				@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
+					$value: map-get($breakpoint-overwrites, $property);
+				} @else if is-not-null($breakpoint-overwrites) {
+					$value: $breakpoint-overwrites;
+				}
+
+				@if $breakpoint-name-loop == $breakpoint-name {
+					$breakpoint-reached: true;
+				}
+			}
+		}
 	}
 
 	@return $value;
@@ -106,19 +141,30 @@ $rr-global-settings: ();
 @function get-property-by-entry($entry, $property, $default: null, $breakpoint-name: '') {
 	$value: null;
 
-	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
-		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
-
-
-		@if is-not-null($breakpoint-overwrites) {
-			$entry: $breakpoint-overwrites;
-		}
-	}
-
+	// Set default
 	@if is-map($entry) and map-has-key($entry, $property) {
 		$value: map-get($entry, $property);
 	} @else {
 		$value: $default;
+	}
+
+	// Get breakpoint overwrite
+	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
+		$breakpoint-reached: false;
+
+		@each $breakpoint-name-loop, $breakpoint-entry in $rr-grid-breakpoints {
+			@if not $breakpoint-reached {
+				$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name-loop);
+
+				@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
+					$value: map-get($breakpoint-overwrites, $property);
+				}
+
+				@if $breakpoint-name-loop == $breakpoint-name {
+					$breakpoint-reached: true;
+				}
+			}
+		}
 	}
 
 	@return $value;
