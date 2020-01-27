@@ -388,16 +388,19 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		}
 
 		// Container
-		@if is-number($breakpoint-container-width) {
-			.#{$rr-grid-container-class} {
+		.#{$rr-grid-container-class} {
+			@if $breakpoint-container-spacing > 0 {
+				margin-right: $breakpoint-container-spacing;
+				margin-left: $breakpoint-container-spacing;
+			}
+
+			@if is-number($breakpoint-container-width) {
 				max-width: $breakpoint-container-width;
 
 				@if $breakpoint-container-alignment == right {
-					margin-right: $breakpoint-container-horizontal-margin;
 					margin-left: auto;
 				} @else if $breakpoint-container-alignment == left {
 					margin-right: auto;
-					margin-left: $breakpoint-container-horizontal-margin;
 				} @else if $breakpoint-container-alignment == center {
 					margin-left: auto;
 					margin-right: auto;
