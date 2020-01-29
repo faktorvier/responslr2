@@ -388,7 +388,8 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		}
 
 		// Container
-		.#{$rr-grid-container-class} {
+		.#{$rr-grid-container-class},
+		.#{$breakpoint-prefix}#{$rr-grid-container-class} {
 			@if $breakpoint-container-spacing > 0 {
 				margin-right: $breakpoint-container-spacing;
 				margin-left: $breakpoint-container-spacing;
@@ -405,6 +406,15 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 					margin-left: auto;
 					margin-right: auto;
 				}
+			}
+		}
+
+		// Container reset
+		@if $breakpoint-prefix-short != '' {
+			.#{$breakpoint-prefix-short}#{$rr-grid-container-class}-#{$rr-global-unset-class} {
+				max-width: unset;
+				margin-right: unset;
+				margin-left: unset;
 			}
 		}
 
