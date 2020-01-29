@@ -193,6 +193,22 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	@return $prefix;
 }
 
+// Get basic class with exceptions
+// @todo: experimental, testing in other modules
+@function grid-class-name-with-extend-exceptions($breakpoint-name, $class, $class-exception) {
+	$return: $class;
+	$breakpoint-index: index($rr-grid-breakpoints-names, $breakpoint-name);
+
+	@if $breakpoint-index >= 3 {
+		@for $index from 3 through $breakpoint-index + 1 {
+			$breakpoint: nth($rr-grid-breakpoints-names, $index - 1);
+			$return: $return + ':not(.' + grid-breakpoint-prefix($breakpoint, true) + $class + '-' + $class-exception + ')';
+		}
+	}
+
+	@return $return;
+}
+
 /////////
 // MIXINS
 /////////
@@ -352,6 +368,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 			.#{$rr-grid-row-class} {
 				display: flex;
 				flex-wrap: wrap;
+				width: 100%;
 			}
 
 			// Column
@@ -388,6 +405,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		}
 
 		// Container
+		//.#{grid-class-name-with-extend-exceptions($breakpoint-name, $rr-grid-container-class, $rr-global-unset-class)},
 		.#{$rr-grid-container-class},
 		.#{$breakpoint-prefix}#{$rr-grid-container-class} {
 			@if $breakpoint-container-spacing > 0 {
@@ -409,13 +427,19 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 			}
 		}
 
-		// Container reset
+		// Container unset
 		@if $breakpoint-prefix-short != '' {
 			.#{$breakpoint-prefix-short}#{$rr-grid-container-class}-#{$rr-global-unset-class} {
 				max-width: unset;
 				margin-right: unset;
 				margin-left: unset;
 			}
+		}
+
+		// Row column combination width
+		.#{$rr-grid-container-class}.#{$rr-grid-row-class},
+		.#{$breakpoint-prefix}#{$rr-grid-container-class}.#{$rr-grid-row-class} {
+			width: calc(100% - #{$breakpoint-container-spacing * 2});
 		}
 
 		// Row gutter fix
