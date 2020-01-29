@@ -19,21 +19,21 @@ $rr-position-properties: (
 // Default position fill classes
 $rr-position-filler-properties: (
 	'parent': (
-		position: absolute,
+		//position: absolute,
 		top: 0,
 		right: 0,
 		bottom: 0,
 		left: 0
 	),
 	'height': (
-		position: absolute,
+		//position: absolute,
 		top: 0,
 		right: unset,
 		bottom: 0,
 		left: unset
 	),
 	'width': (
-		position: absolute,
+		//position: absolute,
 		top: unset,
 		right: 0,
 		bottom: unset,
