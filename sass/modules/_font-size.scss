@@ -18,6 +18,7 @@ $rr-font-sizes-default: map-default($rr-font-sizes) !default;
 // Output handling
 $rr-generate-font-sizes: $rr-generate-classes !default;
 $rr-generate-font-sizes-unset: $rr-generate-font-sizes !default;
+$rr-generate-font-sizes-hide: $rr-generate-font-sizes !default;
 $rr-generate-font-sizes-breakpoints: $rr-generate-breakpoint-classes !default;
 
 ///////////////////
@@ -59,8 +60,6 @@ $rr-font-size-unset-class-properties: (
 		);
 	}
 
-	// @todo: fix extend
-
 	@return $properties;
 }
 
@@ -85,15 +84,26 @@ $rr-font-size-unset-class-properties: (
 	@if $rr-generate-font-sizes {
 		$rr-font-sizes-new: $rr-font-sizes;
 
+		// Append hide
+		@if $rr-generate-font-sizes-hide {
+			$rr-font-sizes-new: map-append(
+				$rr-font-sizes-new,
+				(
+					'size': 0,
+					'line-height': 0,
+					'letter-spacing': 0
+				),
+				$rr-global-hide-class
+			);
+		}
+
 		// Append unset
 		@if $rr-generate-font-sizes-unset and $breakpoint-prefix != '' {
-			@if $rr-generate-font-sizes-unset {
-				$rr-font-sizes-new: map-append(
-					$rr-font-sizes-new,
-					unset,
-					$rr-global-unset-class
-				);
-			}
+			$rr-font-sizes-new: map-append(
+				$rr-font-sizes-new,
+				unset,
+				$rr-global-unset-class
+			);
 		}
 
 		@each $font-size-name, $font-size-entry in $rr-font-sizes-new {

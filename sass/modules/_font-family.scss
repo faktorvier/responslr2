@@ -49,8 +49,6 @@ $rr-generate-font-families-breakpoints: $rr-generate-breakpoint-classes !default
 		);
 	}
 
-	// @todo: fix extend
-
 	@return $properties;
 }
 
