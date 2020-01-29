@@ -119,6 +119,19 @@
 	@return $width;
 }
 
+// Get hover selector
+@function hover($selector) {
+	$return: '';
+
+	@if & {
+		$return: 'html.#{$rr-global-can-hover-class} & #{$selector}:hover, #{$selector}:focus, #{$selector}:active';
+	} @else {
+		$return: 'html.#{$rr-global-can-hover-class} #{$selector}:hover, #{$selector}:focus, #{$selector}:active';
+	}
+
+	@return $return;
+}
+
 /////////
 // MIXINS
 /////////
