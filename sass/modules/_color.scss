@@ -6,6 +6,7 @@
 $rr-color-text-class-prefix: 'color-' !default;
 $rr-color-background-class-prefix: 'bg-color-' !default;
 $rr-color-border-class-prefix: 'border-color-' !default;
+$rr-color-currentcolor-class: 'current' !default;
 
 // Default entries
 $rr-colors: () !default;
@@ -19,6 +20,7 @@ $rr-generate-colors-text: $rr-generate-colors !default;
 $rr-generate-colors-background: $rr-generate-colors !default;
 $rr-generate-colors-border: $rr-generate-colors !default;
 $rr-generate-colors-unset: $rr-generate-colors !default;
+$rr-generate-colors-currentcolor: $rr-generate-colors !default;
 $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 
 ////////////
@@ -104,6 +106,15 @@ $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 				$rr-colors-new,
 				unset,
 				$rr-global-unset-class
+			);
+		}
+
+		// Append currentColor
+		@if $rr-generate-colors-currentcolor {
+			$rr-colors-new: map-append(
+				$rr-colors-new,
+				currentColor,
+				$rr-color-currentcolor-class
 			);
 		}
 
