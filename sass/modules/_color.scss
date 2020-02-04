@@ -52,7 +52,22 @@ $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 
 // Get css properties by entry
 @function color-entry-to-properties($entry, $breakpoint-name: '', $type: 'text') {
-	$property: color-property-by-type($type);
+	$property: color;
+
+	@if $type == 'background' {
+		$property: background-color;
+	} @else if $type == 'border' {
+		$property: border-color;
+	} @else if $type == 'border-top' {
+		$property: border-top-color;
+	} @else if $type == 'border-right' {
+		$property: border-right-color;
+	} @else if $type == 'border-bottom' {
+		$property: border-bottom-color;
+	} @else if $type == 'border-left' {
+		$property: border-left-color;
+	}
+
 	$color: get-value-by-entry($entry, 'color', $breakpoint-name);
 
 	@if $type == 'background' {
@@ -88,8 +103,14 @@ $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 }
 
 // Output border color by name
-@mixin color-border($name: null, $breakpoint-name: '') {
-	@include color($name, 'border', $breakpoint-name);
+@mixin color-border($name: null, $directon: null, $breakpoint-name: '') {
+	$type: 'border';
+
+	@if is-not-null($directon) {
+		$type: $type + '-' + $directon;
+	}
+
+	@include color($name, $type, $breakpoint-name);
 }
 
 /////////
