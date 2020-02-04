@@ -20,6 +20,7 @@ $rr-primary-color: #17d996;
 
 // Output handling
 $rr-generate-classes: true !default;
+$rr-generate-features: $rr-generate-classes !default;
 $rr-generate-breakpoint-classes: true !default;
 $rr-generate-settings: true !default;
 
