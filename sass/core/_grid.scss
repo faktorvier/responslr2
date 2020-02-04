@@ -289,7 +289,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	@if str-length($media-query) == 0 {
 		@content;
 	} @else {
-		@media#{$media-query} {
+		@media #{$media-query} {
 			@content;
 		}
 	}
