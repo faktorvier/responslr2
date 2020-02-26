@@ -368,7 +368,8 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 			.#{$rr-grid-row-class} {
 				display: flex;
 				flex-wrap: wrap;
-				width: 100%;
+				//width: 100%;
+				flex-grow: 1;
 			}
 
 			// Column
@@ -435,20 +436,20 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		}
 
 		// Row column combination width
-		.#{$rr-grid-container-class}.#{$rr-grid-row-class},
-		.#{$breakpoint-prefix}#{$rr-grid-container-class}.#{$rr-grid-row-class} {
-			@if $breakpoint-container-spacing > 0 {
-				width: calc(100% - #{$breakpoint-container-spacing * 2});
-			} @else {
-				width: 100%;
-			}
-		}
+		// .#{$rr-grid-container-class}.#{$rr-grid-row-class},
+		// .#{$breakpoint-prefix}#{$rr-grid-container-class}.#{$rr-grid-row-class} {
+		// 	@if $breakpoint-container-spacing > 0 {
+		// 		//width: calc(100% - #{$breakpoint-container-spacing * 2});
+		// 	} @else {
+		// 		//width: 100%;
+		// 	}
+		// }
 
 		// Row gutter fix
 		.#{$rr-grid-row-class} .#{$rr-grid-row-class} {
 			margin-left: -(grid-gutter-half($breakpoint-name));
 			margin-right: -(grid-gutter-half($breakpoint-name));
-			width: calc(100% + #{grid-gutter($breakpoint-name)});
+			//width: calc(100% + #{grid-gutter($breakpoint-name)});
 		}
 
 		// Column gutter
@@ -479,7 +480,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 				.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$column-index} > .#{$rr-grid-column-class} {
 					flex: 0 0 calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
 
-					.#{$rr-grid-row-class} {
+					> * {
 						--rr-grid-column-base: #{$column-index};
 					}
 
@@ -530,7 +531,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-global-full-class} > .#{$rr-grid-column-class} {
 			flex: 0 0 100%;
 
-			.#{$rr-grid-row-class} {
+			> * {
 				--rr-grid-column-base: #{$breakpoint-columns};
 			}
 		}
