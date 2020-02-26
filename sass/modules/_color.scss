@@ -83,6 +83,24 @@ $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 	@return $properties;
 }
 
+// Get color by name
+@function color($name, $type: 'text', $breakpoint-name: '') {
+	$entry: color-entry($name);
+	$color: null;
+
+	@if($entry) {
+		$color: get-value-by-entry($entry, 'color', $breakpoint-name);
+
+		@if $type == 'background' {
+			$color: get-property-by-entry($entry, 'color-bg', $color, $breakpoint-name);
+		} @else if $type == 'border' {
+			$color: get-property-by-entry($entry, 'color-border', $color, $breakpoint-name);
+		}
+	}
+
+	@return $color;
+}
+
 /////////
 // MIXINS
 /////////
