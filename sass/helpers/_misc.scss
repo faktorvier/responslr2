@@ -34,7 +34,7 @@ $rr-generate-misc-box-fillers-helpers: $rr-generate-misc-helpers !default;
 @mixin generate-misc-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-misc-helpers {
 		// Disable user selection
-		@if $rr-generate-misc-user-selection-helpers and $breakpoint-prefix == '' {
+		@if $rr-generate-misc-user-selection-helpers and grid-is-default($breakpoint-prefix) {
 			.#{$rr-misc-user-select-disable-class} {
 				user-select: none;
 			}

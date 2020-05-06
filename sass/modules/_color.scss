@@ -6,6 +6,7 @@
 $rr-color-text-class-prefix: 'color-' !default;
 $rr-color-background-class-prefix: 'bg-color-' !default;
 $rr-color-border-class-prefix: 'border-color-' !default;
+$rr-color-currentcolor-class: 'current' !default;
 
 // Default entries
 $rr-colors: () !default;
@@ -19,7 +20,8 @@ $rr-generate-colors-text: $rr-generate-colors !default;
 $rr-generate-colors-background: $rr-generate-colors !default;
 $rr-generate-colors-border: $rr-generate-colors !default;
 $rr-generate-colors-unset: $rr-generate-colors !default;
-$rr-generate-colors-hover: $rr-generate-classes !default;
+$rr-generate-colors-currentcolor: $rr-generate-colors !default;
+$rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 
 ////////////
 // FUNCTIONS
@@ -48,33 +50,85 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 	@return $property-name;
 }
 
+// Get css properties by entry
+@function color-entry-to-properties($entry, $breakpoint-name: '', $type: 'text') {
+	$property: color;
+
+	@if $type == 'background' {
+		$property: background-color;
+	} @else if $type == 'border' {
+		$property: border-color;
+	} @else if $type == 'border-top' {
+		$property: border-top-color;
+	} @else if $type == 'border-right' {
+		$property: border-right-color;
+	} @else if $type == 'border-bottom' {
+		$property: border-bottom-color;
+	} @else if $type == 'border-left' {
+		$property: border-left-color;
+	}
+
+	$color: get-value-by-entry($entry, 'color', $breakpoint-name);
+
+	@if $type == 'background' {
+		$color: get-property-by-entry($entry, 'color-bg', $color, $breakpoint-name);
+	} @else if $type == 'border' {
+		$color: get-property-by-entry($entry, 'color-border', $color, $breakpoint-name);
+	}
+
+	$properties: (
+		$property: $color
+	);
+
+	@return $properties;
+}
+
+// Get color by name
+@function color($name, $type: 'text', $breakpoint-name: '') {
+	$entry: color-entry($name);
+	$color: null;
+
+	@if($entry) {
+		$color: get-value-by-entry($entry, 'color', $breakpoint-name);
+
+		@if $type == 'background' {
+			$color: get-property-by-entry($entry, 'color-bg', $color, $breakpoint-name);
+		} @else if $type == 'border' {
+			$color: get-property-by-entry($entry, 'color-border', $color, $breakpoint-name);
+		}
+	}
+
+	@return $color;
+}
+
 /////////
 // MIXINS
 /////////
 
 // Output color by name and type
-@mixin color($name: null, $type: 'text') {
-	$entry: color-entry($name);
-
-	@if is-not-null($entry) {
-		$property: color-property-by-type($type);
-
-		@include generate-properties((
-			$property: get-value-by-entry($entry, 'color')
-		));
-
-		// @todo: generate all breakpoints
-	}
+@mixin color($name: null, $type: 'text', $breakpoint-name: '') {
+	@include entry-output(
+		color-entry($name),
+		'color-entry-to-properties',
+		$breakpoint-name,
+		$type
+	);
 }
 
 // Output background color by name
-@mixin color-bg($name: null) {
-	@include color($name, 'background');
+@mixin color-bg($name: null, $breakpoint-name: '') {
+	@include color($name, 'background', $breakpoint-name);
 }
 
 // Output border color by name
-@mixin color-border($name: null) {
-	@include color($name, 'border');
+@mixin color-border($name: null, $directon: null, $breakpoint-name: '') {
+	$type: 'border';
+
+	@if is-not-null($directon) {
+		$type: $type + '-' + $directon;
+	}
+
+	@include color($name, $type, $breakpoint-name);
 }
 
 /////////
@@ -94,11 +148,25 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 			);
 		}
 
+		// Append currentColor
+		@if $rr-generate-colors-currentcolor {
+			$rr-colors-new: map-append(
+				$rr-colors-new,
+				currentColor,
+				$rr-color-currentcolor-class
+			);
+		}
+
 		@each $color-name, $color-entry in $rr-colors-new {
 			$color-value: get-value-by-entry($color-entry, 'color', $breakpoint-name);
+			$color-value-bg: get-property-by-entry($color-entry, 'color-bg', $color-value, $breakpoint-name);
+			$color-value-border: get-property-by-entry($color-entry, 'color-border', $color-value, $breakpoint-name);
+
 			$generate-text-color: map-maybe-get($color-entry, 'generate-text', $rr-generate-colors-text);
 			$generate-background-color: map-maybe-get($color-entry, 'generate-background', $rr-generate-colors-background);
 			$generate-border-color: map-maybe-get($color-entry, 'generate-border', $rr-generate-colors-border);
+			$generate-breakpoints: map-maybe-get($color-entry, 'generate-breakpoints', $rr-generate-colors-breakpoints);
+
 			$breakpoint-overwrites: entry-has-breakpoint-overwrite($color-entry, $breakpoint-name);
 
 			// Text color
@@ -108,7 +176,8 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 					$prefix: $rr-color-text-class-prefix,
 					$breakpoint-prefix: $breakpoint-prefix,
 					$properties: (color: $color-value),
-					$breakpoint-overwrites: $breakpoint-overwrites
+					$breakpoint-overwrites: $breakpoint-overwrites,
+					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 				);
 			}
 
@@ -118,8 +187,9 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 					$class: $color-name,
 					$prefix: $rr-color-background-class-prefix,
 					$breakpoint-prefix: $breakpoint-prefix,
-					$properties: (background-color: $color-value),
-					$breakpoint-overwrites: $breakpoint-overwrites
+					$properties: (background-color: $color-value-bg),
+					$breakpoint-overwrites: $breakpoint-overwrites,
+					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 				);
 			}
 
@@ -129,8 +199,9 @@ $rr-generate-colors-hover: $rr-generate-classes !default;
 					$class: $color-name,
 					$prefix: $rr-color-border-class-prefix,
 					$breakpoint-prefix: $breakpoint-prefix,
-					$properties: (border-color: $color-value),
-					$breakpoint-overwrites: $breakpoint-overwrites
+					$properties: (border-color: $color-value-border),
+					$breakpoint-overwrites: $breakpoint-overwrites,
+					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 				);
 			}
 		}

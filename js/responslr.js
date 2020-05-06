@@ -302,7 +302,7 @@ function ResponslrGrid() {
 			self.breakpointChanged();
 		}
 
-		if(self.settings.helper.enabled) {
+		if(self.settings.helper.enabled && $helperInfo != null) {
 			$helperInfo.attr('data-rr-window-width', window.innerWidth);
 		}
 	};

@@ -13,36 +13,44 @@ $rr-global-settings: map-merge(
 	)
 );
 
-// Main settings
-:root {
-	--rr-can-hover: false;
-	--rr-can-touch: false;
+// Output default features and settings
+@if $rr-generate-features or $rr-generate-settings {
+	:root {
+		@if $rr-generate-features {
+			--rr-can-hover: false;
+			--rr-can-touch: false;
+		}
 
-	@if $rr-generate-settings and is-not-empty($rr-generate-settings) {
-		--rr-settings: '#{inspect(json-encode($rr-global-settings))}';
-	}
-}
-
-// Breakpoint settings
-@each $breakpoint-name, $breakpoint-entry in $rr-grid-breakpoints {
-	@include mq($breakpoint-name) {
-		:root {
-			--rr-current-breakpoint: "#{inspect($breakpoint-name)}";
-			--rr-current-columns: "#{inspect(grid-breakpoint-property($breakpoint-name, 'columns'))}";
+		@if $rr-generate-settings and is-not-empty($rr-generate-settings) {
+			--rr-settings: '#{inspect(json-encode($rr-global-settings))}';
 		}
 	}
 }
 
-// Features
-@include mq-hover() {
-	:root {
-		--rr-can-hover: true;
+// Output breakpoint settings
+@if $rr-generate-settings {
+	@each $breakpoint-name, $breakpoint-entry in $rr-grid-breakpoints {
+		@include mq($breakpoint-name) {
+			:root {
+				--rr-current-breakpoint: "#{inspect($breakpoint-name)}";
+				--rr-current-columns: "#{inspect(grid-breakpoint-property($breakpoint-name, 'columns'))}";
+			}
+		}
 	}
 }
 
-@include mq-touch() {
-	:root {
-		--rr-can-touch: true;
+// Output features
+@if $rr-generate-features {
+	@include mq-hover() {
+		:root {
+			--rr-can-hover: true;
+		}
+	}
+
+	@include mq-touch() {
+		:root {
+			--rr-can-touch: true;
+		}
 	}
 }
 

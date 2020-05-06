@@ -24,7 +24,7 @@ $rr-generate-tables: $rr-generate-classes !default;
 /////////
 
 @mixin generate-table-component-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-tables and $breakpoint-prefix == '' {
+	@if $rr-generate-tables and grid-is-default($breakpoint-prefix) {
 		.#{$rr-table-class} {
 			@include table();
 		}

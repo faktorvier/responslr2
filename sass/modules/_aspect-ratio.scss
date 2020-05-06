@@ -14,6 +14,7 @@ $rr-aspect-ratios-default: map-default($rr-aspect-ratios) !default;
 // Output handling
 $rr-generate-aspect-ratios: $rr-generate-classes !default;
 $rr-generate-aspect-ratios-unset: $rr-generate-aspect-ratios !default;
+$rr-generate-aspect-ratios-breakpoints: $rr-generate-breakpoint-classes !default;
 
 ///////////////////
 // CLASS PROPERTIES
@@ -70,7 +71,7 @@ $rr-aspect-ratio-unset-class-properties: (
 
 	@if $value == $rr-global-unset-class {
 		$properties: $rr-aspect-ratio-unset-class-properties;
-	} @else {
+	} @else if is-list($value) {
 		$properties: map-append(
 			$rr-aspect-ratio-class-properties,
 			aspect-ratio-calculate(nth($value, 1), nth($value, 2)),
@@ -86,7 +87,6 @@ $rr-aspect-ratio-unset-class-properties: (
 		}
 	}
 
-
 	@return $properties;
 }
 
@@ -96,14 +96,12 @@ $rr-aspect-ratio-unset-class-properties: (
 
 // Output aspect ratio by name
 @mixin aspect-ratio($name: null, $breakpoint-name: '', $append-child: true) {
-	$entry: aspect-ratio-entry($name);
-
-	@if is-not-null($entry) {
-		$properties: aspect-ratio-entry-to-properties($entry, $breakpoint-name, $append-child);
-		@include generate-properties($properties);
-
-		// @todo: generate all breakpoints
-	}
+	@include entry-output(
+		aspect-ratio-entry($name),
+		'aspect-ratio-entry-to-properties',
+		$breakpoint-name,
+		$append-child
+	);
 }
 
 // Output aspect ratio child
@@ -136,12 +134,15 @@ $rr-aspect-ratio-unset-class-properties: (
 	@if $rr-generate-aspect-ratios {
 		// Normal classes
 		@each $aspect-ratio-name, $aspect-ratio-entry in $rr-aspect-ratios {
+			$generate-breakpoints: map-maybe-get($aspect-ratio-entry, 'generate-breakpoints', $rr-generate-aspect-ratios-breakpoints);
+
 			@include generate-output-by-class(
 				$class: $aspect-ratio-name,
 				$prefix: $rr-aspect-ratio-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
 				$properties: aspect-ratio-entry-to-properties($aspect-ratio-entry, $breakpoint-name),
-				$breakpoint-overwrites: entry-has-breakpoint-overwrite($aspect-ratio-entry, $breakpoint-name)
+				$breakpoint-overwrites: entry-has-breakpoint-overwrite($aspect-ratio-entry, $breakpoint-name),
+				$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 			);
 		}
 
@@ -151,7 +152,8 @@ $rr-aspect-ratio-unset-class-properties: (
 				$class: $rr-global-unset-class,
 				$prefix: $rr-aspect-ratio-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
-				$properties: $rr-aspect-ratio-unset-class-properties
+				$properties: $rr-aspect-ratio-unset-class-properties,
+				$generate-breakpoints: $breakpoint-prefix == '' or $rr-generate-aspect-ratios-breakpoints
 			);
 		}
 	}

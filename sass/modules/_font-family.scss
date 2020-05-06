@@ -19,6 +19,7 @@ $rr-font-families-default: map-default($rr-font-families) !default;
 
 // Output handling
 $rr-generate-font-families: $rr-generate-classes !default;
+$rr-generate-font-families-breakpoints: $rr-generate-breakpoint-classes !default;
 
 ////////////
 // FUNCTIONS
@@ -57,14 +58,11 @@ $rr-generate-font-families: $rr-generate-classes !default;
 
 // Output font family by name
 @mixin font-family($name: null, $breakpoint-name: '') {
-	$entry: font-family-entry($name);
-
-	@if is-not-null($entry) {
-		$properties: font-family-entry-to-properties($entry, $breakpoint-name);
-		@include generate-properties($properties);
-
-		// @todo: generate all breakpoints
-	}
+	@include entry-output(
+		font-family-entry($name),
+		'font-family-entry-to-properties',
+		$breakpoint-name
+	);
 }
 
 /////////
@@ -74,7 +72,7 @@ $rr-generate-font-families: $rr-generate-classes !default;
 @mixin generate-font-family-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $rr-generate-font-families {
 		// Font faces
-		@if $breakpoint-prefix == '' {
+		@if grid-is-default($breakpoint-prefix) {
 			@each $class-name, $font in $rr-font-families {
 				@if is-map($font) and map-has-key($font, 'face') {
 					$font-face: get-property-by-entry($font, 'face', null);
@@ -102,12 +100,15 @@ $rr-generate-font-families: $rr-generate-classes !default;
 
 		// Font families
 		@each $font-family-name, $font-family-entry in $rr-font-families {
+			$generate-breakpoints: map-maybe-get($font-family-entry, 'generate-breakpoints', $rr-generate-font-families-breakpoints);
+
 			@include generate-output-by-class(
 				$class: $font-family-name,
 				$prefix: $rr-font-family-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
 				$properties: font-family-entry-to-properties($font-family-entry, $breakpoint-name),
-				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-family-entry, $breakpoint-name)
+				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-family-entry, $breakpoint-name),
+				$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
 			);
 		}
 	}

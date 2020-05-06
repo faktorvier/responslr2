@@ -113,7 +113,7 @@ $rr-transition-hardware-acceleration-class-properties: (
 	$transition-duration: map-maybe-get($entry, 'duration', $rr-transitions-default-duration);
 	$transition-delay: map-maybe-get($entry, 'delay', $rr-transitions-default-delay);
 	$transition-timing-function: map-maybe-get($entry, 'timing-function', $rr-transitions-default-timing-function);
-	$transition-hardware-acceleration: map-maybe-get($entry, 'hardware-acceleration', true);
+	$transition-hardware-acceleration: map-maybe-get($entry, 'hardware-acceleration', $rr-transitions-default-hardware-acceleration);
 
 	$properties: ();
 
@@ -151,10 +151,14 @@ $rr-transition-hardware-acceleration-class-properties: (
 /////////
 
 // Output transition by name
-@mixin transition($name: null) {
+@mixin transition($name: null, $hardware-acceleration: null) {
 	$entry: transition-entry($name);
 
 	@if is-not-null($entry) {
+		@if is-not-null($hardware-acceleration) {
+			$entry: map-merge($entry, ('hardware-acceleration': $hardware-acceleration));
+		}
+
 		$properties: transition-entry-to-properties($entry);
 		@include generate-properties($properties);
 	}
@@ -170,7 +174,7 @@ $rr-transition-hardware-acceleration-class-properties: (
 /////////
 
 @mixin generate-transition-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-transitions and $breakpoint-prefix == '' {
+	@if $rr-generate-transitions and grid-is-default($breakpoint-prefix) {
 		@each $transition-name, $transition-entry in $rr-transitions {
 			@include generate-output-by-class(
 				$class: $transition-name,

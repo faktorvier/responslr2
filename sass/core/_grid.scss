@@ -53,8 +53,6 @@ $rr-grid-breakpoint-map-defaults: (
 	'container-spacing': 0
 );
 
-$rr-grid-breakpoints-default: map-default($rr-grid-breakpoints) !default;
-
 // Percentage columns steps
 $rr-grid-breakpoint-fraction-steps: 6 !default;
 $rr-grid-breakpoint-fraction-prefix-delimiter: '\\/' !default;
@@ -90,6 +88,9 @@ $rr-generate-grid-settings: $rr-generate-settings !default;
 // INTERNAL VARIABLES
 /////////////////////
 
+// Default breakpoint
+$rr-grid-breakpoints-default: map-default($rr-grid-breakpoints);
+
 // Set current breakpoint to default
 $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
@@ -123,7 +124,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 
 // Check if breakpoint is default breakpoint
 @function grid-is-default($name) {
-	@return $name == $rr-grid-breakpoints-default;
+	@return $name == $rr-grid-breakpoints-default or $name == '';
 }
 
 // Get a breakpoint gutter with optional multiplier by name
@@ -190,6 +191,22 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	}
 
 	@return $prefix;
+}
+
+// Get basic class with exceptions
+// @todo: experimental, testing in other modules
+@function grid-class-name-with-extend-exceptions($breakpoint-name, $class, $class-exception) {
+	$return: $class;
+	$breakpoint-index: index($rr-grid-breakpoints-names, $breakpoint-name);
+
+	@if $breakpoint-index >= 3 {
+		@for $index from 3 through $breakpoint-index + 1 {
+			$breakpoint: nth($rr-grid-breakpoints-names, $index - 1);
+			$return: $return + ':not(.' + grid-breakpoint-prefix($breakpoint, true) + $class + '-' + $class-exception + ')';
+		}
+	}
+
+	@return $return;
 }
 
 /////////
@@ -272,7 +289,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	@if str-length($media-query) == 0 {
 		@content;
 	} @else {
-		@media#{$media-query} {
+		@media #{$media-query} {
 			@content;
 		}
 	}
@@ -351,6 +368,8 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 			.#{$rr-grid-row-class} {
 				display: flex;
 				flex-wrap: wrap;
+				//width: 100%;
+				flex-grow: 1;
 			}
 
 			// Column
@@ -387,16 +406,19 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		}
 
 		// Container
-		@if is-number($breakpoint-container-width) {
-			.#{$rr-grid-container-class} {
+		//.#{grid-class-name-with-extend-exceptions($breakpoint-name, $rr-grid-container-class, $rr-global-unset-class)},
+		.#{$rr-grid-container-class},
+		.#{$breakpoint-prefix}#{$rr-grid-container-class} {
+			margin-right: $breakpoint-container-spacing;
+			margin-left: $breakpoint-container-spacing;
+
+			@if is-number($breakpoint-container-width) {
 				max-width: $breakpoint-container-width;
 
 				@if $breakpoint-container-alignment == right {
-					margin-right: $breakpoint-container-horizontal-margin;
 					margin-left: auto;
 				} @else if $breakpoint-container-alignment == left {
 					margin-right: auto;
-					margin-left: $breakpoint-container-horizontal-margin;
 				} @else if $breakpoint-container-alignment == center {
 					margin-left: auto;
 					margin-right: auto;
@@ -404,10 +426,30 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 			}
 		}
 
+		// Container unset
+		@if $breakpoint-prefix-short != '' {
+			.#{$breakpoint-prefix-short}#{$rr-grid-container-class}-#{$rr-global-unset-class} {
+				max-width: unset;
+				margin-right: unset;
+				margin-left: unset;
+			}
+		}
+
+		// Row column combination width
+		// .#{$rr-grid-container-class}.#{$rr-grid-row-class},
+		// .#{$breakpoint-prefix}#{$rr-grid-container-class}.#{$rr-grid-row-class} {
+		// 	@if $breakpoint-container-spacing > 0 {
+		// 		//width: calc(100% - #{$breakpoint-container-spacing * 2});
+		// 	} @else {
+		// 		//width: 100%;
+		// 	}
+		// }
+
 		// Row gutter fix
 		.#{$rr-grid-row-class} .#{$rr-grid-row-class} {
 			margin-left: -(grid-gutter-half($breakpoint-name));
 			margin-right: -(grid-gutter-half($breakpoint-name));
+			//width: calc(100% + #{grid-gutter($breakpoint-name)});
 		}
 
 		// Column gutter
@@ -438,8 +480,12 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 				.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$column-index} > .#{$rr-grid-column-class} {
 					flex: 0 0 calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
 
-					.#{$rr-grid-row-class} {
+					> * {
 						--rr-grid-column-base: #{$column-index};
+					}
+
+					.#{$rr-grid-row-class}--#{$rr-global-reset-class} {
+						--rr-grid-column-base: #{$breakpoint-columns};
 					}
 				}
 
@@ -485,7 +531,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-global-full-class} > .#{$rr-grid-column-class} {
 			flex: 0 0 100%;
 
-			.#{$rr-grid-row-class} {
+			> * {
 				--rr-grid-column-base: #{$breakpoint-columns};
 			}
 		}

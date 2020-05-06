@@ -3,7 +3,7 @@
 ///////////////////
 
 // Output handling
-$rr-generate-reset: true !default;
+$rr-generate-reset: $rr-generate-classes !default;
 $rr-generate-normalize: false !default;
 
 /////////

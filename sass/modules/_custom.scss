@@ -48,14 +48,11 @@ $rr-generate-customs: $rr-generate-classes !default;
 
 // Output custom by name
 @mixin custom($name: null, $breakpoint-name: '') {
-	$custom: custom-entry($name);
-
-	@if is-not-null($custom) {
-		$custom: map-remove($custom, 'breakpoints');
-		@include generate-properties($custom);
-
-		// @todo: generate all breakpoints
-	}
+	@include entry-output(
+		custom-entry($name),
+		'custom-entry-to-properties',
+		$breakpoint-name
+	);
 }
 
 /////////
