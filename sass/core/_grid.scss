@@ -648,7 +648,8 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	@each $breakpoint-name, $breakpoint-entry in $rr-grid-breakpoints {
 		$grid-breakpoints: map-merge($grid-breakpoints, (
 			$breakpoint-name: (
-				'columns': grid-breakpoint-property($breakpoint-name, 'columns')
+				'columns': grid-breakpoint-property($breakpoint-name, 'columns'),
+				'gutter': grid-breakpoint-property($breakpoint-name, 'gutter')
 			)
 		));
 	}
