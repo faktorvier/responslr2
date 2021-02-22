@@ -83,6 +83,29 @@ $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 	@return $properties;
 }
 
+@function color-entry-to-border-shorthand($entry, $breakpoint-name: '', $shorthand: '', $direction: null) {
+	$color: get-value-by-entry($entry, 'color', $breakpoint-name);
+	$color: get-property-by-entry($entry, 'color-border', $color, $breakpoint-name);
+
+	$property: border;
+
+	@if $direction == 'top' {
+		$property: border-top;
+	} @else if $direction == 'right' {
+		$property: border-right;
+	} @else if $direction == 'bottom' {
+		$property: border-bottom;
+	} @else if $direction == 'left' {
+		$property: border-left;
+	}
+
+	$properties: (
+		$property: #{$shorthand} #{$color}
+	);
+
+	@return $properties;
+}
+
 // Get color by name
 @function color($name, $type: 'text', $breakpoint-name: '') {
 	$entry: color-entry($name);
@@ -121,14 +144,25 @@ $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 }
 
 // Output border color by name
-@mixin color-border($name: null, $directon: null, $breakpoint-name: '') {
+@mixin color-border($name: null, $direction: null, $breakpoint-name: '') {
 	$type: 'border';
 
-	@if is-not-null($directon) {
-		$type: $type + '-' + $directon;
+	@if is-not-null($direction) {
+		@include color($name, $type + '-' + $direction, $breakpoint-name);
+	} @else {
+		@include color($name, $type, $breakpoint-name);
 	}
+}
 
-	@include color($name, $type, $breakpoint-name);
+// Output border shorthand with color by name
+@mixin color-border-shorthand($name: null, $shorthand: null, $direction: null, $breakpoint-name: '') {
+	@include entry-output(
+		color-entry($name),
+		'color-entry-to-border-shorthand',
+		$breakpoint-name,
+		$shorthand,
+		$direction
+	);
 }
 
 /////////
