@@ -116,6 +116,16 @@ $rr-generate-spacings-breakpoints: $rr-generate-breakpoint-classes !default;
 	@return $properties;
 }
 
+// Get container spacing (without gutter)
+@function spacing-container($breakpoint-name: '') {
+	@return grid-breakpoint-property($breakpoint-name, 'container-spacing');
+}
+
+// Get container spacing (with gutter)
+@function spacing-container-outer($breakpoint-name: '') {
+	@return grid-gutter-half($breakpoint-name) + grid-breakpoint-property($breakpoint-name, 'container-spacing');
+}
+
 /////////
 // MIXINS
 /////////
