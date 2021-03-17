@@ -649,7 +649,9 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		$grid-breakpoints: map-merge($grid-breakpoints, (
 			$breakpoint-name: (
 				'columns': grid-breakpoint-property($breakpoint-name, 'columns'),
-				'gutter': grid-breakpoint-property($breakpoint-name, 'gutter')
+				'gutter': grid-breakpoint-property($breakpoint-name, 'gutter'),
+				'min-width': strip-unit(grid-breakpoint-property($breakpoint-name, 'min-width')),
+				'max-width': strip-unit(grid-calculate-max-width($breakpoint-name))
 			)
 		));
 	}
