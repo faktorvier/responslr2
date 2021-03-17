@@ -92,6 +92,15 @@
 	@return ($value / $base-size * 1rem);
 }
 
+// Strip unit from value
+@function strip-unit($number) {
+	@if type-of($number) == 'number' and not unitless($number) {
+		@return $number / ($number * 0 + 1);
+	}
+
+	@return $number;
+}
+
 // Convert a value to rem by breakpoint
 @function to-rem-breakpoint($value, $breakpoint: '') {
 	@if $breakpoint == '' {
