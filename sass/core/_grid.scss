@@ -446,7 +446,8 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		// }
 
 		// Row gutter fix
-		.#{$rr-grid-row-class} .#{$rr-grid-row-class} {
+		.#{$rr-grid-row-class} .#{$rr-grid-row-class},
+		.#{$rr-grid-row-class} > .#{$rr-grid-column-class} .#{$breakpoint-prefix-short}#{$rr-grid-row-gutter-class} {
 			margin-left: -(grid-gutter-half($breakpoint-name));
 			margin-right: -(grid-gutter-half($breakpoint-name));
 			//width: calc(100% + #{grid-gutter($breakpoint-name)});

@@ -46,6 +46,7 @@ $rr-generate-misc-box-fillers-helpers: $rr-generate-misc-helpers !default;
 				$classes: $rr-misc-box-filler-properties,
 				$prefix: $rr-misc-box-filler-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
+				$append-prefix: true,
 				$generate-unset: (
 					width: unset,
 					height: unset

@@ -16,6 +16,8 @@ $rr-global-settings: map-merge(
 // Output default features and settings
 @if $rr-generate-features or $rr-generate-settings {
 	:root {
+		--rr-version: '#{inspect($rr-version)}';
+
 		@if $rr-generate-features {
 			--rr-can-hover: false;
 			--rr-can-touch: false;
@@ -54,14 +56,16 @@ $rr-global-settings: map-merge(
 	}
 }
 
-/*******************/
-/* OUTPUT: CLASSES */
-/*******************/
+/*********************/
+/* OUTPUT: NORMALIZE */
+/*********************/
 
-// Normalize
 @include generate-normalize-core-output();
 
-// Breakpoint classes
+/***************************/
+/* OUTPUT: DEFAULT CLASSES */
+/***************************/
+
 @each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
 	@include mq($breakpoint-name) {
 		// Get breakpoint prefix
@@ -95,5 +99,26 @@ $rr-global-settings: map-merge(
 	}
 }
 
-// Grid helper
+/*********************************/
+/* OUTPUT: BREAKPOINT OVERWRITES */
+/*********************************/
+
+@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
+	@include mq($breakpoint-name) {
+		// Get breakpoint prefix
+		$breakpoint-prefix: grid-breakpoint-prefix($breakpoint-name);
+
+		// Modules
+		@include generate-aspect-ratio-module-output($breakpoint-prefix, $breakpoint-name, true);
+		@include generate-color-module-output($breakpoint-prefix, $breakpoint-name, true);
+		@include generate-font-family-module-output($breakpoint-prefix, $breakpoint-name, true);
+		@include generate-font-size-module-output($breakpoint-prefix, $breakpoint-name, true);
+		@include generate-spacing-module-output($breakpoint-prefix, $breakpoint-name, true);
+	}
+}
+
+/***********************/
+/* OUTPUT: GRID HELPER */
+/***********************/
+
 @include generate-grid-helper-core-output();

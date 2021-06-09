@@ -2,6 +2,9 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+// Core
+$rr-version: '2.1.0';
+
 // Classes
 $rr-global-hide-class: 'hide' !default;
 $rr-global-show-class: 'show' !default;
@@ -81,30 +84,7 @@ $rr-global-settings: ();
 }
 
 // Get the main value from an entry
-// @function get-value-by-entry($entry, $property, $breakpoint-name: '') {
-// 	$value: null;
-
-// 	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
-// 		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
-
-// 		@if is-not-null($breakpoint-overwrites) {
-// 			$entry: $breakpoint-overwrites;
-// 		}
-// 	}
-
-// 	@if is-map($entry) {
-// 		@if map-has-key($entry, $property) {
-// 			$value: map-get($entry, $property);
-// 		}
-// 	} @else {
-// 		$value: $entry;
-// 	}
-
-// 	@return $value;
-// }
-
-// Get the main value from an entry
-@function get-value-by-entry($entry, $property, $breakpoint-name: '') {
+@function get-value-by-entry($entry, $property, $breakpoint-name: '', $apply-overwrites: true) {
 	$value: null;
 
 	// Set default
@@ -116,21 +96,33 @@ $rr-global-settings: ();
 
 	// Get breakpoint overwrite
 	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
-		$breakpoint-reached: false;
+		@if $apply-overwrites {
+			$breakpoint-reached: false;
 
-		@each $breakpoint-name-loop, $breakpoint-entry in $rr-grid-breakpoints {
-			@if not $breakpoint-reached {
-				$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name-loop);
+			@each $breakpoint-name-loop, $breakpoint-entry in $rr-grid-breakpoints {
+				@if not $breakpoint-reached {
+					$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name-loop);
 
-				@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
-					$value: map-get($breakpoint-overwrites, $property);
-				} @else if is-not-null($breakpoint-overwrites) {
-					$value: $breakpoint-overwrites;
+					@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
+						$value: map-get($breakpoint-overwrites, $property);
+					} @else if is-not-null($breakpoint-overwrites) {
+						$value: $breakpoint-overwrites;
+					}
+
+					@if $breakpoint-name-loop == $breakpoint-name {
+						$breakpoint-reached: true;
+					}
 				}
+			}
+		} @else {
+			$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 
-				@if $breakpoint-name-loop == $breakpoint-name {
-					$breakpoint-reached: true;
-				}
+			@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
+				$value: map-get($breakpoint-overwrites, $property);
+			} @else if is-not-null($breakpoint-overwrites) {
+				$value: $breakpoint-overwrites;
+			} @else {
+				$value: null;
 			}
 		}
 	}
@@ -139,7 +131,7 @@ $rr-global-settings: ();
 }
 
 // Get a property from an entry
-@function get-property-by-entry($entry, $property, $default: null, $breakpoint-name: '') {
+@function get-property-by-entry($entry, $property, $default: null, $breakpoint-name: '', $apply-overwrites: true) {
 	$value: null;
 
 	// Set default
@@ -151,19 +143,29 @@ $rr-global-settings: ();
 
 	// Get breakpoint overwrite
 	@if $breakpoint-name != '' and not grid-is-default($breakpoint-name) {
-		$breakpoint-reached: false;
+		@if $apply-overwrites {
+			$breakpoint-reached: false;
 
-		@each $breakpoint-name-loop, $breakpoint-entry in $rr-grid-breakpoints {
-			@if not $breakpoint-reached {
-				$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name-loop);
+			@each $breakpoint-name-loop, $breakpoint-entry in $rr-grid-breakpoints {
+				@if not $breakpoint-reached {
+					$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name-loop);
 
-				@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
-					$value: map-get($breakpoint-overwrites, $property);
+					@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
+						$value: map-get($breakpoint-overwrites, $property);
+					}
+
+					@if $breakpoint-name-loop == $breakpoint-name {
+						$breakpoint-reached: true;
+					}
 				}
+			}
+		} @else {
+			$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 
-				@if $breakpoint-name-loop == $breakpoint-name {
-					$breakpoint-reached: true;
-				}
+			@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
+				$value: map-get($breakpoint-overwrites, $property);
+			} @else {
+				$value: null;
 			}
 		}
 	}
@@ -208,15 +210,15 @@ $rr-global-settings: ();
 }
 
 // Generate output by a single class with multiple properties
-@mixin generate-output-by-class($class, $properties, $prefix: '', $breakpoint-prefix: '', $breakpoint-overwrites: false, $generate-breakpoints: true) {
+@mixin generate-output-by-class($class, $properties, $prefix: '', $breakpoint-prefix: '', $append-prefix: false, $generate-breakpoints: true) {
 	$selector: ();
 
-	@if $breakpoint-overwrites {
+	@if $append-prefix {
+		@if $generate-breakpoints {
+			$selector: append($selector, '.#{$breakpoint-prefix}#{$prefix}#{$class}', 'comma');
+		}
+	} @else {
 		$selector: append($selector, '.#{$prefix}#{$class}', 'comma');
-	}
-
-	@if $generate-breakpoints {
-		$selector: append($selector, '.#{$breakpoint-prefix}#{$prefix}#{$class}', 'comma');
 	}
 
 	@if not list-empty($selector) {
@@ -227,7 +229,7 @@ $rr-global-settings: ();
 }
 
 // Generate output by multiple classes with multiple properties
-@mixin generate-output-by-classes($classes, $prefix: '', $breakpoint-prefix: '', $generate-unset: false, $additional-unset-prefix: '', $generate-breakpoints: true) {
+@mixin generate-output-by-classes($classes, $prefix: '', $breakpoint-prefix: '', $generate-unset: false, $additional-unset-prefix: '', $append-prefix: false, $generate-breakpoints: true) {
 	// Generate normal classes
 	@each $class-name, $class-properties in $classes {
 		@include generate-output-by-class(
@@ -235,6 +237,7 @@ $rr-global-settings: ();
 			$properties: $class-properties,
 			$prefix: $prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
+			$append-prefix: $append-prefix,
 			$generate-breakpoints: $generate-breakpoints
 		);
 	}
@@ -246,6 +249,7 @@ $rr-global-settings: ();
 			$properties: $generate-unset,
 			$prefix: $prefix + $additional-unset-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
+			$append-prefix: $append-prefix,
 			$generate-breakpoints: $generate-breakpoints
 		);
 	}

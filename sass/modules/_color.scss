@@ -169,7 +169,7 @@ $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 // OUTPUT
 /////////
 
-@mixin generate-color-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin generate-color-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
 	@if $rr-generate-colors {
 		$rr-colors-new: $rr-colors;
 
@@ -191,52 +191,52 @@ $rr-generate-colors-breakpoints: $rr-generate-breakpoint-classes !default;
 			);
 		}
 
-		@each $color-name, $color-entry in $rr-colors-new {
-			$color-value: get-value-by-entry($color-entry, 'color', $breakpoint-name);
-			$color-value-bg: get-property-by-entry($color-entry, 'color-bg', $color-value, $breakpoint-name);
-			$color-value-border: get-property-by-entry($color-entry, 'color-border', $color-value, $breakpoint-name);
+		@if not grid-is-default($breakpoint-name) or not $apply-overwrites {
+			@each $color-name, $color-entry in $rr-colors-new {
+				$color-value: get-value-by-entry($color-entry, 'color', $breakpoint-name, $apply-overwrites);
+				$color-value-bg: get-property-by-entry($color-entry, 'color-bg', $color-value, $breakpoint-name, $apply-overwrites);
+				$color-value-border: get-property-by-entry($color-entry, 'color-border', $color-value, $breakpoint-name, $apply-overwrites);
 
-			$generate-text-color: map-maybe-get($color-entry, 'generate-text', $rr-generate-colors-text);
-			$generate-background-color: map-maybe-get($color-entry, 'generate-background', $rr-generate-colors-background);
-			$generate-border-color: map-maybe-get($color-entry, 'generate-border', $rr-generate-colors-border);
-			$generate-breakpoints: map-maybe-get($color-entry, 'generate-breakpoints', $rr-generate-colors-breakpoints);
+				$generate-text-color: map-maybe-get($color-entry, 'generate-text', $rr-generate-colors-text);
+				$generate-background-color: map-maybe-get($color-entry, 'generate-background', $rr-generate-colors-background);
+				$generate-border-color: map-maybe-get($color-entry, 'generate-border', $rr-generate-colors-border);
+				$generate-breakpoints: map-maybe-get($color-entry, 'generate-breakpoints', $rr-generate-colors-breakpoints);
 
-			$breakpoint-overwrites: entry-has-breakpoint-overwrite($color-entry, $breakpoint-name);
+				// Text color
+				@if $generate-text-color {
+					@include generate-output-by-class(
+						$class: $color-name,
+						$prefix: $rr-color-text-class-prefix,
+						$breakpoint-prefix: $breakpoint-prefix,
+						$properties: (color: $color-value),
+						$append-prefix: $apply-overwrites,
+						$generate-breakpoints: $generate-breakpoints
+					);
+				}
 
-			// Text color
-			@if $generate-text-color {
-				@include generate-output-by-class(
-					$class: $color-name,
-					$prefix: $rr-color-text-class-prefix,
-					$breakpoint-prefix: $breakpoint-prefix,
-					$properties: (color: $color-value),
-					$breakpoint-overwrites: $breakpoint-overwrites,
-					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
-				);
-			}
+				// Background color
+				@if $generate-background-color {
+					@include generate-output-by-class(
+						$class: $color-name,
+						$prefix: $rr-color-background-class-prefix,
+						$breakpoint-prefix: $breakpoint-prefix,
+						$properties: (background-color: $color-value-bg),
+						$append-prefix: $apply-overwrites,
+						$generate-breakpoints: $generate-breakpoints
+					);
+				}
 
-			// Background color
-			@if $generate-background-color {
-				@include generate-output-by-class(
-					$class: $color-name,
-					$prefix: $rr-color-background-class-prefix,
-					$breakpoint-prefix: $breakpoint-prefix,
-					$properties: (background-color: $color-value-bg),
-					$breakpoint-overwrites: $breakpoint-overwrites,
-					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
-				);
-			}
-
-			// Border color
-			@if $generate-border-color {
-				@include generate-output-by-class(
-					$class: $color-name,
-					$prefix: $rr-color-border-class-prefix,
-					$breakpoint-prefix: $breakpoint-prefix,
-					$properties: (border-color: $color-value-border),
-					$breakpoint-overwrites: $breakpoint-overwrites,
-					$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
-				);
+				// Border color
+				@if $generate-border-color {
+					@include generate-output-by-class(
+						$class: $color-name,
+						$prefix: $rr-color-border-class-prefix,
+						$breakpoint-prefix: $breakpoint-prefix,
+						$properties: (border-color: $color-value-border),
+						$append-prefix: $apply-overwrites,
+						$generate-breakpoints: $generate-breakpoints
+					);
+				}
 			}
 		}
 	}

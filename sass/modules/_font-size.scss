@@ -46,8 +46,8 @@ $rr-font-size-unset-class-properties: (
 }
 
 // Get css properties by entry
-@function font-size-entry-to-properties($entry, $breakpoint-name: '') {
-	$value: get-value-by-entry($entry, 'size', $breakpoint-name);
+@function font-size-entry-to-properties($entry, $breakpoint-name: '', $apply-overwrites: true) {
+	$value: get-value-by-entry($entry, 'size', $breakpoint-name, $apply-overwrites);
 	$properties: ();
 
 	@if $value == $rr-global-unset-class {
@@ -55,8 +55,8 @@ $rr-font-size-unset-class-properties: (
 	} @else {
 		$properties: (
 			font-size: $value,
-			line-height: get-property-by-entry($entry, 'line-height', $rr-font-size-default-line-height, $breakpoint-name),
-			letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-size-default-letter-spacing, $breakpoint-name)
+			line-height: get-property-by-entry($entry, 'line-height', $rr-font-size-default-line-height, $breakpoint-name, $apply-overwrites),
+			letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-size-default-letter-spacing, $breakpoint-name, $apply-overwrites)
 		);
 	}
 
@@ -80,7 +80,7 @@ $rr-font-size-unset-class-properties: (
 // OUTPUT
 /////////
 
-@mixin generate-font-size-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin generate-font-size-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
 	@if $rr-generate-font-sizes {
 		$rr-font-sizes-new: $rr-font-sizes;
 
@@ -106,17 +106,19 @@ $rr-font-size-unset-class-properties: (
 			);
 		}
 
-		@each $font-size-name, $font-size-entry in $rr-font-sizes-new {
-			$generate-breakpoints: map-maybe-get($font-size-entry, 'generate-breakpoints', $rr-generate-font-sizes-breakpoints);
+		@if not grid-is-default($breakpoint-name) or not $apply-overwrites {
+			@each $font-size-name, $font-size-entry in $rr-font-sizes-new {
+				$generate-breakpoints: map-maybe-get($font-size-entry, 'generate-breakpoints', $rr-generate-font-sizes-breakpoints);
 
-			@include generate-output-by-class(
-				$class: $font-size-name,
-				$prefix: $rr-font-size-class-prefix,
-				$breakpoint-prefix: $breakpoint-prefix,
-				$properties: font-size-entry-to-properties($font-size-entry, $breakpoint-name),
-				$breakpoint-overwrites: entry-has-breakpoint-overwrite($font-size-entry, $breakpoint-name),
-				$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
-			);
+				@include generate-output-by-class(
+					$class: $font-size-name,
+					$prefix: $rr-font-size-class-prefix,
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: font-size-entry-to-properties($font-size-entry, $breakpoint-name, $apply-overwrites),
+					$append-prefix: $apply-overwrites,
+					$generate-breakpoints: $generate-breakpoints
+				);
+			}
 		}
 	}
 }

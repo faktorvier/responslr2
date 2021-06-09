@@ -65,8 +65,8 @@ $rr-aspect-ratio-unset-class-properties: (
 }
 
 // Get css properties by entry
-@function aspect-ratio-entry-to-properties($entry, $breakpoint-name: '', $append-child: true) {
-	$value: get-value-by-entry($entry, 'ratio', $breakpoint-name);
+@function aspect-ratio-entry-to-properties($entry, $breakpoint-name: '', $append-child: true, $apply-overwrites: true) {
+	$value: get-value-by-entry($entry, 'ratio', $breakpoint-name, $apply-overwrites);
 	$properties: ();
 
 	@if $value == $rr-global-unset-class {
@@ -130,31 +130,35 @@ $rr-aspect-ratio-unset-class-properties: (
 // OUTPUT
 /////////
 
-@mixin generate-aspect-ratio-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin generate-aspect-ratio-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
 	@if $rr-generate-aspect-ratios {
 		// Normal classes
-		@each $aspect-ratio-name, $aspect-ratio-entry in $rr-aspect-ratios {
-			$generate-breakpoints: map-maybe-get($aspect-ratio-entry, 'generate-breakpoints', $rr-generate-aspect-ratios-breakpoints);
+		@if not grid-is-default($breakpoint-name) or not $apply-overwrites {
+			@each $aspect-ratio-name, $aspect-ratio-entry in $rr-aspect-ratios {
+				$generate-breakpoints: map-maybe-get($aspect-ratio-entry, 'generate-breakpoints', $rr-generate-aspect-ratios-breakpoints);
 
-			@include generate-output-by-class(
-				$class: $aspect-ratio-name,
-				$prefix: $rr-aspect-ratio-class-prefix,
-				$breakpoint-prefix: $breakpoint-prefix,
-				$properties: aspect-ratio-entry-to-properties($aspect-ratio-entry, $breakpoint-name),
-				$breakpoint-overwrites: entry-has-breakpoint-overwrite($aspect-ratio-entry, $breakpoint-name),
-				$generate-breakpoints: $breakpoint-prefix == '' or $generate-breakpoints
-			);
+				@include generate-output-by-class(
+					$class: $aspect-ratio-name,
+					$prefix: $rr-aspect-ratio-class-prefix,
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: aspect-ratio-entry-to-properties($aspect-ratio-entry, $breakpoint-name, true, $apply-overwrites),
+					$append-prefix: $apply-overwrites,
+					$generate-breakpoints: $generate-breakpoints
+				);
+			}
 		}
 
 		// Unset class
-		@if $rr-generate-aspect-ratios-unset and $breakpoint-prefix != '' {
-			@include generate-output-by-class(
-				$class: $rr-global-unset-class,
-				$prefix: $rr-aspect-ratio-class-prefix,
-				$breakpoint-prefix: $breakpoint-prefix,
-				$properties: $rr-aspect-ratio-unset-class-properties,
-				$generate-breakpoints: $breakpoint-prefix == '' or $rr-generate-aspect-ratios-breakpoints
-			);
+		@if grid-is-default($breakpoint-name) or $apply-overwrites {
+			@if $rr-generate-aspect-ratios-unset and $breakpoint-prefix != '' {
+				@include generate-output-by-class(
+					$class: $rr-global-unset-class,
+					$prefix: $rr-aspect-ratio-class-prefix,
+					$breakpoint-prefix: $breakpoint-prefix,
+					$properties: $rr-aspect-ratio-unset-class-properties,
+					$append-prefix: $apply-overwrites
+				);
+			}
 		}
 	}
 }

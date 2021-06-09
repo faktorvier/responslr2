@@ -176,6 +176,7 @@ $rr-generate-position-positions: $rr-generate-position !default;
 			$classes: $rr-position-filler-properties,
 			$prefix: $rr-position-filler-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
+			$append-prefix: true,
 			$generate-unset: (
 				position: unset,
 				top: unset,
@@ -192,6 +193,7 @@ $rr-generate-position-positions: $rr-generate-position !default;
 			$classes: $rr-position-positions-properties,
 			$prefix: $rr-position-position-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
+			$append-prefix: true,
 			$generate-unset: (
 				position: unset,
 				top: unset,

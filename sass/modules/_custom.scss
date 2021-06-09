@@ -30,13 +30,16 @@ $rr-generate-customs: $rr-generate-classes !default;
 
 // Get css properties by entry
 @function custom-entry-to-properties($entry, $breakpoint-name: '') {
-	$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 	$properties: ();
 
-	@if is-null($breakpoint-overwrites) {
+	@if grid-is-default($breakpoint-name) {
 		$properties: map-remove($entry, 'breakpoints');
 	} @else {
-		$properties: custom-entry-to-properties($breakpoint-overwrites, $breakpoint-name);
+		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
+
+		@if not is-null($breakpoint-overwrites) {
+			$properties: $breakpoint-overwrites;
+		}
 	}
 
 	@return $properties;
@@ -67,7 +70,7 @@ $rr-generate-customs: $rr-generate-classes !default;
 				$prefix: $rr-custom-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
 				$properties: custom-entry-to-properties($custom-entry, $breakpoint-name),
-				$breakpoint-overwrites: entry-has-breakpoint-overwrite($custom-entry, $breakpoint-name)
+				//$breakpoint-overwrites: entry-has-breakpoint-overwrite($custom-entry, $breakpoint-name)
 			);
 		}
 	}
