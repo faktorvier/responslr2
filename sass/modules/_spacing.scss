@@ -141,8 +141,10 @@ $rr-generate-spacings-breakpoints: $rr-generate-breakpoint-classes !default;
 			'spacing': auto,
 			'generate-padding': false
 		);
-	}  @else if $name == 'gutter' {
+	} @else if $name == 'gutter' {
 		$entry: grid-gutter($breakpoint-name);
+	} @else if $name == 'gutter-half' {
+		$entry: grid-gutter-half($breakpoint-name);
 	} @else {
 		$entry: spacing-entry($name);
 	}
@@ -165,21 +167,24 @@ $rr-generate-spacings-breakpoints: $rr-generate-breakpoint-classes !default;
 
 		// Append gutter spacing
 		$gutters: ();
+		$gutters-half: ();
 		$container-spacings: ();
 		$container-gutters: ();
 
 		@each $breakpoint-name-loop, $breakpoint in $rr-grid-breakpoints {
 			@if not grid-is-default($breakpoint-name-loop) {
 				$gutter: grid-gutter($breakpoint-name-loop);
+				$gutter-half: grid-gutter-half($breakpoint-name-loop);
 				$container-spacing: grid-breakpoint-property($breakpoint-name-loop, 'container-spacing');
 
 				$gutters: map-append($gutters, $gutter, $breakpoint-name-loop);
+				$gutters-half: map-append($gutters-half, $gutter-half, $breakpoint-name-loop);
 				$container-spacings: map-append($container-spacings, $container-spacing, $breakpoint-name-loop);
 				$container-gutters: map-append($container-gutters, ($gutter / 2) + $container-spacing, $breakpoint-name-loop);
 			}
 		}
 
-		// Append gutter spacing
+		// Append gutter spacings
 		@if $rr-generate-spacings-gutter {
 			$rr-spacings-new: map-append(
 				$rr-spacings-new,
@@ -188,6 +193,15 @@ $rr-generate-spacings-breakpoints: $rr-generate-breakpoint-classes !default;
 					'breakpoints': $gutters
 				),
 				$rr-global-gutter-class
+			);
+
+			$rr-spacings-new: map-append(
+				$rr-spacings-new,
+				(
+					'spacing': grid-gutter-half($breakpoint-name),
+					'breakpoints': $gutters-half
+				),
+				$rr-global-gutter-class + '-half'
 			);
 		}
 
