@@ -6,6 +6,10 @@
 @use 'sass:math';
 @use 'sass:list';
 
+@use 'string' as *;
+@use 'map' as *;
+@use 'units' as *;
+
 @function escape-selector($selector) {
 	@return $selector;
 
@@ -100,15 +104,15 @@
 
 	@if $nogutter {
 		@if $negate {
-			$width: ((math.div(100vw / #{grid-breakpoint-property($breakpoint, 'columns')}) * #{$columns}) - #{grid-gutter($breakpoint) * math.max($columns - 1, 1)}) * -1;
+			$width: ((math.div(100vw, #{grid-breakpoint-property($breakpoint, 'columns')}) * #{$columns}) - #{grid-gutter($breakpoint) * math.max($columns - 1, 1)}) * -1;
 		} @else {
-			$width: (math.div(100vw / #{grid-breakpoint-property($breakpoint, 'columns')}) * #{$columns}) - #{grid-gutter($breakpoint) * math.max($columns - 1, 1)};
+			$width: (math.div(100vw, #{grid-breakpoint-property($breakpoint, 'columns')}) * #{$columns}) - #{grid-gutter($breakpoint) * math.max($columns - 1, 1)};
 		}
 	} @else {
 		@if $negate {
-			$width: ((math.div(100vw / #{grid-breakpoint-property($breakpoint, 'columns')}) * #{$columns})) * -1;
+			$width: ((math.div(100vw, #{grid-breakpoint-property($breakpoint, 'columns')}) * #{$columns})) * -1;
 		} @else {
-			$width: (math.div(100vw / #{grid-breakpoint-property($breakpoint, 'columns')}) * #{$columns});
+			$width: (math.div(100vw, #{grid-breakpoint-property($breakpoint, 'columns')}) * #{$columns});
 		}
 	}
 

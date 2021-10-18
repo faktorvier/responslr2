@@ -6,6 +6,8 @@
 @use 'sass:map';
 @use 'sass:list';
 
+@use '../utilities' as *;
+
 // Core
 $rr-version: '2.2.0';
 

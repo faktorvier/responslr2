@@ -5,6 +5,8 @@
 @use 'sass:meta';
 @use 'sass:map';
 
+@use '../utilities' as *;
+
 // Add core settings
 $rr-global-settings: map.merge(
 	$rr-global-settings,

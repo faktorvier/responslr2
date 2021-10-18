@@ -2,6 +2,8 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../utilities' as *;
+
 // Classes
 $rr-spacing-class-prefix: '' !default;
 $rr-spacing-container-spacing-class: 'container-spacing' !default;

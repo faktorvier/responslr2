@@ -2,6 +2,8 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../utilities' as *;
+
 // Classes
 $rr-color-text-class-prefix: 'color-' !default;
 $rr-color-background-class-prefix: 'bg-color-' !default;

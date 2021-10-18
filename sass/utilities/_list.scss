@@ -5,6 +5,8 @@
 @use 'sass:meta';
 @use 'sass:list';
 
+@use 'units' as *;
+
 // Check if value is a list
 @function is-list($list) {
 	@return meta.type-of($list) == 'list';

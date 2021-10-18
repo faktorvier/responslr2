@@ -9,6 +9,8 @@
 @use 'sass:map';
 @use 'sass:string';
 
+@use '../utilities' as *;
+
 $rr-grid-breakpoint-only-class-suffix: '-only' !default;
 $rr-grid-row-class: 'row' !default;
 $rr-grid-row-gutter-class: 'row--gutter' !default;
@@ -228,43 +230,30 @@ $rr-grid-breakpoints-names: map.keys($rr-grid-breakpoints);
 	} @else if is-not-null($name) {
 		$name: str-to-list($name, '-');
 
+		$min-width: list.nth($name, 1);
+		$max-width: null;
+
 		@each $name-part in $name {
 			// Get breakpoint data
-			@if not in-list(('portrait', 'landscape', 'hover', 'touch', 'only', 'up', 'down'), $name-part) {
-				$min-width: $name-part;
-				$max-width: null;
-
-				@if in-list($name, 'only') {
-					$max-width: $name-part;
-				}
-
-				@if in-list($name, 'down') {
-					$min-width: null;
-					$max-width: $name-part;
-				}
-			}
-
-			// Append orientation
-			@if $name-part == 'portait' {
+			@if $name-part == 'only' {
+				$max-width: list.nth($name, 1);
+			} @else if $name-part == 'down' {
+				$min-width: null;
+				$max-width: list.nth($name, 1);
+			} @else if $name-part == 'portait' {
 				$media-query: '#{$media-query} and (orientation: portrait)';
-			}
-
-			@if $name-part == 'landscape' {
+			} @else if $name-part == 'landscape' {
 				$media-query: '#{$media-query} and (orientation: landscape)';
-			}
-
-			// Append hover
-			@if $name-part == 'hover' {
+			} @else if $name-part == 'hover' {
 				$media-query: '#{$media-query} and (hover: hover)';
-			}
-
-			@if $name-part == 'touch' {
+			} @else if $name-part == 'touch' {
 				$media-query: '#{$media-query} and (hover: none)';
 			}
 		}
 	}
 
 	// Append min width
+	// Append max width
 	@if not is-number($min-width) and is-not-null($min-width) {
 		$min-width: grid-breakpoint-property($min-width, 'min-width');
 	}
@@ -273,7 +262,6 @@ $rr-grid-breakpoints-names: map.keys($rr-grid-breakpoints);
 		$media-query: '#{$media-query} and (min-width: #{$min-width})';
 	}
 
-	// Append max width
 	@if not is-number($max-width) and is-not-null($max-width) {
 		$max-width: grid-calculate-max-width($max-width);
 	}

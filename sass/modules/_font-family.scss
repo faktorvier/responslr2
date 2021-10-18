@@ -5,6 +5,8 @@
 @use 'sass:list';
 @use 'sass:string';
 
+@use '../utilities' as *;
+
 // Classes
 $rr-font-family-class-prefix: 'font-' !default;
 

@@ -2,6 +2,8 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../utilities' as *;
+
 // Classes
 $rr-transition-class-prefix: 'transition-' !default;
 
@@ -137,7 +139,6 @@ $rr-transition-hardware-acceleration-class-properties: (
 			transition-timing-function: list-comma(transition-timing-function-by-name($transition-timing-function))
 		);
 	}
-
 
 	@if $transition-hardware-acceleration {
 		$properties: map-merge($properties, $rr-transition-hardware-acceleration-class-properties);
