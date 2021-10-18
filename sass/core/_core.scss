@@ -2,8 +2,12 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use 'sass:meta';
+@use 'sass:map';
+@use 'sass:list';
+
 // Core
-$rr-version: '2.1.0';
+$rr-version: '2.2.0';
 
 // Classes
 $rr-global-hide-class: 'hide' !default;
@@ -39,7 +43,7 @@ $rr-global-settings: ();
 
 // Check if map entry exists
 @function entry-exists($map, $name) {
-	@return map-has-key($map, to-string($name));
+	@return map.has-key($map, $name);
 }
 
 // Get map entry by name
@@ -50,10 +54,8 @@ $rr-global-settings: ();
 		$name: $default;
 	}
 
-	$name: to-string($name);
-
 	@if entry-exists($map, $name) {
-		$return: map-get($map, $name);
+		$return: map.get($map, $name);
 	}
 
 	@return $return;
@@ -71,13 +73,13 @@ $rr-global-settings: ();
 	}
 
 	@if is-not-null($entry) {
-		@if is-map($entry) and map-has-key($entry, $property) {
-			$return: map-get($entry, $property);
+		@if is-map($entry) and map.has-key($entry, $property) {
+			$return: map.get($entry, $property);
 		} @else {
-			$return: map-get($defaults, $property);
+			$return: map.get($defaults, $property);
 		}
 	} @else {
-		$return: map-get($defaults, $property);
+		$return: map.get($defaults, $property);
 	}
 
 	@return $return;
@@ -88,8 +90,8 @@ $rr-global-settings: ();
 	$value: null;
 
 	// Set default
-	@if is-map($entry) and map-has-key($entry, $property) {
-		$value: map-get($entry, $property);
+	@if is-map($entry) and map.has-key($entry, $property) {
+		$value: map.get($entry, $property);
 	} @else {
 		$value: $entry;
 	}
@@ -103,8 +105,8 @@ $rr-global-settings: ();
 				@if not $breakpoint-reached {
 					$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name-loop);
 
-					@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
-						$value: map-get($breakpoint-overwrites, $property);
+					@if is-map($breakpoint-overwrites) and map.has-key($breakpoint-overwrites, $property) {
+						$value: map.get($breakpoint-overwrites, $property);
 					} @else if is-not-null($breakpoint-overwrites) {
 						$value: $breakpoint-overwrites;
 					}
@@ -117,8 +119,8 @@ $rr-global-settings: ();
 		} @else {
 			$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 
-			@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
-				$value: map-get($breakpoint-overwrites, $property);
+			@if is-map($breakpoint-overwrites) and map.has-key($breakpoint-overwrites, $property) {
+				$value: map.get($breakpoint-overwrites, $property);
 			} @else if is-not-null($breakpoint-overwrites) {
 				$value: $breakpoint-overwrites;
 			} @else {
@@ -135,8 +137,8 @@ $rr-global-settings: ();
 	$value: null;
 
 	// Set default
-	@if is-map($entry) and map-has-key($entry, $property) {
-		$value: map-get($entry, $property);
+	@if is-map($entry) and map.has-key($entry, $property) {
+		$value: map.get($entry, $property);
 	} @else {
 		$value: $default;
 	}
@@ -150,8 +152,8 @@ $rr-global-settings: ();
 				@if not $breakpoint-reached {
 					$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name-loop);
 
-					@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
-						$value: map-get($breakpoint-overwrites, $property);
+					@if is-map($breakpoint-overwrites) and map.has-key($breakpoint-overwrites, $property) {
+						$value: map.get($breakpoint-overwrites, $property);
 					}
 
 					@if $breakpoint-name-loop == $breakpoint-name {
@@ -162,8 +164,8 @@ $rr-global-settings: ();
 		} @else {
 			$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 
-			@if is-map($breakpoint-overwrites) and map-has-key($breakpoint-overwrites, $property) {
-				$value: map-get($breakpoint-overwrites, $property);
+			@if is-map($breakpoint-overwrites) and map.has-key($breakpoint-overwrites, $property) {
+				$value: map.get($breakpoint-overwrites, $property);
 			} @else {
 				$value: null;
 			}
@@ -176,7 +178,7 @@ $rr-global-settings: ();
 // Get breakpoint overwrites by entry
 @function get-breakpoint-overwrite-by-entry($entry, $breakpoint-name) {
 	$breakpoints: map-maybe-get($entry, 'breakpoints', ());
-	$overwrites: map-get($breakpoints, $breakpoint-name);
+	$overwrites: map.get($breakpoints, $breakpoint-name);
 	@return $overwrites;
 }
 
@@ -193,8 +195,8 @@ $rr-global-settings: ();
 @mixin generate-output-by-property($property, $values, $prefix: '', $breakpoint-prefix: '', $generate-unset: false, $additional-unset-prefix: '') {
 	// Generate normal classes
 	@each $value-raw in $values {
-		$value: if(is-list($value-raw), nth($value-raw, 2), $value-raw);
-		$class-name: nth($value-raw, 1);
+		$value: if(is-list($value-raw), list.nth($value-raw, 2), $value-raw);
+		$class-name: list.nth($value-raw, 1);
 
 		.#{$breakpoint-prefix}#{$prefix}#{$class-name} {
 			#{$property}: $value;
@@ -215,10 +217,10 @@ $rr-global-settings: ();
 
 	@if $append-prefix {
 		@if $generate-breakpoints {
-			$selector: append($selector, '.#{$breakpoint-prefix}#{$prefix}#{$class}', 'comma');
+			$selector: list.append($selector, '.#{$breakpoint-prefix}#{$prefix}#{$class}', 'comma');
 		}
 	} @else {
-		$selector: append($selector, '.#{$prefix}#{$class}', 'comma');
+		$selector: list.append($selector, '.#{$prefix}#{$class}', 'comma');
 	}
 
 	@if not list-empty($selector) {
@@ -259,7 +261,7 @@ $rr-global-settings: ();
 @mixin entry-output($entry, $property-function, $breakpoint-name: '', $args...) {
 	@if is-not-null($entry) {
 		@include generate-properties(
-			call(get-function($property-function), $entry, $breakpoint-name, $args...)
+			meta.call(meta.get-function($property-function), $entry, $breakpoint-name, $args...)
 		);
 
 		// Breakpoint overwrites if no breakpoint is defined
@@ -268,7 +270,7 @@ $rr-global-settings: ();
 				@if entry-has-breakpoint-overwrite($entry, $breakpoint-name-sub) {
 					@include mq($breakpoint-name-sub) {
 						@include generate-properties(
-							call(get-function($property-function), $entry, $breakpoint-name-sub, $args...)
+							meta.call(meta.get-function($property-function), $entry, $breakpoint-name-sub, $args...)
 						);
 					}
 				}

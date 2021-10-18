@@ -2,8 +2,11 @@
 /* OUTPUT: SETTINGS VARIABLES */
 /******************************/
 
+@use 'sass:meta';
+@use 'sass:map';
+
 // Add core settings
-$rr-global-settings: map-merge(
+$rr-global-settings: map.merge(
 	$rr-global-settings,
 	(
 		'core': (
@@ -16,7 +19,7 @@ $rr-global-settings: map-merge(
 // Output default features and settings
 @if $rr-generate-features or $rr-generate-settings {
 	:root {
-		--rr-version: '#{inspect($rr-version)}';
+		--rr-version: #{meta.inspect($rr-version)};
 
 		@if $rr-generate-features {
 			--rr-can-hover: false;
@@ -24,7 +27,7 @@ $rr-global-settings: map-merge(
 		}
 
 		@if $rr-generate-settings and is-not-empty($rr-generate-settings) {
-			--rr-settings: '#{inspect(json-encode($rr-global-settings))}';
+			--rr-settings: #{meta.inspect(json-encode($rr-global-settings))};
 		}
 	}
 }
@@ -34,8 +37,8 @@ $rr-global-settings: map-merge(
 	@each $breakpoint-name, $breakpoint-entry in $rr-grid-breakpoints {
 		@include mq($breakpoint-name) {
 			:root {
-				--rr-current-breakpoint: "#{inspect($breakpoint-name)}";
-				--rr-current-columns: "#{inspect(grid-breakpoint-property($breakpoint-name, 'columns'))}";
+				--rr-current-breakpoint: '#{$breakpoint-name}';
+				--rr-current-columns: '#{grid-breakpoint-property($breakpoint-name, 'columns')}';
 			}
 		}
 	}

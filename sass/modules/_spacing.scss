@@ -180,7 +180,7 @@ $rr-generate-spacings-breakpoints: $rr-generate-breakpoint-classes !default;
 				$gutters: map-append($gutters, $gutter, $breakpoint-name-loop);
 				$gutters-half: map-append($gutters-half, $gutter-half, $breakpoint-name-loop);
 				$container-spacings: map-append($container-spacings, $container-spacing, $breakpoint-name-loop);
-				$container-gutters: map-append($container-gutters, ($gutter / 2) + $container-spacing, $breakpoint-name-loop);
+				$container-gutters: map-append($container-gutters, ($gutter * 0.5) + $container-spacing, $breakpoint-name-loop);
 			}
 		}
 

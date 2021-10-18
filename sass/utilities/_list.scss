@@ -2,42 +2,45 @@
 // FUNCTIONS
 ////////////
 
+@use 'sass:meta';
+@use 'sass:list';
+
 // Check if value is a list
 @function is-list($list) {
-	@return type-of($list) == 'list';
+	@return meta.type-of($list) == 'list';
 }
 
 // Check if list is empty
 @function list-empty($list) {
-	@return length($list) == 0;
+	@return list.length($list) == 0;
 }
 
 // Check if list is not empty
 @function list-not-empty($list) {
-	@return length($list) != 0;
+	@return list.length($list) != 0;
 }
 
 // Check if value is in list
 @function in-list($list, $value) {
-	@return is-not-null(index($list, $value));
+	@return is-not-null(list.index($list, $value));
 }
 
 // Get first list item
 @function list-get-first($list) {
-	@return nth($list, 1);
+	@return list.nth($list, 1);
 }
 
 // Get last list item
 @function list-get-last($list) {
-	@return nth($list, length($list));
+	@return list.nth($list, list.length($list));
 }
 
 // Change list separator to comma
 @function list-comma($list) {
-	@return join($list, (), $separator: 'comma');
+	@return list.join($list, (), $separator: 'comma');
 }
 
 // Change list separator to space
 @function list-space($list) {
-	@return join($list, (), $separator: 'space');
+	@return list.join($list, (), $separator: 'space');
 }

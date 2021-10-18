@@ -3,6 +3,12 @@
 ///////////////////
 
 // Classes
+@use 'sass:meta';
+@use 'sass:math';
+@use 'sass:list';
+@use 'sass:map';
+@use 'sass:string';
+
 $rr-grid-breakpoint-only-class-suffix: '-only' !default;
 $rr-grid-row-class: 'row' !default;
 $rr-grid-row-gutter-class: 'row--gutter' !default;
@@ -95,7 +101,7 @@ $rr-grid-breakpoints-default: map-default($rr-grid-breakpoints);
 $rr-grid-current-breakpoint: str-unquote($rr-grid-breakpoints-default);
 
 // Breakpoint names
-$rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
+$rr-grid-breakpoints-names: map.keys($rr-grid-breakpoints);
 
 ////////////
 // FUNCTIONS
@@ -162,8 +168,8 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 		$return-max-width: 0;
 		$breakpoint-index: grid-breakpoint-index($name) + 1;
 
-		@if $breakpoint-index > 0 and $breakpoint-index <= length($rr-grid-breakpoints) {
-			$max-width-name: nth($rr-grid-breakpoints-names, $breakpoint-index);
+		@if $breakpoint-index > 0 and $breakpoint-index <= list.length($rr-grid-breakpoints) {
+			$max-width-name: list.nth($rr-grid-breakpoints-names, $breakpoint-index);
 			$min-width-value: grid-breakpoint-property($max-width-name, 'min-width');
 
 			@if is-number($min-width-value) {
@@ -201,7 +207,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 
 	@if $breakpoint-index >= 3 {
 		@for $index from 3 through $breakpoint-index + 1 {
-			$breakpoint: nth($rr-grid-breakpoints-names, $index - 1);
+			$breakpoint: list.nth($rr-grid-breakpoints-names, $index - 1);
 			$return: $return + ':not(.' + grid-breakpoint-prefix($breakpoint, true) + $class + '-' + $class-exception + ')';
 		}
 	}
@@ -220,7 +226,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	@if $name == 'print' {
 		$media-type: 'print';
 	} @else if is-not-null($name) {
-		$name: if(type-of($name) != 'list', ($name), $name);
+		$name: str-to-list($name, '-');
 
 		@each $name-part in $name {
 			// Get breakpoint data
@@ -278,7 +284,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 
 	// Prepend media type
 	@if $media-type == 'screen' {
-		@if str-length($media-query) > 0 {
+		@if string.length($media-query) > 0 {
 			$media-query: '#{$media-type}#{$media-query}';
 		}
 	} @else {
@@ -286,7 +292,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 	}
 
 	// Output media query
-	@if str-length($media-query) == 0 {
+	@if string.length($media-query) == 0 {
 		@content;
 	} @else {
 		@media #{$media-query} {
@@ -475,24 +481,26 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 
 		// Column (normal)
 		@if $rr-generate-grid-breakpoints-normal {
-			@for $column-index from 1 through $breakpoint-columns {
-				// Breakpoint
-				.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$column-index},
-				.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$column-index} > .#{$rr-grid-column-class} {
-					flex: 0 0 calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
+			@if is-not-null($breakpoint-base-size) {
+				@for $column-index from 1 through $breakpoint-columns {
+					// Breakpoint
+					.#{$rr-grid-column-class}.#{$breakpoint-prefix}#{$column-index},
+					.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$column-index} > .#{$rr-grid-column-class} {
+						flex: 0 0 calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
 
-					> * {
-						--rr-grid-column-base: #{$column-index};
+						> * {
+							--rr-grid-column-base: #{$column-index};
+						}
+
+						.#{$rr-grid-row-class}--#{$rr-global-reset-class} {
+							--rr-grid-column-base: #{$breakpoint-columns};
+						}
 					}
 
-					.#{$rr-grid-row-class}--#{$rr-global-reset-class} {
-						--rr-grid-column-base: #{$breakpoint-columns};
+					// Offset
+					.#{$breakpoint-prefix}#{$rr-grid-offset-class-prefix}#{$column-index} {
+						margin-left: calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
 					}
-				}
-
-				// Offset
-				.#{$breakpoint-prefix}#{$rr-grid-offset-class-prefix}#{$column-index} {
-					margin-left: calc(#{$column-index} / var(--rr-grid-column-base) * 100%);
 				}
 			}
 		}
@@ -504,7 +512,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 			@for $denominator from 1 through $rr-grid-breakpoint-fraction-steps {
 				@for $numerator from 1 through $denominator {
 					@if $numerator != $denominator {
-						$percent: 100% / $denominator * $numerator;
+						$percent: math.div(100%, $denominator) * $numerator;
 						$fraction-class: '#{$numerator}#{$rr-grid-breakpoint-fraction-prefix-delimiter}#{$denominator}';
 
 						@if not in-list($fractions-added, $percent) {
@@ -519,7 +527,7 @@ $rr-grid-breakpoints-names: map-keys($rr-grid-breakpoints);
 								margin-left: $percent;
 							}
 
-							$fractions-added: append($fractions-added, $percent);
+							$fractions-added: list.append($fractions-added, $percent);
 						}
 
 					}

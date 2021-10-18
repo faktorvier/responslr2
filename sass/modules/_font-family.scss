@@ -1,6 +1,9 @@
 ///////////////////
 // DEFAULT SETTINGS
 ///////////////////
+@use 'sass:map';
+@use 'sass:list';
+@use 'sass:string';
 
 // Classes
 $rr-font-family-class-prefix: 'font-' !default;
@@ -74,14 +77,14 @@ $rr-generate-font-families-breakpoints: $rr-generate-breakpoint-classes !default
 		// Font faces
 		@if grid-is-default($breakpoint-prefix) and not $apply-overwrites {
 			@each $class-name, $font in $rr-font-families {
-				@if is-map($font) and map-has-key($font, 'face') {
+				@if is-map($font) and map.has-key($font, 'face') {
 					$font-face: get-property-by-entry($font, 'face', null);
-					$font-family: nth($font-face, 2);
-					$font-file: nth($font-face, 1);
+					$font-family: list.nth($font-face, 2);
+					$font-file: list.nth($font-face, 1);
 					$font-src: ();
 
 					@each $file-type in $rr-font-family-default-file-types {
-						$font-src: append($font-src, url(quote($font-file + '.' + $file-type)) format(quote($file-type)), $separator: 'comma');
+						$font-src: list.append($font-src, url(string.quote($font-file + '.' + $file-type)) format(string.quote($file-type)), $separator: 'comma');
 					}
 
 					$properties: (
