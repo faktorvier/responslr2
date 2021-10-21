@@ -2,13 +2,15 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../core';
+
 // Classes
-$rr-position-class-prefix: '' !default;
-$rr-position-filler-class-prefix: 'fill-' !default;
-$rr-position-position-class-prefix: 'position-' !default;
+$class-prefix: '' !default;
+$filler-class-prefix: 'fill-' !default;
+$position-class-prefix: 'position-' !default;
 
 // Default position properties
-$rr-position-properties: (
+$properties: (
 	static,
 	relative,
 	absolute,
@@ -17,7 +19,7 @@ $rr-position-properties: (
 ) !default;
 
 // Default position fill classes
-$rr-position-filler-properties: (
+$filler-properties: (
 	'parent': (
 		top: 0,
 		right: 0,
@@ -63,7 +65,7 @@ $rr-position-filler-properties: (
 ) !default;
 
 // Default positions classes
-$rr-position-positions-properties: (
+$positions-properties: (
 	't': (
 		top: 0,
 		right: unset,
@@ -150,31 +152,31 @@ $rr-position-positions-properties: (
 ) !default;
 
 // Output handling
-$rr-generate-position: $rr-generate-classes !default;
-$rr-generate-position-fillers: $rr-generate-position !default;
-$rr-generate-position-positions: $rr-generate-position !default;
+$generate: core.$generate-classes !default;
+$generate-fillers: $generate !default;
+$generate-positions: $generate !default;
 
 /////////
 // OUTPUT
 /////////
 
-@mixin generate-position-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	// Position
-	@if $rr-generate-position {
-		@include generate-output-by-property(
+	@if $generate {
+		@include core.generate-output-by-property(
 			$property: 'position',
-			$values: $rr-position-properties,
-			$prefix: $rr-position-class-prefix,
+			$values: $properties,
+			$prefix: $class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 	}
 
 	// Position fillers
-	@if $rr-generate-position-fillers {
-		@include generate-output-by-classes(
-			$classes: $rr-position-filler-properties,
-			$prefix: $rr-position-filler-class-prefix,
+	@if $generate-fillers {
+		@include core.generate-output-by-classes(
+			$classes: $filler-properties,
+			$prefix: $filler-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$append-prefix: true,
 			$generate-unset: (
@@ -188,10 +190,10 @@ $rr-generate-position-positions: $rr-generate-position !default;
 	}
 
 	// Position position
-	@if $rr-generate-position-positions {
-		@include generate-output-by-classes(
-			$classes: $rr-position-positions-properties,
-			$prefix: $rr-position-position-class-prefix,
+	@if $generate-positions {
+		@include core.generate-output-by-classes(
+			$classes: $positions-properties,
+			$prefix: $position-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$append-prefix: true,
 			$generate-unset: (

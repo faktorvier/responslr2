@@ -2,11 +2,13 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../core';
+
 // Classes
-$rr-table-class: 'table' !default;
+$table-class: 'table' !default;
 
 // Output handling
-$rr-generate-tables: $rr-generate-classes !default;
+$generate-tables: core.$generate-classes !default;
 
 /////////
 // MIXINS
@@ -24,8 +26,8 @@ $rr-generate-tables: $rr-generate-classes !default;
 /////////
 
 @mixin generate-table-component-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-tables and grid-is-default($breakpoint-prefix) {
-		.#{$rr-table-class} {
+	@if $generate-tables and core.is-default($breakpoint-prefix) {
+		.#{$table-class} {
 			@include table();
 		}
 	}

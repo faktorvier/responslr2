@@ -2,53 +2,55 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../core';
+
 // Classes
-$rr-visibility-class-prefix: '' !default;
-$rr-visibility-show-class: $rr-global-show-class !default;
-$rr-visibility-hide-class: $rr-global-hide-class !default;
+$class-prefix: '' !default;
+$show-class: core.$show-class !default;
+$hide-class: core.$hide-class !default;
 
 // Output handling
-$rr-generate-visibility: $rr-generate-classes !default;
+$generate: core.$generate-classes !default;
 
 /////////
 // OUTPUT
 /////////
 
-@mixin generate-visibility-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-visibility {
+@mixin generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $generate {
 		// Show block (default)
-		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class},
-		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class}-block {
+		.#{$breakpoint-prefix}#{$class-prefix}#{$show-class},
+		.#{$breakpoint-prefix}#{$class-prefix}#{$show-class}-block {
 			display: block;
 		}
 
 		// Show inline
-		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class}-inline {
+		.#{$breakpoint-prefix}#{$class-prefix}#{$show-class}-inline {
 			display: inline;
 		}
 
 		// Show row
-		.#{$rr-grid-row-class}.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
+		.#{core.$row-class}.#{$breakpoint-prefix}#{$class-prefix}#{$show-class} {
 			display: flex;
 		}
 
 		// Show table
-		table.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
+		table.#{$breakpoint-prefix}#{$class-prefix}#{$show-class} {
 			display: table;
 		}
 
 		// Show table row
-		tr.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
+		tr.#{$breakpoint-prefix}#{$class-prefix}#{$show-class} {
 			display: table-row;
 		}
 
 		// Show table cell
-		td.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-show-class} {
+		td.#{$breakpoint-prefix}#{$class-prefix}#{$show-class} {
 			display: table-cell;
 		}
 
 		// Hide
-		.#{$breakpoint-prefix}#{$rr-visibility-class-prefix}#{$rr-visibility-hide-class} {
+		.#{$breakpoint-prefix}#{$class-prefix}#{$hide-class} {
 			display: none;
 		}
 	}

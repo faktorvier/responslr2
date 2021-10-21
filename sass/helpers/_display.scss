@@ -2,11 +2,13 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../core';
+
 // Classes
-$rr-display-class-prefix: 'd-' !default;
+$class-prefix: 'd-' !default;
 
 // Default display properties
-$rr-display-properties: (
+$properties: (
 	none,
 	inline,
 	inline-block,
@@ -21,18 +23,18 @@ $rr-display-properties: (
 ) !default;
 
 // Output handling
-$rr-generate-display: $rr-generate-classes !default;
+$generate-display: core.$generate-classes !default;
 
 /////////
 // OUTPUT
 /////////
 
-@mixin generate-display-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-display {
-		@include generate-output-by-property(
+@mixin generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $generate-display {
+		@include core.generate-output-by-property(
 			$property: 'display',
-			$values: $rr-display-properties,
-			$prefix: $rr-display-class-prefix,
+			$values: $properties,
+			$prefix: $class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);

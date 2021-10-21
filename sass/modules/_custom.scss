@@ -2,19 +2,21 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-@use '../utilities' as *;
+@use 'sass:meta';
+@use '../utilities' as utils;
+@use '../core';
 
 // Classes
-$rr-custom-class-prefix: '' !default;
+$custom-class-prefix: '' !default;
 
 // Default entries
-$rr-customs: () !default;
+$customs: () !default;
 
 // Default entry
-$rr-customs-default: map-default($rr-customs) !default;
+$customs-default: utils.map-default($customs) !default;
 
 // Output handling
-$rr-generate-customs: $rr-generate-classes !default;
+$generate-customs: core.$generate-classes !default;
 
 ////////////
 // FUNCTIONS
@@ -22,24 +24,24 @@ $rr-generate-customs: $rr-generate-classes !default;
 
 // Check if an entry exists
 @function custom-exists($name) {
-	@return entry-exists($rr-customs, $name);
+	@return core.entry-exists($customs, $name);
 }
 
 // Gets an entry by name
 @function custom-entry($name: null) {
-	@return get-entry-by-name($rr-customs, $name, $rr-customs-default);
+	@return core.get-entry-by-name($customs, $name, $customs-default);
 }
 
 // Get css properties by entry
 @function custom-entry-to-properties($entry, $breakpoint-name: '') {
 	$properties: ();
 
-	@if grid-is-default($breakpoint-name) {
+	@if core.is-default($breakpoint-name) {
 		$properties: map-remove($entry, 'breakpoints');
 	} @else {
-		$breakpoint-overwrites: get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
+		$breakpoint-overwrites: core.get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 
-		@if not is-null($breakpoint-overwrites) {
+		@if not utils.is-null($breakpoint-overwrites) {
 			$properties: $breakpoint-overwrites;
 		}
 	}
@@ -53,9 +55,9 @@ $rr-generate-customs: $rr-generate-classes !default;
 
 // Output custom by name
 @mixin custom($name: null, $breakpoint-name: '') {
-	@include entry-output(
+	@include core.entry-output(
 		custom-entry($name),
-		'custom-entry-to-properties',
+		meta.get-function('custom-entry-to-properties'),
 		$breakpoint-name
 	);
 }
@@ -65,14 +67,14 @@ $rr-generate-customs: $rr-generate-classes !default;
 /////////
 
 @mixin generate-custom-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-customs {
-		@each $custom-name, $custom-entry in $rr-customs {
-			@include generate-output-by-class(
+	@if $generate-customs {
+		@each $custom-name, $custom-entry in $customs {
+			@include core.generate-output-by-class(
 				$class: $custom-name,
-				$prefix: $rr-custom-class-prefix,
+				$prefix: $custom-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
 				$properties: custom-entry-to-properties($custom-entry, $breakpoint-name),
-				//$breakpoint-overwrites: entry-has-breakpoint-overwrite($custom-entry, $breakpoint-name)
+				//$breakpoint-overwrites: core.entry-has-breakpoint-overwrite($custom-entry, $breakpoint-name)
 			);
 		}
 	}

@@ -1,30 +1,32 @@
 ///////////////////
 // DEFAULT SETTINGS
 ///////////////////
+@use 'sass:meta';
 @use 'sass:map';
 @use 'sass:list';
 @use 'sass:string';
 
-@use '../utilities' as *;
+@use '../utilities' as utils;
+@use '../core';
 
 // Classes
-$rr-font-family-class-prefix: 'font-' !default;
+$font-family-class-prefix: 'font-' !default;
 
 // Default values
-$rr-font-family-default-file-types: ('woff2');
-$rr-font-family-default-weight: normal !default;
-$rr-font-family-default-style: normal !default;
-$rr-font-family-default-letter-spacing: unset !default;
+$font-family-default-file-types: ('woff2');
+$font-family-default-weight: normal !default;
+$font-family-default-style: normal !default;
+$font-family-default-letter-spacing: unset !default;
 
 // Default entries
-$rr-font-families: () !default;
+$font-families: () !default;
 
 // Default entry
-$rr-font-families-default: map-default($rr-font-families) !default;
+$font-families-default: utils.map-default($font-families) !default;
 
 // Output handling
-$rr-generate-font-families: $rr-generate-classes !default;
-$rr-generate-font-families-breakpoints: $rr-generate-breakpoint-classes !default;
+$generate-font-families: core.$generate-classes !default;
+$generate-font-families-breakpoints: core.$generate-breakpoint-classes !default;
 
 ////////////
 // FUNCTIONS
@@ -32,25 +34,25 @@ $rr-generate-font-families-breakpoints: $rr-generate-breakpoint-classes !default
 
 // Check if a font family exists
 @function font-family-exists($name) {
-	@return entry-exists($rr-font-families, $name);
+	@return core.entry-exists($font-families, $name);
 }
 
 // Gets a font family by name
 @function font-family-entry($name: null) {
-	@return get-entry-by-name($rr-font-families, $name, $rr-font-families-default);
+	@return core.get-entry-by-name($font-families, $name, $font-families-default);
 }
 
 // Get css properties by entry
 @function font-family-entry-to-properties($entry, $breakpoint-name: '', $apply-overwrites: true) {
-	$family: get-value-by-entry($entry, 'family', $breakpoint-name, $apply-overwrites);
+	$family: core.get-value-by-entry($entry, 'family', $breakpoint-name, $apply-overwrites);
 	$properties: ();
 
-	@if is-not-null($family) {
+	@if utils.is-not-null($family) {
 		$properties: (
-			font-family: list-comma($family),
-			font-weight: get-property-by-entry($entry, 'weight', $rr-font-family-default-weight, $breakpoint-name, $apply-overwrites),
-			font-style: get-property-by-entry($entry, 'style', $rr-font-family-default-style, $breakpoint-name, $apply-overwrites),
-			letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-family-default-letter-spacing, $breakpoint-name, $apply-overwrites)
+			font-family: utils.list-comma($family),
+			font-weight: core.get-property-by-entry($entry, 'weight', $font-family-default-weight, $breakpoint-name, $apply-overwrites),
+			font-style: core.get-property-by-entry($entry, 'style', $font-family-default-style, $breakpoint-name, $apply-overwrites),
+			letter-spacing: core.get-property-by-entry($entry, 'letter-spacing', $font-family-default-letter-spacing, $breakpoint-name, $apply-overwrites)
 		);
 	}
 
@@ -63,9 +65,9 @@ $rr-generate-font-families-breakpoints: $rr-generate-breakpoint-classes !default
 
 // Output font family by name
 @mixin font-family($name: null, $breakpoint-name: '') {
-	@include entry-output(
+	@include core.entry-output(
 		font-family-entry($name),
-		'font-family-entry-to-properties',
+		meta.get-function('font-family-entry-to-properties'),
 		$breakpoint-name
 	);
 }
@@ -75,42 +77,42 @@ $rr-generate-font-families-breakpoints: $rr-generate-breakpoint-classes !default
 /////////
 
 @mixin generate-font-family-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
-	@if $rr-generate-font-families {
+	@if $generate-font-families {
 		// Font faces
-		@if grid-is-default($breakpoint-prefix) and not $apply-overwrites {
-			@each $class-name, $font in $rr-font-families {
-				@if is-map($font) and map.has-key($font, 'face') {
-					$font-face: get-property-by-entry($font, 'face', null);
+		@if core.is-default($breakpoint-prefix) and not $apply-overwrites {
+			@each $class-name, $font in $font-families {
+				@if utils.is-map($font) and map.has-key($font, 'face') {
+					$font-face: core.get-property-by-entry($font, 'face', null);
 					$font-family: list.nth($font-face, 2);
 					$font-file: list.nth($font-face, 1);
 					$font-src: ();
 
-					@each $file-type in $rr-font-family-default-file-types {
+					@each $file-type in $font-family-default-file-types {
 						$font-src: list.append($font-src, url(string.quote($font-file + '.' + $file-type)) format(string.quote($file-type)), $separator: 'comma');
 					}
 
 					$properties: (
 						font-family: $font-family,
 						src: $font-src,
-						font-weight: get-property-by-entry($font, 'weight', $rr-font-family-default-weight),
-						font-style: get-property-by-entry($font, 'style', $rr-font-family-default-style)
+						font-weight: core.get-property-by-entry($font, 'weight', $font-family-default-weight),
+						font-style: core.get-property-by-entry($font, 'style', $font-family-default-style)
 					);
 
 					@font-face {
-						@include generate-properties($properties);
+						@include core.generate-properties($properties);
 					}
 				}
 			}
 		}
 
 		// Font families
-		@if not grid-is-default($breakpoint-name) or not $apply-overwrites {
-			@each $font-family-name, $font-family-entry in $rr-font-families {
-				$generate-breakpoints: map-maybe-get($font-family-entry, 'generate-breakpoints', $rr-generate-font-families-breakpoints);
+		@if not core.is-default($breakpoint-name) or not $apply-overwrites {
+			@each $font-family-name, $font-family-entry in $font-families {
+				$generate-breakpoints: utils.map-maybe-get($font-family-entry, 'generate-breakpoints', $generate-font-families-breakpoints);
 
-				@include generate-output-by-class(
+				@include core.generate-output-by-class(
 					$class: $font-family-name,
-					$prefix: $rr-font-family-class-prefix,
+					$prefix: $font-family-class-prefix,
 					$breakpoint-prefix: $breakpoint-prefix,
 					$properties: font-family-entry-to-properties($font-family-entry, $breakpoint-name, $apply-overwrites),
 					$append-prefix: $apply-overwrites,

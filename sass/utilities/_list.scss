@@ -5,7 +5,7 @@
 @use 'sass:meta';
 @use 'sass:list';
 
-@use 'units' as *;
+@use 'units';
 
 // Check if value is a list
 @function is-list($list) {
@@ -24,16 +24,16 @@
 
 // Check if value is in list
 @function in-list($list, $value) {
-	@return is-not-null(list.index($list, $value));
+	@return units.is-not-null(list.index($list, $value));
 }
 
 // Get first list item
-@function list-get-first($list) {
+@function list-first($list) {
 	@return list.nth($list, 1);
 }
 
 // Get last list item
-@function list-get-last($list) {
+@function list-last($list) {
 	@return list.nth($list, list.length($list));
 }
 

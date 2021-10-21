@@ -9,7 +9,11 @@
 
 // Check if empty
 @function is-empty($value) {
-	@if not $value or $value == '' or $value == 0 or $value == () or list.length($value) == 0 {
+	@if not $value
+		or $value == ''
+		or $value == 0
+		or $value == ()
+		or list.length($value) == 0 {
 		@return true;
 	}
 
@@ -87,7 +91,7 @@
 
 // Convert a value to rem
 @function to-rem($value) {
-	$base-breakpoint: map.get($rr-grid-breakpoints, list.nth($rr-grid-breakpoints-names, 1));
+	$base-breakpoint: map.get(core.$breakpoints, list.nth(core.$breakpoints-names, 1));
 	$base-size: map.get($base-breakpoint, base-size);
 
 	@if meta.type-of($base-size) != number {
@@ -109,13 +113,13 @@
 // Convert a value to rem by breakpoint
 @function to-rem-breakpoint($value, $breakpoint: '') {
 	@if $breakpoint == '' {
-		$breakpoint: list.nth($rr-grid-breakpoints-names, list.length($rr-grid-breakpoints-names));
+		$breakpoint: list.nth(core.$breakpoints-names, list.length(core.$breakpoints-names));
 	}
 
-	$smallest-breakpoint: map.get($rr-grid-breakpoints, list.nth($rr-grid-breakpoints-names, 1));
+	$smallest-breakpoint: map.get(core.$breakpoints, list.nth(core.$breakpoints-names, 1));
 	$smallest-base-size: map.get($smallest-breakpoint, base-size);
 
-	$output-breakpoint: map.get($rr-grid-breakpoints, $breakpoint);
+	$output-breakpoint: map.get(core.$breakpoints, $breakpoint);
 	$output-base-size: map.get($output-breakpoint, base-size);
 
 	$output-base-size-modifier: math.div($smallest-base-size, $output-base-size);

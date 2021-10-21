@@ -2,20 +2,23 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use 'sass:list';
+@use '../core';
+
 // Classes
-$rr-flex-direction-class-prefix: 'flex-' !default;
-$rr-flex-wrap-class-prefix: 'flex-' !default;
-$rr-flex-justify-content-class-prefix: 'justify-' !default;
-$rr-flex-align-items-class-prefix: 'align-' !default;
-$rr-flex-align-content-class-prefix: 'align-content-' !default;
-$rr-flex-align-self-class-prefix: 'align-self-' !default;
-$rr-flex-justify-self-class-prefix: 'justify-self-' !default;
-$rr-flex-grow-class-prefix: 'grow-' !default;
-$rr-flex-shrink-class-prefix: 'shrink-' !default;
-$rr-flex-order-class-prefix: 'order-' !default;
+$direction-class-prefix: 'flex-' !default;
+$wrap-class-prefix: 'flex-' !default;
+$justify-content-class-prefix: 'justify-' !default;
+$align-items-class-prefix: 'align-' !default;
+$align-content-class-prefix: 'align-content-' !default;
+$align-self-class-prefix: 'align-self-' !default;
+$justify-self-class-prefix: 'justify-self-' !default;
+$grow-class-prefix: 'grow-' !default;
+$shrink-class-prefix: 'shrink-' !default;
+$order-class-prefix: 'order-' !default;
 
 // Default flex-direction properties
-$rr-flex-direction-properties: (
+$direction-properties: (
 	row,
 	row-reverse,
 	column,
@@ -23,14 +26,14 @@ $rr-flex-direction-properties: (
 ) !default;
 
 // Default flex-wrap properties
-$rr-flex-wrap-properties: (
+$wrap-properties: (
 	nowrap,
 	wrap,
 	wrap-reverse
 ) !default;
 
 // Default justify-content properties
-$rr-flex-justify-content-properties: (
+$justify-content-properties: (
 	('start', flex-start),
 	('end', flex-end),
 	center,
@@ -39,7 +42,7 @@ $rr-flex-justify-content-properties: (
 ) !default;
 
 // Default align items properties
-$rr-flex-align-items-properties: (
+$align-items-properties: (
 	('start', flex-start),
 	('end', flex-end),
 	center,
@@ -48,7 +51,7 @@ $rr-flex-align-items-properties: (
 ) !default;
 
 // Default aligh-content properties
-$rr-flex-align-content-properties: (
+$align-content-properties: (
 	('start', flex-start),
 	('end', flex-end),
 	center,
@@ -58,7 +61,7 @@ $rr-flex-align-content-properties: (
 ) !default;
 
 // Default align-self properties
-$rr-flex-align-self-properties: (
+$align-self-properties: (
 	auto,
 	normal,
 	('start', flex-start),
@@ -69,7 +72,7 @@ $rr-flex-align-self-properties: (
 ) !default;
 
 // Default justify-self properties
-$rr-flex-justify-self-properties: (
+$justify-self-properties: (
 	auto,
 	normal,
 	start,
@@ -80,128 +83,128 @@ $rr-flex-justify-self-properties: (
 ) !default;
 
 // Default flex-grow properties
-$rr-flex-grow-properties: (
+$grow-properties: (
 	0,
 	1
 ) !default;
 
 // Default flex-shrink properties
-$rr-flex-shrink-properties: (
+$shrink-properties: (
 	0,
 	1
 ) !default;
 
 // Default max order to generate
-$rr-flex-order-max: 12 !default;
+$order-max: 12 !default;
 
 // Default order properties
-$rr-flex-order-properties: (
+$order-properties: (
 	('first', -1),
-	('last', $rr-flex-order-max + 1)
+	('last', $order-max + 1)
 ) !default;
 
 // Output handling
-$rr-generate-flex: $rr-generate-classes !default;
+$generate: core.$generate-classes !default;
 
 /////////
 // OUTPUT
 /////////
 
-@mixin generate-flex-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-flex {
+@mixin generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $generate {
 		// Flex direction
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'flex-direction',
-			$values: $rr-flex-direction-properties,
-			$prefix: $rr-flex-direction-class-prefix,
+			$values: $direction-properties,
+			$prefix: $direction-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 
 		// Flex wrap
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'flex-wrap',
-			$values: $rr-flex-wrap-properties,
-			$prefix: $rr-flex-wrap-class-prefix,
+			$values: $wrap-properties,
+			$prefix: $wrap-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true,
 			$additional-unset-prefix: 'wrap-'
 		);
 
 		// Justify content
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'justify-content',
-			$values: $rr-flex-justify-content-properties,
-			$prefix: $rr-flex-justify-content-class-prefix,
+			$values: $justify-content-properties,
+			$prefix: $justify-content-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 
 		// Align items
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'align-items',
-			$values: $rr-flex-align-items-properties,
-			$prefix: $rr-flex-align-items-class-prefix,
+			$values: $align-items-properties,
+			$prefix: $align-items-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 
 		// Align content
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'align-content',
-			$values: $rr-flex-align-content-properties,
-			$prefix: $rr-flex-align-content-class-prefix,
+			$values: $align-content-properties,
+			$prefix: $align-content-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 
 		// Align self
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'align-self',
-			$values: $rr-flex-align-self-properties,
-			$prefix: $rr-flex-align-self-class-prefix,
+			$values: $align-self-properties,
+			$prefix: $align-self-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 
 		// Justify self
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'justify-self',
-			$values: $rr-flex-justify-self-properties,
-			$prefix: $rr-flex-justify-self-class-prefix,
+			$values: $justify-self-properties,
+			$prefix: $justify-self-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 
 		// Flex grow
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'flex-grow',
-			$values: $rr-flex-grow-properties,
-			$prefix: $rr-flex-grow-class-prefix,
+			$values: $grow-properties,
+			$prefix: $grow-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: false
 		);
 
 		// Flex shrink
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'flex-shrink',
-			$values: $rr-flex-shrink-properties,
-			$prefix: $rr-flex-shrink-class-prefix,
+			$values: $shrink-properties,
+			$prefix: $shrink-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: false
 		);
 
 		// Order
-		$rr-flex-order-properties-new: $rr-flex-order-properties;
+		$order-properties-new: $order-properties;
 
-		@for $order from 0 to $rr-flex-order-max + 1 {
-			$rr-flex-order-properties-new: append($rr-flex-order-properties-new, $order);
+		@for $order from 0 to $order-max + 1 {
+			$order-properties-new: list.append($order-properties-new, $order);
 		}
 
-		@include generate-output-by-property(
+		@include core.generate-output-by-property(
 			$property: 'order',
-			$values: $rr-flex-order-properties-new,
-			$prefix: $rr-flex-order-class-prefix,
+			$values: $order-properties-new,
+			$prefix: $order-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);

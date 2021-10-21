@@ -2,27 +2,29 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../core';
+
 // Classes
-$rr-background-size-class-prefix: 'bg-' !default;
-$rr-background-clip-class-prefix: 'bg-clip-' !default;
-$rr-background-position-class-prefix: 'bg-position-' !default;
+$size-class-prefix: 'bg-' !default;
+$clip-class-prefix: 'bg-clip-' !default;
+$position-class-prefix: 'bg-position-' !default;
 
 // Default background-size properties
-$rr-background-size-properties: (
+$size-properties: (
 	cover,
 	contain,
 	auto
 ) !default;
 
 // Default background-size properties
-$rr-background-clip-properties: (
+$clip-properties: (
 	('border', border-box),
 	('padding', padding-box),
 	('content', content-box)
 ) !default;
 
 // Default background-positions properties
-$rr-background-position-properties: (
+$position-properties: (
 	('t', top),
 	('r', right),
 	('b', bottom),
@@ -35,44 +37,44 @@ $rr-background-position-properties: (
 ) !default;
 
 // Output handling
-$rr-generate-background: $rr-generate-classes !default;
-$rr-generate-background-sizes: $rr-generate-background !default;
-$rr-generate-background-clips: $rr-generate-background !default;
-$rr-generate-background-positions: $rr-generate-background !default;
+$generate: core.$generate-classes !default;
+$generate-sizes: $generate !default;
+$generate-clips: $generate !default;
+$generate-positions: $generate !default;
 
 /////////
 // OUTPUT
 /////////
 
-@mixin generate-background-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	// Background size
-	@if $rr-generate-background-sizes {
-		@include generate-output-by-property(
+	@if $generate-sizes {
+		@include core.generate-output-by-property(
 			$property: 'background-size',
-			$values: $rr-background-size-properties,
-			$prefix: $rr-background-size-class-prefix,
+			$values: $size-properties,
+			$prefix: $size-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 	}
 
 	// Background clip
-	@if $rr-generate-background-clips {
-		@include generate-output-by-property(
+	@if $generate-clips {
+		@include core.generate-output-by-property(
 			$property: 'background-clip',
-			$values: $rr-background-clip-properties,
-			$prefix: $rr-background-clip-class-prefix,
+			$values: $clip-properties,
+			$prefix: $clip-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 	}
 
 	// Background position
-	@if $rr-generate-background-positions {
-		@include generate-output-by-property(
+	@if $generate-positions {
+		@include core.generate-output-by-property(
 			$property: 'background-position',
-			$values: $rr-background-position-properties,
-			$prefix: $rr-background-position-class-prefix,
+			$values: $position-properties,
+			$prefix: $position-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);

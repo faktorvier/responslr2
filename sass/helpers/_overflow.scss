@@ -2,13 +2,15 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../core';
+
 // Classes
-$rr-overflow-class-prefix: 'overflow-' !default;
-$rr-overflow-x-class-prefix: 'overflow-x-' !default;
-$rr-overflow-y-class-prefix: 'overflow-y-' !default;
+$class-prefix: 'overflow-' !default;
+$x-class-prefix: 'overflow-x-' !default;
+$y-class-prefix: 'overflow-y-' !default;
 
 // Default overflow properties
-$rr-overflow-properties: (
+$properties: (
 	visible,
 	hidden,
 	scroll,
@@ -16,43 +18,43 @@ $rr-overflow-properties: (
 ) !default;
 
 // Output handling
-$rr-generate-overflow: $rr-generate-classes !default;
-$rr-generate-overflow-x: $rr-generate-overflow !default;
-$rr-generate-overflow-y: $rr-generate-overflow !default;
+$generate: core.$generate-classes !default;
+$generate-x: $generate !default;
+$generate-y: $generate !default;
 
 /////////
 // OUTPUT
 /////////
 
-@mixin generate-overflow-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	// Overflow
-	@if $rr-generate-overflow {
-		@include generate-output-by-property(
+	@if $generate {
+		@include core.generate-output-by-property(
 			$property: 'overflow',
-			$values: $rr-overflow-properties,
-			$prefix: $rr-overflow-class-prefix,
+			$values: $properties,
+			$prefix: $class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 	}
 
 	// Overflow x
-	@if $rr-generate-overflow-x {
-		@include generate-output-by-property(
+	@if $generate-x {
+		@include core.generate-output-by-property(
 			$property: 'overflow-x',
-			$values: $rr-overflow-properties,
-			$prefix: $rr-overflow-x-class-prefix,
+			$values: $properties,
+			$prefix: $x-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 	}
 
 	// Overflow y
-	@if $rr-generate-overflow-y {
-		@include generate-output-by-property(
+	@if $generate-y {
+		@include core.generate-output-by-property(
 			$property: 'overflow-y',
-			$values: $rr-overflow-properties,
-			$prefix: $rr-overflow-y-class-prefix,
+			$values: $properties,
+			$prefix: $y-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);

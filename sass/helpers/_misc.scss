@@ -2,12 +2,14 @@
 // DEFAULT SETTINGS
 ///////////////////
 
+@use '../core';
+
 // Classes
-$rr-misc-user-select-disable-class: 'no-user-select' !default;
-$rr-misc-box-filler-class-prefix: 'full-' !default;
+$user-select-disable-class: 'no-user-select' !default;
+$box-filler-class-prefix: 'full-' !default;
 
 // Default box filler classes
-$rr-misc-box-filler-properties: (
+$misc-box-filler-properties: (
 	'parent': (
 		width: 100%,
 		height: 100%
@@ -23,28 +25,28 @@ $rr-misc-box-filler-properties: (
 ) !default;
 
 // Output handling
-$rr-generate-misc-helpers: $rr-generate-classes !default;
-$rr-generate-misc-user-selection-helpers: $rr-generate-misc-helpers !default;
-$rr-generate-misc-box-fillers-helpers: $rr-generate-misc-helpers !default;
+$generate: core.$generate-classes !default;
+$generate-user-selection: $generate !default;
+$generate-box-fillers: $generate !default;
 
 /////////
 // OUTPUT
 /////////
 
-@mixin generate-misc-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-misc-helpers {
+@mixin generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
+	@if $generate {
 		// Disable user selection
-		@if $rr-generate-misc-user-selection-helpers and grid-is-default($breakpoint-prefix) {
-			.#{$rr-misc-user-select-disable-class} {
+		@if $generate-user-selection and core.is-default($breakpoint-prefix) {
+			.#{$user-select-disable-class} {
 				user-select: none;
 			}
 		}
 
 		// Box fillers
-		@if $rr-generate-misc-box-fillers-helpers {
-			@include generate-output-by-classes(
-				$classes: $rr-misc-box-filler-properties,
-				$prefix: $rr-misc-box-filler-class-prefix,
+		@if $generate-box-fillers {
+			@include core.generate-output-by-classes(
+				$classes: $misc-box-filler-properties,
+				$prefix: $box-filler-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
 				$append-prefix: true,
 				$generate-unset: (

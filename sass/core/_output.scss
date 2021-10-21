@@ -5,56 +5,62 @@
 @use 'sass:meta';
 @use 'sass:map';
 
-@use '../utilities' as *;
+@use '../utilities' as utils;
+@use 'core';
+@use 'normalize';
+@use 'grid';
+@use '../helpers';
+@use '../modules' as *;
+@use '../components' as *;
 
 // Add core settings
-$rr-global-settings: map.merge(
-	$rr-global-settings,
+$settings: map.merge(
+	( 'grid': grid.$settings ),
 	(
 		'core': (
-			'canHoverClass': $rr-global-can-hover-class,
-			'canTouchClass': $rr-global-can-touch-class
+			'canHoverClass': core.$can-hover-class,
+			'canTouchClass': core.$can-touch-class
 		)
 	)
 );
 
 // Output default features and settings
-@if $rr-generate-features or $rr-generate-settings {
+@if core.$generate-features or grid.$generate-settings {
 	:root {
-		--rr-version: #{meta.inspect($rr-version)};
+		--rr-version: #{meta.inspect(core.$version)};
 
-		@if $rr-generate-features {
+		@if core.$generate-features {
 			--rr-can-hover: false;
 			--rr-can-touch: false;
 		}
 
-		@if $rr-generate-settings and is-not-empty($rr-generate-settings) {
-			--rr-settings: #{meta.inspect(json-encode($rr-global-settings))};
+		@if grid.$generate-settings and not utils.is-empty(grid.$generate-settings) {
+			--rr-settings: #{meta.inspect(utils.json-encode($settings))};
 		}
 	}
 }
 
 // Output breakpoint settings
-@if $rr-generate-settings {
-	@each $breakpoint-name, $breakpoint-entry in $rr-grid-breakpoints {
-		@include mq($breakpoint-name) {
+@if grid.$generate-settings {
+	@each $breakpoint-name, $breakpoint-entry in grid.$breakpoints {
+		@include grid.mq($breakpoint-name) {
 			:root {
 				--rr-current-breakpoint: '#{$breakpoint-name}';
-				--rr-current-columns: '#{grid-breakpoint-property($breakpoint-name, 'columns')}';
+				--rr-current-columns: '#{grid.breakpoint-property($breakpoint-name, 'columns')}';
 			}
 		}
 	}
 }
 
 // Output features
-@if $rr-generate-features {
-	@include mq-hover() {
+@if core.$generate-features {
+	@include grid.mq-hover() {
 		:root {
 			--rr-can-hover: true;
 		}
 	}
 
-	@include mq-touch() {
+	@include grid.mq-touch() {
 		:root {
 			--rr-can-touch: true;
 		}
@@ -65,30 +71,30 @@ $rr-global-settings: map.merge(
 /* OUTPUT: NORMALIZE */
 /*********************/
 
-@include generate-normalize-core-output();
+@include normalize.normalize-generate-output();
 
 /***************************/
 /* OUTPUT: DEFAULT CLASSES */
 /***************************/
 
-@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-	@include mq($breakpoint-name) {
+@each $breakpoint-name, $breakpoint in grid.$breakpoints {
+	@include grid.mq($breakpoint-name) {
 		// Get breakpoint prefix
-		$breakpoint-prefix: grid-breakpoint-prefix($breakpoint-name);
-		$breakpoint-prefix-full: grid-breakpoint-prefix($breakpoint-name, false);
+		$breakpoint-prefix: grid.breakpoint-prefix($breakpoint-name);
+		$breakpoint-prefix-full: grid.breakpoint-prefix($breakpoint-name, false);
 
 		// Grid
-		@include generate-grid-core-output($breakpoint-prefix-full, $breakpoint-prefix, $breakpoint-name);
+		@include grid.grid-generate-output($breakpoint-prefix-full, $breakpoint-prefix, $breakpoint-name);
 
 		// Helpers
-		@include generate-background-helpers-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-display-helpers-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-flex-helpers-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-misc-helpers-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-overflow-helpers-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-position-helpers-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-typo-helpers-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-visibility-helpers-output($breakpoint-prefix, $breakpoint-name);
+		@include helpers.background-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include helpers.display-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include helpers.flex-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include helpers.misc-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include helpers.overflow-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include helpers.position-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include helpers.typo-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include helpers.visibility-generate-output($breakpoint-prefix, $breakpoint-name);
 
 		// Modules
 		@include generate-aspect-ratio-module-output($breakpoint-prefix, $breakpoint-name);
@@ -108,10 +114,10 @@ $rr-global-settings: map.merge(
 /* OUTPUT: BREAKPOINT OVERWRITES */
 /*********************************/
 
-@each $breakpoint-name, $breakpoint in $rr-grid-breakpoints {
-	@include mq($breakpoint-name) {
+@each $breakpoint-name, $breakpoint in grid.$breakpoints {
+	@include grid.mq($breakpoint-name) {
 		// Get breakpoint prefix
-		$breakpoint-prefix: grid-breakpoint-prefix($breakpoint-name);
+		$breakpoint-prefix: grid.breakpoint-prefix($breakpoint-name);
 
 		// Modules
 		@include generate-aspect-ratio-module-output($breakpoint-prefix, $breakpoint-name, true);
@@ -126,4 +132,4 @@ $rr-global-settings: map.merge(
 /* OUTPUT: GRID HELPER */
 /***********************/
 
-@include generate-grid-helper-core-output();
+@include grid.grid-generate-helper-output();

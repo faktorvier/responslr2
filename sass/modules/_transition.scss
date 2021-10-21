@@ -2,31 +2,32 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-@use '../utilities' as *;
+@use '../utilities' as utils;
+@use '../core';
 
 // Classes
-$rr-transition-class-prefix: 'transition-' !default;
+$transition-class-prefix: 'transition-' !default;
 
 // Default values
-$rr-transitions-default-duration: 0.25s !default;
-$rr-transitions-default-delay: null !default;
-$rr-transitions-default-timing-function: null !default;
-$rr-transitions-default-hardware-acceleration: true !default;
+$transitions-default-duration: 0.25s !default;
+$transitions-default-delay: null !default;
+$transitions-default-timing-function: null !default;
+$transitions-default-hardware-acceleration: true !default;
 
 // Default entries
-$rr-transitions: () !default;
+$transitions: () !default;
 
 // Default entry
-$rr-transitions-default: map-default($rr-transitions) !default;
+$transitions-default: utils.map-default($transitions) !default;
 
 // Output handling
-$rr-generate-transitions: $rr-generate-classes !default;
+$generate-transitions: core.$generate-classes !default;
 
 ///////////////////
 // CLASS PROPERTIES
 ///////////////////
 
-$rr-transition-hardware-acceleration-class-properties: (
+$transition-hardware-acceleration-class-properties: (
 	transform: translateZ(0)
 ) !default;
 
@@ -36,12 +37,12 @@ $rr-transition-hardware-acceleration-class-properties: (
 
 // Check if an entry exists
 @function transition-exists($name) {
-	@return entry-exists($rr-transitions, $name);
+	@return core.entry-exists($transitions, $name);
 }
 
 // Gets an entry by name
 @function transition-entry($name: null) {
-	@return get-entry-by-name($rr-transitions, $name, $rr-transitions-default);
+	@return core.get-entry-by-name($transitions, $name, $transitions-default);
 }
 
 // Get timing function by name
@@ -49,7 +50,7 @@ $rr-transition-hardware-acceleration-class-properties: (
 	$timing-function: ();
 
 	@each $name in $names {
-		@if is-not-null($name) {
+		@if utils.is-not-null($name) {
 			@if $name == 'easeInQuad' {
 				$timing-function: append($timing-function, cubic-bezier(0.550, 0.085, 0.680, 0.530));
 			} @else if $name == 'easeInCubic' {
@@ -111,20 +112,20 @@ $rr-transition-hardware-acceleration-class-properties: (
 
 // Get css properties by entry
 @function transition-entry-to-properties($entry) {
-	$transition-property: get-value-by-entry($entry, 'property');
-	$transition-duration: map-maybe-get($entry, 'duration', $rr-transitions-default-duration);
-	$transition-delay: map-maybe-get($entry, 'delay', $rr-transitions-default-delay);
-	$transition-timing-function: map-maybe-get($entry, 'timing-function', $rr-transitions-default-timing-function);
-	$transition-hardware-acceleration: map-maybe-get($entry, 'hardware-acceleration', $rr-transitions-default-hardware-acceleration);
+	$transition-property: core.get-value-by-entry($entry, 'property');
+	$transition-duration: utils.map-maybe-get($entry, 'duration', $transitions-default-duration);
+	$transition-delay: utils.map-maybe-get($entry, 'delay', $transitions-default-delay);
+	$transition-timing-function: utils.map-maybe-get($entry, 'timing-function', $transitions-default-timing-function);
+	$transition-hardware-acceleration: utils.map-maybe-get($entry, 'hardware-acceleration', $transitions-default-hardware-acceleration);
 
 	$properties: ();
 
 	@if length($transition-property) == 1 {
-		@if is-null($transition-delay) {
+		@if utils.is-null($transition-delay) {
 			$transition-delay: 0s;
 		}
 
-		@if is-null($transition-timing-function) {
+		@if utils.is-null($transition-timing-function) {
 			$transition-timing-function: ease;
 		}
 
@@ -133,15 +134,15 @@ $rr-transition-hardware-acceleration-class-properties: (
 		);
 	} @else {
 		$properties: (
-			transition-property: list-comma($transition-property),
-			transition-duration: list-comma($transition-duration),
-			transition-delay: list-comma($transition-delay),
-			transition-timing-function: list-comma(transition-timing-function-by-name($transition-timing-function))
+			transition-property: utils.list-comma($transition-property),
+			transition-duration: utils.list-comma($transition-duration),
+			transition-delay: utils.list-comma($transition-delay),
+			transition-timing-function: utils.list-comma(transition-timing-function-by-name($transition-timing-function))
 		);
 	}
 
 	@if $transition-hardware-acceleration {
-		$properties: map-merge($properties, $rr-transition-hardware-acceleration-class-properties);
+		$properties: map-merge($properties, $transition-hardware-acceleration-class-properties);
 	}
 
 	@return $properties;
@@ -155,19 +156,19 @@ $rr-transition-hardware-acceleration-class-properties: (
 @mixin transition($name: null, $hardware-acceleration: null) {
 	$entry: transition-entry($name);
 
-	@if is-not-null($entry) {
-		@if is-not-null($hardware-acceleration) {
+	@if utils.is-not-null($entry) {
+		@if utils.is-not-null($hardware-acceleration) {
 			$entry: map-merge($entry, ('hardware-acceleration': $hardware-acceleration));
 		}
 
 		$properties: transition-entry-to-properties($entry);
-		@include generate-properties($properties);
+		@include core.generate-properties($properties);
 	}
 }
 
 // Output transition hardware acceleration
 @mixin transition-hardware-acceleration() {
-	@include generate-properties($rr-transition-hardware-acceleration-class-properties);
+	@include core.generate-properties($transition-hardware-acceleration-class-properties);
 }
 
 /////////
@@ -175,11 +176,11 @@ $rr-transition-hardware-acceleration-class-properties: (
 /////////
 
 @mixin generate-transition-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
-	@if $rr-generate-transitions and grid-is-default($breakpoint-prefix) {
-		@each $transition-name, $transition-entry in $rr-transitions {
-			@include generate-output-by-class(
+	@if $generate-transitions and core.is-default($breakpoint-prefix) {
+		@each $transition-name, $transition-entry in $transitions {
+			@include core.generate-output-by-class(
 				$class: $transition-name,
-				$prefix: $rr-transition-class-prefix,
+				$prefix: $transition-class-prefix,
 				$breakpoint-prefix: $breakpoint-prefix,
 				$properties: transition-entry-to-properties($transition-entry)
 			);

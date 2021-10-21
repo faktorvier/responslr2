@@ -2,15 +2,16 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-@use '../utilities' as *;
+@use '../utilities' as utils;
+@use '../core';
 
 // Classes
-$rr-font-fix-class: 'font-fix' !default;
-$rr-font-align-class-prefix: 'txt-' !default;
-$rr-font-transform-class-prefix: 'txt-transform-' !default;
+$fix-class: 'font-fix' !default;
+$align-class-prefix: 'txt-' !default;
+$transform-class-prefix: 'txt-transform-' !default;
 
 // Default text-align properties
-$rr-font-align-properties: (
+$align-properties: (
 	left,
 	right,
 	center,
@@ -19,7 +20,7 @@ $rr-font-align-properties: (
 ) !default;
 
 // Default text-transform properties
-$rr-font-transform-properties: (
+$transform-properties: (
 	none,
 	capitalize,
 	uppercase,
@@ -27,15 +28,15 @@ $rr-font-transform-properties: (
 ) !default;
 
 // Outout handling
-$rr-generate-font-fix: $rr-generate-classes !default;
-$rr-generate-font-align: $rr-generate-classes !default;
-$rr-generate-font-transform: $rr-generate-classes !default;
+$generate-fix: core.$generate-classes !default;
+$generate-align: core.$generate-classes !default;
+$generate-transform: core.$generate-classes !default;
 
 ///////////////////
 // CLASS PROPERTIES
 ///////////////////
 
-$rr-font-reset-class-properties: (
+$reset-class-properties: (
 	font-smooth: always,
 	font-smoothing: antialiased,
 	-webkit-font-smoothing: antialiased,
@@ -47,39 +48,39 @@ $rr-font-reset-class-properties: (
 // MIXINS
 /////////
 
-@mixin font-fix() {
-	@include generate-properties($rr-font-reset-class-properties);
+@mixin fix() {
+	@include core.generate-properties($reset-class-properties);
 }
 
 /////////
 // OUTPUT
 /////////
 
-@mixin generate-typo-helpers-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	// Font fix
-	@if $rr-generate-font-fix and grid-is-default($breakpoint-prefix) {
-		.#{$rr-font-fix-class} {
-			@include generate-properties($rr-font-reset-class-properties);
+	@if $generate-fix and core.is-default($breakpoint-prefix) {
+		.#{$fix-class} {
+			@include core.generate-properties($reset-class-properties);
 		}
 	}
 
 	// Text align
-	@if $rr-generate-font-align {
-		@include generate-output-by-property(
+	@if $generate-align {
+		@include core.generate-output-by-property(
 			$property: 'text-align',
-			$values: $rr-font-align-properties,
-			$prefix: $rr-font-align-class-prefix,
+			$values: $align-properties,
+			$prefix: $align-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);
 	}
 
 	// Text transform
-	@if $rr-generate-font-transform {
-		@include generate-output-by-property(
+	@if $generate-transform {
+		@include core.generate-output-by-property(
 			$property: 'text-transform',
-			$values: $rr-font-transform-properties,
-			$prefix: $rr-font-transform-class-prefix,
+			$values: $transform-properties,
+			$prefix: $transform-class-prefix,
 			$breakpoint-prefix: $breakpoint-prefix,
 			$generate-unset: true
 		);

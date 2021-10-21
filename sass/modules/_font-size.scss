@@ -2,32 +2,34 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-@use '../utilities' as *;
+@use 'sass:meta';
+@use '../utilities' as utils;
+@use '../core';
 
 // Classes
-$rr-font-size-class-prefix: 'font-size-' !default;
+$font-size-class-prefix: 'font-size-' !default;
 
 // Default values
-$rr-font-size-default-line-height: unset !default;
-$rr-font-size-default-letter-spacing: unset !default;
+$font-size-default-line-height: unset !default;
+$font-size-default-letter-spacing: unset !default;
 
 // Default entries
-$rr-font-sizes: () !default;
+$font-sizes: () !default;
 
 // Default entry
-$rr-font-sizes-default: map-default($rr-font-sizes) !default;
+$font-sizes-default: utils.map-default($font-sizes) !default;
 
 // Output handling
-$rr-generate-font-sizes: $rr-generate-classes !default;
-$rr-generate-font-sizes-unset: $rr-generate-font-sizes !default;
-$rr-generate-font-sizes-hide: $rr-generate-font-sizes !default;
-$rr-generate-font-sizes-breakpoints: $rr-generate-breakpoint-classes !default;
+$generate-font-sizes: core.$generate-classes !default;
+$generate-font-sizes-unset: $generate-font-sizes !default;
+$generate-font-sizes-hide: $generate-font-sizes !default;
+$generate-font-sizes-breakpoints: core.$generate-breakpoint-classes !default;
 
 ///////////////////
 // CLASS PROPERTIES
 ///////////////////
 
-$rr-font-size-unset-class-properties: (
+$font-size-unset-class-properties: (
 	font-size: unset,
 	line-height: unset,
 	letter-spacing: unset
@@ -39,26 +41,26 @@ $rr-font-size-unset-class-properties: (
 
 // Check if a font size exists
 @function font-size-exists($name) {
-	@return entry-exists($rr-font-sizes, $name);
+	@return core.entry-exists($font-sizes, $name);
 }
 
 // Gets a font size by name
 @function font-size-entry($name: null) {
-	@return get-entry-by-name($rr-font-sizes, $name, $rr-font-sizes-default);
+	@return core.get-entry-by-name($font-sizes, $name, $font-sizes-default);
 }
 
 // Get css properties by entry
 @function font-size-entry-to-properties($entry, $breakpoint-name: '', $apply-overwrites: true) {
-	$value: get-value-by-entry($entry, 'size', $breakpoint-name, $apply-overwrites);
+	$value: core.get-value-by-entry($entry, 'size', $breakpoint-name, $apply-overwrites);
 	$properties: ();
 
-	@if $value == $rr-global-unset-class {
-		$properties: $rr-font-size-unset-class-properties;
+	@if $value == core.$unset-class {
+		$properties: $font-size-unset-class-properties;
 	} @else {
 		$properties: (
 			font-size: $value,
-			line-height: get-property-by-entry($entry, 'line-height', $rr-font-size-default-line-height, $breakpoint-name, $apply-overwrites),
-			letter-spacing: get-property-by-entry($entry, 'letter-spacing', $rr-font-size-default-letter-spacing, $breakpoint-name, $apply-overwrites)
+			line-height: core.get-property-by-entry($entry, 'line-height', $font-size-default-line-height, $breakpoint-name, $apply-overwrites),
+			letter-spacing: core.get-property-by-entry($entry, 'letter-spacing', $font-size-default-letter-spacing, $breakpoint-name, $apply-overwrites)
 		);
 	}
 
@@ -71,9 +73,9 @@ $rr-font-size-unset-class-properties: (
 
 // Output font size by name
 @mixin font-size($name: null, $breakpoint-name: '') {
-	@include entry-output(
+	@include core.entry-output(
 		font-size-entry($name),
-		'font-size-entry-to-properties',
+		meta.get-function('font-size-entry-to-properties'),
 		$breakpoint-name
 	);
 }
@@ -83,38 +85,38 @@ $rr-font-size-unset-class-properties: (
 /////////
 
 @mixin generate-font-size-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
-	@if $rr-generate-font-sizes {
-		$rr-font-sizes-new: $rr-font-sizes;
+	@if $generate-font-sizes {
+		$font-sizes-new: $font-sizes;
 
 		// Append hide
-		@if $rr-generate-font-sizes-hide {
-			$rr-font-sizes-new: map-append(
-				$rr-font-sizes-new,
+		@if $generate-font-sizes-hide {
+			$font-sizes-new: utils.map-append(
+				$font-sizes-new,
 				(
 					'size': 0,
 					'line-height': 0,
 					'letter-spacing': 0
 				),
-				$rr-global-hide-class
+				core.$hide-class
 			);
 		}
 
 		// Append unset
-		@if $rr-generate-font-sizes-unset and $breakpoint-prefix != '' {
-			$rr-font-sizes-new: map-append(
-				$rr-font-sizes-new,
+		@if $generate-font-sizes-unset and $breakpoint-prefix != '' {
+			$font-sizes-new: utils.map-append(
+				$font-sizes-new,
 				unset,
-				$rr-global-unset-class
+				core.$unset-class
 			);
 		}
 
-		@if not grid-is-default($breakpoint-name) or not $apply-overwrites {
-			@each $font-size-name, $font-size-entry in $rr-font-sizes-new {
-				$generate-breakpoints: map-maybe-get($font-size-entry, 'generate-breakpoints', $rr-generate-font-sizes-breakpoints);
+		@if not core.is-default($breakpoint-name) or not $apply-overwrites {
+			@each $font-size-name, $font-size-entry in $font-sizes-new {
+				$generate-breakpoints: utils.map-maybe-get($font-size-entry, 'generate-breakpoints', $generate-font-sizes-breakpoints);
 
-				@include generate-output-by-class(
+				@include core.generate-output-by-class(
 					$class: $font-size-name,
-					$prefix: $rr-font-size-class-prefix,
+					$prefix: $font-size-class-prefix,
 					$breakpoint-prefix: $breakpoint-prefix,
 					$properties: font-size-entry-to-properties($font-size-entry, $breakpoint-name, $apply-overwrites),
 					$append-prefix: $apply-overwrites,

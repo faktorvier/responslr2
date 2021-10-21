@@ -18,7 +18,7 @@
 }
 
 // Unquote if input is a string
-@function str-unquote($string) {
+@function unquote($string) {
 	$return-string: $string;
 
 	@if is-string($string) {
@@ -29,11 +29,11 @@
 }
 
 // Replace substring in string
-@function str-replace($string, $search, $replace: '') {
+@function replace($string, $search, $replace: '') {
 	$index: string.index($string, $search);
 
 	@if $index {
-		@return string.slice($string, 1, $index - 1) + $replace + str-replace(string.slice($string, $index + string.length($search)), $search, $replace);
+		@return string.slice($string, 1, $index - 1) + $replace + replace(string.slice($string, $index + string.length($search)), $search, $replace);
 	}
 
 	@return $string;
@@ -85,7 +85,7 @@
 	$new: $string;
 
 	@each $search, $replace in $map {
-		$new: str-replace($new, $search, $replace);
+		$new: replace($new, $search, $replace);
 	}
 
 	@return $new;
