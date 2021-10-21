@@ -3,7 +3,7 @@
 ///////////////////
 
 @use 'sass:meta';
-@use '../utilities' as utils;
+@use '../utils';
 @use '../core';
 
 // Classes
@@ -118,7 +118,7 @@ $generate-colors-breakpoints: core.$generate-breakpoint-classes !default;
 	@if($entry) {
 		$color: core.get-value-by-entry($entry, 'color', $breakpoint-name);
 
-		@if $type == 'background' or $type == 'bg' {
+		@if $type == 'background' {
 			$color: core.get-property-by-entry($entry, 'color-bg', $color, $breakpoint-name);
 		} @else if $type == 'border' {
 			$color: core.get-property-by-entry($entry, 'color-border', $color, $breakpoint-name);
@@ -173,7 +173,7 @@ $generate-colors-breakpoints: core.$generate-breakpoint-classes !default;
 // OUTPUT
 /////////
 
-@mixin generate-color-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
+@mixin color-generate-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
 	@if $generate-colors {
 		$colors-new: $colors;
 

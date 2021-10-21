@@ -5,13 +5,13 @@
 @use 'sass:meta';
 @use 'sass:map';
 
-@use '../utilities' as utils;
+@use '../utils';
 @use 'core';
 @use 'normalize';
 @use 'grid';
 @use '../helpers';
-@use '../modules' as *;
-@use '../components' as *;
+@use '../modules';
+@use '../components';
 
 // Add core settings
 $settings: map.merge(
@@ -97,16 +97,16 @@ $settings: map.merge(
 		@include helpers.visibility-generate-output($breakpoint-prefix, $breakpoint-name);
 
 		// Modules
-		@include generate-aspect-ratio-module-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-custom-module-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-color-module-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-font-family-module-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-font-size-module-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-spacing-module-output($breakpoint-prefix, $breakpoint-name);
-		@include generate-transition-module-output($breakpoint-prefix, $breakpoint-name);
+		@include modules.aspect-ratio-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include modules.custom-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include modules.color-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include modules.font-family-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include modules.font-size-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include modules.spacing-generate-output($breakpoint-prefix, $breakpoint-name);
+		@include modules.transition-generate-output($breakpoint-prefix, $breakpoint-name);
 
 		// Components
-		@include generate-table-component-output($breakpoint-prefix, $breakpoint-name);
+		@include components.table-generate-output($breakpoint-prefix, $breakpoint-name);
 	}
 }
 
@@ -120,11 +120,11 @@ $settings: map.merge(
 		$breakpoint-prefix: grid.breakpoint-prefix($breakpoint-name);
 
 		// Modules
-		@include generate-aspect-ratio-module-output($breakpoint-prefix, $breakpoint-name, true);
-		@include generate-color-module-output($breakpoint-prefix, $breakpoint-name, true);
-		@include generate-font-family-module-output($breakpoint-prefix, $breakpoint-name, true);
-		@include generate-font-size-module-output($breakpoint-prefix, $breakpoint-name, true);
-		@include generate-spacing-module-output($breakpoint-prefix, $breakpoint-name, true);
+		@include modules.aspect-ratio-generate-output($breakpoint-prefix, $breakpoint-name, true);
+		@include modules.color-generate-output($breakpoint-prefix, $breakpoint-name, true);
+		@include modules.font-family-generate-output($breakpoint-prefix, $breakpoint-name, true);
+		@include modules.font-size-generate-output($breakpoint-prefix, $breakpoint-name, true);
+		@include modules.spacing-generate-output($breakpoint-prefix, $breakpoint-name, true);
 	}
 }
 

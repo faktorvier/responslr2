@@ -3,7 +3,7 @@
 ///////////////////
 
 @use 'sass:meta';
-@use '../utilities' as utils;
+@use '../utils';
 @use '../core';
 
 // Classes
@@ -165,7 +165,7 @@ $generate-spacings-breakpoints: core.$generate-breakpoint-classes !default;
 // OUTPUT
 /////////
 
-@mixin generate-spacing-module-output($breakpoint-prefix, $breakpoint-name: '', $apply-overwrites: false) {
+@mixin spacing-generate-output($breakpoint-prefix, $breakpoint-name: '', $apply-overwrites: false) {
 	@if $generate-spacings {
 		$spacings-new: $spacings;
 

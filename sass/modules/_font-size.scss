@@ -3,7 +3,7 @@
 ///////////////////
 
 @use 'sass:meta';
-@use '../utilities' as utils;
+@use '../utils';
 @use '../core';
 
 // Classes
@@ -84,7 +84,7 @@ $font-size-unset-class-properties: (
 // OUTPUT
 /////////
 
-@mixin generate-font-size-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
+@mixin font-size-generate-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
 	@if $generate-font-sizes {
 		$font-sizes-new: $font-sizes;
 

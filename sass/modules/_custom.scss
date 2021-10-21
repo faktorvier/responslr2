@@ -3,7 +3,8 @@
 ///////////////////
 
 @use 'sass:meta';
-@use '../utilities' as utils;
+@use 'sass:map';
+@use '../utils';
 @use '../core';
 
 // Classes
@@ -37,7 +38,7 @@ $generate-customs: core.$generate-classes !default;
 	$properties: ();
 
 	@if core.is-default($breakpoint-name) {
-		$properties: map-remove($entry, 'breakpoints');
+		$properties: map.remove($entry, 'breakpoints');
 	} @else {
 		$breakpoint-overwrites: core.get-breakpoint-overwrite-by-entry($entry, $breakpoint-name);
 
@@ -66,7 +67,7 @@ $generate-customs: core.$generate-classes !default;
 // OUTPUT
 /////////
 
-@mixin generate-custom-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin custom-generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $generate-customs {
 		@each $custom-name, $custom-entry in $customs {
 			@include core.generate-output-by-class(

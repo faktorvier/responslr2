@@ -25,7 +25,7 @@ $generate-tables: core.$generate-classes !default;
 // OUTPUT
 /////////
 
-@mixin generate-table-component-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin table-generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $generate-tables and core.is-default($breakpoint-prefix) {
 		.#{$table-class} {
 			@include table();

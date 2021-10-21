@@ -6,7 +6,7 @@
 @use 'sass:math';
 @use 'sass:list';
 
-@use '../utilities' as utils;
+@use '../utils';
 @use '../core';
 
 // Classes
@@ -137,7 +137,7 @@ $aspect-ratio-unset-class-properties: (
 // OUTPUT
 /////////
 
-@mixin generate-aspect-ratio-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
+@mixin aspect-ratio-generate-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
 	@if $generate-aspect-ratios {
 		// Normal classes
 		@if not core.is-default($breakpoint-name) or not $apply-overwrites {

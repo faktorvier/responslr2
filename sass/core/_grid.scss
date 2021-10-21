@@ -9,7 +9,7 @@
 @use 'sass:map';
 @use 'sass:string';
 
-@use '../utilities' as utils;
+@use '../utils';
 @use 'core';
 
 $breakpoint-only-class-suffix: '-only' !default;

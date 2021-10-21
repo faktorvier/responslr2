@@ -6,7 +6,7 @@
 @use 'sass:list';
 @use 'sass:string';
 
-@use '../utilities' as utils;
+@use '../utils';
 @use '../core';
 
 // Classes
@@ -76,7 +76,7 @@ $generate-font-families-breakpoints: core.$generate-breakpoint-classes !default;
 // OUTPUT
 /////////
 
-@mixin generate-font-family-module-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
+@mixin font-family-generate-output($breakpoint-prefix: '', $breakpoint-name: '', $apply-overwrites: false) {
 	@if $generate-font-families {
 		// Font faces
 		@if core.is-default($breakpoint-prefix) and not $apply-overwrites {

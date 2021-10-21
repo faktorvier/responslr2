@@ -2,7 +2,7 @@
 // DEFAULT SETTINGS
 ///////////////////
 
-@use '../utilities' as utils;
+@use '../utils';
 @use '../core';
 
 // Classes
@@ -175,7 +175,7 @@ $transition-hardware-acceleration-class-properties: (
 // OUTPUT
 /////////
 
-@mixin generate-transition-module-output($breakpoint-prefix: '', $breakpoint-name: '') {
+@mixin transition-generate-output($breakpoint-prefix: '', $breakpoint-name: '') {
 	@if $generate-transitions and core.is-default($breakpoint-prefix) {
 		@each $transition-name, $transition-entry in $transitions {
 			@include core.generate-output-by-class(
